@@ -10,7 +10,7 @@ Example:
 
 ```javascript
 const async = require('async-promised');
-const sleep = require('sleep-promise);
+const sleep = require('sleep-promise');
 
 await async.each([1, 3, 2], async x => {
   const ms = x * 25
