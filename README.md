@@ -1,48 +1,20 @@
-# async-promises [![Build Status](https://travis-ci.org/assisrafael/async-promises.svg)](https://travis-ci.org/assisrafael/async-promises)
+# async-promised
 
-[![NPM](https://nodei.co/npm/async-promises.png?compact=true)](https://nodei.co/npm/async-promises/)
+[![Build Status](https://img.shields.io/travis/DanielRamosAcosta/async-promised.svg)](https://travis-ci.org/DanielRamosAcosta/async-promised)
 
-Async control flow patterns using promises based on https://github.com/caolan/async
+Native promise wrapper around [`caolan/async`](https://github.com/caolan/async)
 
 It needs an ES6 environment to work (Promises, Block-scoped binding constructs, etc) like modern browsers and node 4.
 
 Example:
 
 ```javascript
-var asyncP = require('async-promises');
+const async = require('async-promised');
+const sleep = require('sleep-promise);
 
-var args = [];
-return asyncP.each([1, 3, 2], (x) => {
-  return new Promise(function(resolve) {
-    setTimeout(() => {
-      args.push(x);
-      resolve();
-    }, x * 25);
-  });
-})
-.then(() => {
-  console.log(args); //prints [1, 2, 3]
+await async.each([1, 3, 2], async x => {
+  const ms = x * 25
+  await sleep(ms)
+  console.log(`I'm at element ${x}, and I waited ${ms}`)
 });
 ```
-
-
-## Roadmap
-
-- Collections
- - [x] each
- - [x] eachSeries
- - [ ] map
- - [ ] mapSeries
- - [ ] filter
- - [ ] filterSeries
- - [ ] reduce
- - [ ] reduceRight
- - [ ] some
- - [ ] every
-- Control Flow
- - [x] series
- - [x] parallel
- - [x] waterfall
- - [ ] retry
- - [x] times
- - [x] timesSeries
