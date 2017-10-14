@@ -27,7 +27,7 @@ import * as async from 'async';
 function filter<T>(
     arr: async.Dictionary<T> | T[] | IterableIterator<T>,
     iterator: (item: T) => Promise<boolean>
-  ): Promise<Array<(T | undefined)> | undefined> {
+  ): Promise<Array<(T | undefined)>> {
   return new Promise((resolve, reject) => {
     async.filter(arr, (item, cb) => {
       iterator(item)
