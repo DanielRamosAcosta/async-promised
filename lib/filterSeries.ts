@@ -13,20 +13,18 @@ import * as async from 'async';
  * @param {Array|Iterable|Object} coll - A collection to iterate over.
  * @param {Function} iteratee - A truth test to apply to each item in `coll`.
  * The `iteratee` is passed a `callback(err, truthValue)`, which must be called
- * with a boolean argument once it has completed. Invoked with (item, callback).
- * @param {Function} [callback] - A callback which is called after all the
- * `iteratee` functions have finished. Invoked with (err, results)
+ * with a boolean argument once it has completed.
  */
 
 function filter<T>(
-  arr: async.Dictionary<T> | T[] | IterableIterator<T>,
-  iterator: (item: T) => Promise<boolean>
+  coll: async.Dictionary<T> | T[] | IterableIterator<T>,
+  iteratee: (item: T) => Promise<boolean>
 ): Promise<Array<T | undefined>> {
   return new Promise((resolve, reject) => {
     async.filterSeries(
-      arr as any,
+      coll as any,
       (item: T, cb) => {
-        iterator(item)
+        iteratee(item)
           .then(res => cb(undefined, res))
           .catch(err => cb(err));
       },

@@ -11,22 +11,18 @@ import * as async from 'async';
  * @category Collection
  * @param {Array|Iterable|Object} coll - A collection to iterate over.
  * @param {Function} iteratee - An async truth test to apply to each item in
- * `coll`.
- * The should complete with a boolean value as its `result`.
- * Invoked with (item, callback).
- * @param {Function} [callback] - A callback which is called after all the
- * `iteratee` functions have finished. Invoked with (err, results).
+ * `coll`. The `iteratee` should complete with a boolean value as its `result`.
  */
 
 function reject<T>(
-  arr: async.Dictionary<T> | T[] | IterableIterator<T>,
-  iterator: (item: T) => Promise<boolean>
+  coll: async.Dictionary<T> | T[] | IterableIterator<T>,
+  iteratee: (item: T) => Promise<boolean>
 ): Promise<Array<T | undefined>> {
   return new Promise((resolve, promiseReject) => {
     async.rejectSeries(
-      arr as any,
+      coll as any,
       (item: T, cb) => {
-        iterator(item)
+        iteratee(item)
           .then(res => cb(undefined, res))
           .catch(err => cb(err));
       },
