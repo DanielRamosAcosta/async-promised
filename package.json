@@ -7,9 +7,12 @@
     "test": "test"
   },
   "scripts": {
-    "test": "ava",
-    "coverage": "nyc ava",
-    "release": "standard-version"
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "release": "standard-version",
+    "lint": "tslint lib/**/*.ts test/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -29,21 +32,30 @@
   },
   "homepage": "https://github.com/assisrafael/async-promises#readme",
   "devDependencies": {
-    "ava": "^0.22.0",
-    "nyc": "^11.2.1",
-    "standard-version": "^4.2.0"
+    "@types/async": "^2.0.44",
+    "@types/chai": "^4.0.4",
+    "@types/jest": "^21.1.2",
+    "chai": "^4.1.2",
+    "jest": "^21.2.1",
+    "standard-version": "^4.2.0",
+    "ts-jest": "^21.1.2",
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.3"
   },
-  "nyc": {
-    "check-coverage": true,
-    "lines": 92,
-    "statements": 92,
-    "functions": 91,
-    "branches": 75,
-    "reporter": [
-      "text",
-      "text-summary",
-      "html"
-    ],
-    "report-dir": "./coverage/"
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "test/.*.ts",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ]
+  },
+  "dependencies": {
+    "async": "^2.5.0"
   }
 }

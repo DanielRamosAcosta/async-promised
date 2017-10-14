@@ -27,3 +27,10 @@ build/Release
 node_modules
 
 .nyc_output
+
+# Any generated files
+
+lib/**/*.d.ts
+lib/**/*.js
+test/**/*.d.ts
+test/**/*.js
