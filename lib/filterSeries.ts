@@ -1,27 +1,21 @@
 import * as async from 'async';
 
 /**
- * Returns a new array of all the values in `coll` which pass an async truth
- * test. This operation is performed in parallel, but the results array will be
- * in the same order as the original.
+ * The same as [`filter`]{@link module:Collections.filter} but runs only a single async operation at a time.
  *
- * @name filter
+ * @name filterSeries
  * @static
  * @memberOf module:Collections
  * @method
- * @alias select
+ * @see [async.filter]{@link module:Collections.filter}
+ * @alias selectSeries
  * @category Collection
  * @param {Array|Iterable|Object} coll - A collection to iterate over.
  * @param {Function} iteratee - A truth test to apply to each item in `coll`.
- * @example
- *
- * async
- *   .filter(["file1", "file2", "file3"], filePath =>
- *     fs.access(filePath).catch(err => true)
- *   )
- *   .then(results => {
- *     // results now equals an array of the existing files
- *   });
+ * The `iteratee` is passed a `callback(err, truthValue)`, which must be called
+ * with a boolean argument once it has completed. Invoked with (item, callback).
+ * @param {Function} [callback] - A callback which is called after all the
+ * `iteratee` functions have finished. Invoked with (err, results)
  */
 
 function filter<T>(
@@ -29,7 +23,7 @@ function filter<T>(
   iterator: (item: T) => Promise<boolean>
 ): Promise<Array<T | undefined>> {
   return new Promise((resolve, reject) => {
-    async.filter(
+    async.filterSeries(
       arr as any,
       (item: T, cb) => {
         iterator(item)
