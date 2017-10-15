@@ -1,29 +1,26 @@
-import * as async from 'async';
 import { expect } from 'chai';
+import * as async from '../lib';
 
 describe('setImmediate', () => {
-  it('basics', done => {
-    const call_order = [];
-    async.setImmediate(() => {
-      call_order.push('two');
-    });
-    call_order.push('one');
+  it('basics', async () => {
+    const callOrder = [];
+    const prom = async.setImmediate()
+      .then(() => {
+        callOrder.push('two');
+      });
 
-    setTimeout(() => {
-      expect(call_order).to.eql(['one', 'two']);
-      done();
-    }, 25);
+    callOrder.push('one');
+    await prom;
+    expect(callOrder).to.eql(['one', 'two']);
   });
 
-  it('extra args', done => {
-    async.setImmediate(
-      (a, b, c) => {
-        expect([a, b, c]).to.eql([1, 2, 3]);
-        done();
-      },
-      1,
-      2,
-      3
-    );
+  /**
+   * A promise can't be resolved with multiple values. Mulitple args will be
+   * resolved with an array.
+   */
+  it('extra args', () => {
+    return async.setImmediate(1, 2, 3).then(args => {
+      expect(args).to.eql([1, 2, 3]);
+    });
   });
 });
