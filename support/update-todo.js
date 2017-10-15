@@ -44,7 +44,7 @@ function renderTodo(filesUsingCallbacksAsync) {
 }
 
 function renderImplemented({ filename, usesCallbackAsync }) {
-  return `[${usesCallbackAsync ? ' ' : 'x'}] ${filename}`
+  return `* [${usesCallbackAsync ? ' ' : 'x'}] ${filename}`
 }
 
 main()
