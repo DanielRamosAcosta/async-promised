@@ -12,7 +12,8 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "release": "standard-version",
-    "lint": "tslint lib/**/*.ts test/**/*.ts"
+    "lint": "tslint lib/**/*.ts test/**/*.ts",
+    "jsdoc": "jsdoc -c ./support/jsdoc/jsdoc.json"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
     "@types/jest": "^21.1.2",
     "chai": "^4.1.2",
     "jest": "^21.2.1",
+    "jsdoc": "^3.4.0",
     "standard-version": "^4.2.0",
     "ts-jest": "^21.1.2",
     "tslint": "^5.7.0",

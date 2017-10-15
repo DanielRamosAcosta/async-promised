@@ -34,3 +34,9 @@ lib/**/*.d.ts
 lib/**/*.js
 test/**/*.d.ts
 test/**/*.js
+
+# Documentation
+docs
+
+# Distribution
+dist
