@@ -75,7 +75,7 @@ describe('detect', () => {
       expect(call_order).to.eql([3, 2, 'callback']);
       done();
     }, 50);
-  });
+  }, 20000);
 
   it('detectSeries - multiple matches', function(done) {
     const call_order = [];
