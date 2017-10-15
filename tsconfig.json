@@ -53,6 +53,10 @@
   },
   "exclude": [
     "dist",
-    "test"
+    "test",
+    "build",
+    "build-es",
+    "docs",
+    "support"
   ]
 }

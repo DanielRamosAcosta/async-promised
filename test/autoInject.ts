@@ -1,0 +1,183 @@
+import * as async from 'async';
+import { expect } from 'chai';
+
+describe('autoInject', () => {
+  it('basics', done => {
+    const callOrder = [];
+    async.autoInject(
+      {
+        task1(task2, callback) {
+          expect(task2).to.equal(2);
+          setTimeout(() => {
+            callOrder.push('task1');
+            callback(null, 1);
+          }, 25);
+        },
+        task2(callback) {
+          setTimeout(() => {
+            callOrder.push('task2');
+            callback(null, 2);
+          }, 50);
+        },
+        task3(task2, callback) {
+          expect(task2).to.equal(2);
+          callOrder.push('task3');
+          callback(null, 3);
+        },
+        task4(task1, task2, callback) {
+          expect(task1).to.equal(1);
+          expect(task2).to.equal(2);
+          callOrder.push('task4');
+          callback(null, 4);
+        },
+        task5(task2, callback) {
+          expect(task2).to.equal(2);
+          setTimeout(() => {
+            callOrder.push('task5');
+            callback(null, 5);
+          }, 0);
+        },
+        task6(task2, callback) {
+          expect(task2).to.equal(2);
+          callOrder.push('task6');
+          callback(null, 6);
+        }
+      },
+      (err, results) => {
+        expect(results.task6).to.equal(6);
+        expect(callOrder).to.eql([
+          'task2',
+          'task3',
+          'task6',
+          'task5',
+          'task1',
+          'task4'
+        ]);
+        done();
+      }
+    );
+  });
+
+  it('should work with array tasks', done => {
+    const callOrder = [];
+
+    async.autoInject(
+      {
+        task1(cb) {
+          callOrder.push('task1');
+          cb(null, 1);
+        },
+        task2: [
+          'task3',
+          (task3, cb) => {
+            expect(task3).to.equal(3);
+            callOrder.push('task2');
+            cb(null, 2);
+          }
+        ],
+        task3(cb) {
+          callOrder.push('task3');
+          cb(null, 3);
+        }
+      },
+      () => {
+        expect(callOrder).to.eql(['task1', 'task3', 'task2']);
+        done();
+      }
+    );
+  });
+
+  it('should handle array tasks with just a function', done => {
+    async.autoInject(
+      {
+        a: [
+          cb => {
+            cb(null, 1);
+          }
+        ],
+        b: [
+          'a',
+          (a, cb) => {
+            expect(a).to.equal(1);
+            cb();
+          }
+        ]
+      },
+      done
+    );
+  });
+
+  it('should throw error for function without explicit parameters', done => {
+    try {
+      async.autoInject({
+        a() {}
+      });
+    } catch (e) {
+      // It's ok. It detected a void function
+      return done();
+    }
+
+    // If didn't catch error, then it's a failed test
+    done(true);
+  });
+
+  let arrowSupport = true;
+  try {
+    new Function('x => x');
+  } catch (e) {
+    arrowSupport = false;
+  }
+
+  if (arrowSupport) {
+    // Needs to be run on ES6 only
+
+    /* eslint {no-eval: 0}*/
+    eval(
+      '(function() {                                                 ' +
+        '    it(\'should work with es6 arrow syntax\', function (done) { ' +
+        '        async.autoInject({                                    ' +
+        '            task1: (cb)           => cb(null, 1),             ' +
+        '            task2: ( task3 , cb ) => cb(null, 2),             ' +
+        '            task3: cb             => cb(null, 3)              ' +
+        '        }, (err, results) => {                                ' +
+        '            expect(results.task1).toEqual(1);                ' +
+        '            expect(results.task3).toEqual(3);                ' +
+        '            done();                                           ' +
+        '        });                                                   ' +
+        '    });                                                       ' +
+        '})                                                            '
+    )();
+  }
+
+  let defaultSupport = true;
+  try {
+    eval('function x(y = 1){ return y }');
+  } catch (e) {
+    defaultSupport = false;
+  }
+
+  if (arrowSupport && defaultSupport) {
+    // Needs to be run on ES6 only
+
+    /* eslint {no-eval: 0}*/
+    eval(
+      '(function() {                                                 ' +
+        '    it(\'should work with es6 obj method syntax\', function (done) { ' +
+        '        async.autoInject({                                    ' +
+        '            task1 (cb){             cb(null, 1) },            ' +
+        '            task2 ( task3 , cb ) {  cb(null, 2) },            ' +
+        '            task3 (cb) {            cb(null, 3) },            ' +
+        '            task4 ( task2 , cb ) {  cb(null) },               ' +
+        '            task5 ( task4 = 4 , cb ) { cb(null, task4 + 1) }  ' +
+        '        }, (err, results) => {                                ' +
+        '            expect(results.task1).toEqual(1);                ' +
+        '            expect(results.task3).toEqual(3);                ' +
+        '            expect(results.task4).toEqual(undefined);        ' +
+        '            expect(results.task5).toEqual(5);                ' +
+        '            done();                                           ' +
+        '        });                                                   ' +
+        '    });                                                       ' +
+        '})                                                            '
+    )();
+  }
+});

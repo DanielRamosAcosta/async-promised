@@ -14,7 +14,8 @@
     "release": "standard-version",
     "lint": "tslint lib/**/*.ts test/**/*.ts",
     "jsdoc": "jsdoc -c ./support/jsdoc/jsdoc.json",
-    "jsdoc:fix": "node support/jsdoc/jsdoc-fix-html.js"
+    "jsdoc:fix": "node support/jsdoc/jsdoc-fix-html.js",
+    "update-todo": "node support/update-todo.js"
   },
   "repository": {
     "type": "git",
@@ -37,12 +38,14 @@
     "@types/async": "^2.0.44",
     "@types/chai": "^4.0.4",
     "@types/jest": "^21.1.2",
+    "@types/lodash": "^4.14.77",
     "babel-core": "^6.26.0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "chai": "^4.1.2",
     "clean": "^4.0.2",
+    "fs-extra": "^4.0.2",
     "gulp-babel": "^7.0.0",
     "gulp-cli": "^1.4.0",
     "gulp-clone": "^1.0.0",
@@ -56,6 +59,8 @@
     "gulp4": "^4.0.2",
     "jest": "^21.2.1",
     "jsdoc": "^3.4.0",
+    "lodash": "^4.17.4",
+    "outdent": "^0.3.0",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
@@ -78,6 +83,10 @@
       "js",
       "jsx",
       "json"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "support"
     ]
   },
   "dependencies": {
