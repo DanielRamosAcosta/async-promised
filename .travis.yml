@@ -6,4 +6,4 @@ node_js:
   - "8"
 
 script:
-  - npm test
+  - npm test -- --runInBand

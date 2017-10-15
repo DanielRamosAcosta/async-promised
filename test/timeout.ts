@@ -53,7 +53,7 @@ describe('timeout', () => {
         done();
       }
     );
-  }, 20000);
+  });
 
   it('timeout with parallel', done => {
     async.parallel(
