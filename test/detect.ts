@@ -25,7 +25,7 @@ describe('detect', () => {
       expect(call_order).to.eql([1, 2, 'callback', 3]);
       done();
     }, 25);
-  });
+  }, 20000);
 
   it('detect - mulitple matches', function(done) {
     const call_order = [];
