@@ -1,8 +1,8 @@
-import * as async from "async";
-import { expect } from "chai";
-import * as assert from "assert";
+import * as assert from 'assert';
+import * as async from 'async';
+import { expect } from 'chai';
 
-describe("concat", function() {
+describe('concat', function() {
   function concatIteratee(callOrder, val, next) {
     setTimeout(() => {
       callOrder.push(val);
@@ -10,8 +10,8 @@ describe("concat", function() {
     }, val * 25);
   }
 
-  describe("concat", () => {
-    it("basics", function(done) {
+  describe('concat', () => {
+    it('basics', function(done) {
       const callOrder = [];
       async.concat(
         [1, 3, 2],
@@ -25,12 +25,12 @@ describe("concat", function() {
       );
     });
 
-    it("error", done => {
+    it('error', done => {
       async.concat(
         [1, 3, 2],
         (val, next) => {
           if (val === 3) {
-            return next(new Error("fail"));
+            return next(new Error('fail'));
           }
           next(null, [val, val + 1]);
         },
@@ -42,23 +42,23 @@ describe("concat", function() {
       );
     });
 
-    it("original untouched", done => {
-      const arr = ["foo", "bar", "baz"];
+    it('original untouched', done => {
+      const arr = ['foo', 'bar', 'baz'];
       async.concat(
         arr,
         (val, next) => {
           next(null, [val, val]);
         },
         (err, result) => {
-          expect(arr).to.eql(["foo", "bar", "baz"]);
-          expect(result).to.eql(["foo", "foo", "bar", "bar", "baz", "baz"]);
+          expect(arr).to.eql(['foo', 'bar', 'baz']);
+          expect(result).to.eql(['foo', 'foo', 'bar', 'bar', 'baz', 'baz']);
           done();
         }
       );
     });
 
-    it("empty results", done => {
-      const arr = ["foo", "bar", "baz"];
+    it('empty results', done => {
+      const arr = ['foo', 'bar', 'baz'];
       async.concat(
         arr,
         (val, next) => {
@@ -66,14 +66,14 @@ describe("concat", function() {
         },
         (err, result) => {
           expect(err).to.eql(null);
-          expect(result).to.be.an("array").that.is.empty;
+          expect(result).to.be.an('array').that.is.empty;
           done();
         }
       );
     });
 
-    it("empty arrays", done => {
-      const arr = ["foo", "bar", "baz"];
+    it('empty arrays', done => {
+      const arr = ['foo', 'bar', 'baz'];
       async.concat(
         arr,
         (val, next) => {
