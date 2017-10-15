@@ -40,3 +40,5 @@ docs
 
 # Distribution
 dist
+build
+build-es

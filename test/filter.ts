@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import async = require('../lib');
+import * as async from '../lib';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 

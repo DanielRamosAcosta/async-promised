@@ -9,13 +9,13 @@
 
 Async is a utility module which provides straight-forward, powerful functions
 for working with asynchronous JavaScript. Although originally designed for
-use with [Node.js](https://nodejs.org/) and installable via `npm install --save async`,
+use with [Node.js](https://nodejs.org/) and installable via `npm install --save async-promised`,
 it can also be used directly in the browser.
 
 Async is also installable via:
 
-- [yarn](https://yarnpkg.com/en/): `yarn add async`
-- [bower](http://bower.io/): `bower install async`
+- [yarn](https://yarnpkg.com/en/): `yarn add async-promised`
+- [bower](http://bower.io/): `bower install async-promised`
 
 Async provides around 70 functions that include the usual 'functional'
 suspects (`map`, `reduce`, `filter`, `each`…) as well as some common patterns
@@ -27,28 +27,29 @@ callback as the last argument of your asynchronous function -- a callback which 
 ## Quick Examples
 
 ```js
-async.map(['file1','file2','file3'], fs.stat, function(err, results) {
-    // results is now an array of stats for each file
-});
+async.map(['file1','file2','file3'], fsp.stat)
+.then(results => {
+    // results is now an array of stats for each file  
+})
 
-async.filter(['file1','file2','file3'], function(filePath, callback) {
-  fs.access(filePath, function(err) {
-    callback(null, !err)
-  });
-}, function(err, results) {
+async.filter(["file1", "file2", "file3"], filePath =>
+    fsp.access(filePath).catch(err => true)
+)
+.then(results => {
     // results now equals an array of the existing files
 });
 
 async.parallel([
-    function(callback) { ... },
-    function(callback) { ... }
-], function(err, results) {
-    // optional callback
-});
+    async function() { ... },
+    async function() { ... }
+])
+.then(results => {
+// optional callback
+})
 
 async.series([
-    function(callback) { ... },
-    function(callback) { ... }
+    async function() { ... },
+    async function() { ... }
 ]);
 ```
 
@@ -65,13 +66,14 @@ If you get an error like `RangeError: Maximum call stack size exceeded.` or othe
 This can also arise by accident if you callback early in certain cases:
 
 ```js
-async.eachSeries(hugeArray, function iteratee(item, callback) {
+async.eachSeries(hugeArray, async item => {
     if (inCache(item)) {
-        callback(null, cache[item]); // if many items are cached, you'll overflow
+        return cache[item] // if many items are cached, you'll overflow
     } else {
-        doSomeIO(item, callback);
+        return await doSomeIO(item);
     }
-}, function done() {
+})
+.then(() => {
     //...
 });
 ```
@@ -79,22 +81,28 @@ async.eachSeries(hugeArray, function iteratee(item, callback) {
 Just change it to:
 
 ```js
-async.eachSeries(hugeArray, function iteratee(item, callback) {
+async.eachSeries(hugeArray, async item => {
     if (inCache(item)) {
-        async.setImmediate(function() {
-            callback(null, cache[item]);
+        await async.setImmediate(() => {
+            return cache[item]
         });
     } else {
-        doSomeIO(item, callback);
-        //...
+        return await doSomeIO(item);
     }
+})
+.then(() => {
+    //...
 });
 ```
 
-Async does not guard against synchronous iteratees for performance reasons.  If you are still running into stack overflows, you can defer as suggested above, or wrap functions with [`async.ensureAsync`](#ensureAsync)  Functions that are asynchronous by their nature do not have this problem and don't need the extra callback deferral.
+Async does not guard against synchronous iteratees for performance reasons. If you are still running into stack overflows, you can defer as suggested above, or wrap functions with [`async.ensureAsync`](#ensureAsync) Functions that are asynchronous by their nature do not have this problem and don't need the extra callback deferral.
 
 If JavaScript's event loop is still a bit nebulous, check out [this article](http://blog.carbonfive.com/2013/10/27/the-javascript-event-loop-explained/) or [this talk](http://2014.jsconf.eu/speakers/philip-roberts-what-the-heck-is-the-event-loop-anyway.html) for more detailed information about how it works.
 
+
+<!--
+
+With async functions/promises this is necesary?
 
 ### Multiple callbacks
 
@@ -119,6 +127,8 @@ async.waterfall([
 
 It is always good practice to `return callback(err, result)`  whenever a callback call is not the last statement of a function.
 
+-->
+
 
 ### Binding a context to an iteratee
 
@@ -130,22 +140,21 @@ a method of another library isn't working as an iteratee, study this example:
 // Here is a simple object with an (unnecessarily roundabout) squaring method
 var AsyncSquaringLibrary = {
     squareExponent: 2,
-    square: function(number, callback){
-        var result = Math.pow(number, this.squareExponent);
-        setTimeout(function(){
-            callback(null, result);
-        }, 200);
+    square: async number => {
+        const result = Math.pow(number, this.squareExponent);
+        await sleep(200);
+        return result;
     }
 };
 
-async.map([1, 2, 3], AsyncSquaringLibrary.square, function(err, result) {
+async.map([1, 2, 3], AsyncSquaringLibrary.square).then(result => {
     // result is [NaN, NaN, NaN]
     // This fails because the `this.squareExponent` expression in the square
     // function is not evaluated in the context of AsyncSquaringLibrary, and is
     // therefore undefined.
 });
 
-async.map([1, 2, 3], AsyncSquaringLibrary.square.bind(AsyncSquaringLibrary), function(err, result) {
+async.map([1, 2, 3], AsyncSquaringLibrary.square.bind(AsyncSquaringLibrary)).then(result => {
     // result is [1, 4, 9]
     // With the help of bind we can attach a context to the iteratee before
     // passing it to async. Now the square function will be executed in its
@@ -161,27 +170,29 @@ The source is available for download from
 Alternatively, you can install using npm:
 
 ```bash
-$ npm install --save async
+$ npm install --save async-promised
 ```
 
 As well as using Bower:
 
 ```bash
-$ bower install async
+$ bower install async-promised
 ```
 
 You can then `require()` async as normal:
 
 ```js
-var async = require("async");
+const async = require("async-promised");
 ```
 
 Or require individual methods:
 
 ```js
-var waterfall = require("async/waterfall");
-var map = require("async/map");
+const waterfall = require("async-promised/waterfall");
+const map = require("async-promised/map");
 ```
+
+<!-- TODO: Rewrite this -->
 
 __Development:__ [async.js](https://raw.githubusercontent.com/caolan/async/master/dist/async.js) - 29.6kb Uncompressed
 
@@ -210,12 +221,13 @@ included in the `/dist` folder. Async can also be found on the [jsDelivr CDN](ht
 We also provide async as a collection of ES2015 modules, in an alternative `async-es` package on npm.
 
 ```bash
-$ npm install --save async-es
+$ npm install --save async-promised-es
 ```
 
 ```js
-import waterfall from 'async-es/waterfall';
-import async from 'async-es';
+import waterfall from 'async-promised-es/waterfall';
+import { waterfall } from 'async-promised-es';
+import * as async from 'async-promised-es';
 ```
 
 ## Other Libraries

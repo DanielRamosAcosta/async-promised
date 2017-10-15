@@ -1,4 +1,4 @@
-import * as async from 'async';
+import { reject as asyncReject } from 'async';
 
 /**
  * The opposite of [`filter`]{@link module:Collections.filter}. Removes values that pass an `async` truth test.
@@ -24,12 +24,12 @@ import * as async from 'async';
  *   });
  */
 
-function reject<T>(
+export default function reject<T>(
   coll: async.Dictionary<T> | T[] | IterableIterator<T>,
   iteratee: (item: T) => Promise<boolean>
 ): Promise<Array<T | undefined>> {
   return new Promise((resolve, promiseReject) => {
-    async.reject(
+    asyncReject(
       coll as any,
       (item: T, cb) => {
         iteratee(item)
@@ -40,5 +40,3 @@ function reject<T>(
     );
   });
 }
-
-export = reject;

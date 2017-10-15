@@ -1,4 +1,4 @@
-import * as async from 'async';
+import { rejectSeries as asyncRejectSeries } from 'async';
 
 /**
  * The same as [`reject`]{@link module:Collections.reject} but runs only a single async operation at a time.
@@ -14,12 +14,12 @@ import * as async from 'async';
  * `coll`. The `iteratee` should complete with a boolean value as its `result`.
  */
 
-function reject<T>(
+export default function reject<T>(
   coll: async.Dictionary<T> | T[] | IterableIterator<T>,
   iteratee: (item: T) => Promise<boolean>
 ): Promise<Array<T | undefined>> {
   return new Promise((resolve, promiseReject) => {
-    async.rejectSeries(
+    asyncRejectSeries(
       coll as any,
       (item: T, cb) => {
         iteratee(item)
@@ -30,5 +30,3 @@ function reject<T>(
     );
   });
 }
-
-export = reject;

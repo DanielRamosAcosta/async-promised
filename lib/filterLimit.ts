@@ -1,4 +1,4 @@
-import * as async from 'async';
+import { filterLimit as asyncFilterLimit } from 'async';
 
 /**
  * The same as [`filter`]{@link module:Collections.filter} but runs a maximum of
@@ -16,13 +16,13 @@ import * as async from 'async';
  * @param {Function} iteratee - A truth test to apply to each item in `coll`.
  */
 
-function filterLimit<T>(
+export default function filterLimit<T>(
   arr: async.Dictionary<T> | T[] | IterableIterator<T>,
   limit: number,
   iteratee: (item: T) => Promise<boolean>
 ): Promise<Array<T | undefined>> {
   return new Promise((resolve, reject) => {
-    async.filterLimit(
+    asyncFilterLimit(
       arr as any,
       limit,
       (item: T, cb) => {
@@ -34,5 +34,3 @@ function filterLimit<T>(
     );
   });
 }
-
-export = filterLimit;

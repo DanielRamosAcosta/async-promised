@@ -1,4 +1,4 @@
-import * as async from 'async';
+import { filterSeries as asyncFilterSeries } from 'async';
 
 /**
  * The same as [`filter`]{@link module:Collections.filter} but runs only a single async operation at a time.
@@ -16,12 +16,12 @@ import * as async from 'async';
  * with a boolean argument once it has completed.
  */
 
-function filter<T>(
+export default function filter<T>(
   coll: async.Dictionary<T> | T[] | IterableIterator<T>,
   iteratee: (item: T) => Promise<boolean>
 ): Promise<Array<T | undefined>> {
   return new Promise((resolve, reject) => {
-    async.filterSeries(
+    asyncFilterSeries(
       coll as any,
       (item: T, cb) => {
         iteratee(item)
@@ -32,5 +32,3 @@ function filter<T>(
     );
   });
 }
-
-export = filter;

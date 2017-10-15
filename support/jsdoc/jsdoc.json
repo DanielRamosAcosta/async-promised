@@ -4,7 +4,7 @@
     "dictionaries": ["jsdoc"]
   },
   "source": {
-    "include": [ "./dist" ]
+    "include": [ "./build-es" ]
   },
   "plugins": ["plugins/markdown", "./jsdoc-import-path-plugin"],
   "opts": {

@@ -1,4 +1,4 @@
-import * as async from 'async';
+import { rejectLimit as asyncRejectLimit } from 'async';
 
 /**
  * The same as [`reject`]{@link module:Collections.reject} but runs a maximum of `limit` async operations at a
@@ -16,13 +16,13 @@ import * as async from 'async';
  * `coll`. The `iteratee` should complete with a boolean value as its `result`.
  */
 
-function rejectLimit<T>(
+export default function rejectLimit<T>(
   coll: async.Dictionary<T> | T[] | IterableIterator<T>,
   limit: number,
   iteratee: (item: T) => Promise<boolean>
 ): Promise<Array<T | undefined>> {
   return new Promise((resolve, reject) => {
-    async.rejectLimit(
+    asyncRejectLimit(
       coll as any,
       limit,
       (item: T, cb) => {
@@ -34,5 +34,3 @@ function rejectLimit<T>(
     );
   });
 }
-
-export = rejectLimit;

@@ -1,4 +1,4 @@
-import * as async from 'async';
+import { filter as asyncFilter } from 'async';
 
 /**
  * Returns a new array of all the values in `coll` which pass an async truth
@@ -24,12 +24,12 @@ import * as async from 'async';
  *   });
  */
 
-function filter<T>(
+export default function filter<T>(
   arr: async.Dictionary<T> | T[] | IterableIterator<T>,
   iterator: (item: T) => Promise<boolean>
 ): Promise<Array<T | undefined>> {
   return new Promise((resolve, reject) => {
-    async.filter(
+    asyncFilter(
       arr as any,
       (item: T, cb) => {
         iterator(item)
@@ -40,5 +40,3 @@ function filter<T>(
     );
   });
 }
-
-export = filter;

@@ -9,13 +9,12 @@ exports.handlers = {
 
         var importLines = [
             '```',
-            `import ${moduleName} from 'async/${moduleName}';`,
+            `import ${moduleName} from 'async-promised/${moduleName}';`,
             '```'
         ];
 
         if (moduleName !== 'index') {
             e.comment = [lines[0], ...importLines, ...lines.slice(1)].join("\n");
         }
-
     }
 };

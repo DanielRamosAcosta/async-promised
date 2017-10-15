@@ -1,19 +1,20 @@
 {
-  "name": "async-promises",
+  "name": "async-promised",
   "version": "0.2.1",
   "description": "Async control flow patterns using promises based on https://github.com/caolan/async",
-  "main": "./src/async-promises.js",
+  "main": "./dist/async-promised.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "gulp build",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "release": "standard-version",
     "lint": "tslint lib/**/*.ts test/**/*.ts",
-    "jsdoc": "jsdoc -c ./support/jsdoc/jsdoc.json"
+    "jsdoc": "jsdoc -c ./support/jsdoc/jsdoc.json",
+    "jsdoc:fix": "node support/jsdoc/jsdoc-fix-html.js"
   },
   "repository": {
     "type": "git",
@@ -36,13 +37,35 @@
     "@types/async": "^2.0.44",
     "@types/chai": "^4.0.4",
     "@types/jest": "^21.1.2",
+    "babel-core": "^6.26.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
     "chai": "^4.1.2",
+    "clean": "^4.0.2",
+    "gulp-babel": "^7.0.0",
+    "gulp-cli": "^1.4.0",
+    "gulp-clone": "^1.0.0",
+    "gulp-json-transform": "^0.4.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.6.1",
+    "gulp-rollup": "^2.15.0",
+    "gulp-sourcemaps": "^2.6.1",
+    "gulp-typescript": "^3.2.2",
+    "gulp-uglify": "^3.0.0",
+    "gulp4": "^4.0.2",
     "jest": "^21.2.1",
     "jsdoc": "^3.4.0",
+    "rollup": "^0.50.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-stream": "^1.24.1",
     "standard-version": "^4.2.0",
     "ts-jest": "^21.1.2",
     "tslint": "^5.7.0",
-    "typescript": "^2.5.3"
+    "typescript": "^2.5.3",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   },
   "jest": {
     "transform": {
@@ -58,6 +81,7 @@
     ]
   },
   "dependencies": {
-    "async": "^2.5.0"
+    "async": "^2.5.0",
+    "async-es": "^2.5.0"
   }
 }
