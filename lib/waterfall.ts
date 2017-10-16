@@ -70,7 +70,7 @@ export default function waterfall(
 }
 
 function callBackTransform(tasks: Array<(...args: any[]) => Promise<any>>) {
-  if (typeof tasks.map === 'function') {
+  if (Array.isArray(tasks)) {
     return tasks.map(func => {
       return (...allArgs: any[]) => {
         const callback = allArgs[allArgs.length - 1];
