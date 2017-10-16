@@ -15,51 +15,52 @@ import { waterfall as asyncWaterfall } from 'async';
  * to run.
  * Each function should complete with any number of `result` values.
  * The `result` values will be passed as arguments, in order, to the next task.
- * @param {Function} [callback] - An optional callback to run once all the
- * functions have completed. This will be passed the results of the last task's
- * callback. Invoked with (err, [results]).
  * @returns undefined
  * @example
  *
  * async.waterfall([
- *     function(callback) {
- *         callback(null, 'one', 'two');
- *     },
- *     function(arg1, arg2, callback) {
- *         // arg1 now equals 'one' and arg2 now equals 'two'
- *         callback(null, 'three');
- *     },
- *     function(arg1, callback) {
- *         // arg1 now equals 'three'
- *         callback(null, 'done');
- *     }
- * ], function (err, result) {
- *     // result now equals 'done'
- * });
+ *   async () => {
+ *     return ['one', 'two']);
+ *   },
+ *   async ([arg1, arg2]) => {
+ *     // arg1 now equals 'one' and arg2 now equals 'two'
+ *     return 'three';
+ *   },
+ *   async arg1 => {
+ *     // arg1 now equals 'three'
+ *     return 'done';
+ *   }
+ * ])
+ * .then(result => {
+ *   // result now equals 'done'
+ * })
  *
  * // Or, with named functions:
  * async.waterfall([
- *     myFirstFunction,
- *     mySecondFunction,
- *     myLastFunction,
- * ], function (err, result) {
- *     // result now equals 'done'
+ *   myFirstFunction,
+ *   mySecondFunction,
+ *   myLastFunction,
+ * ]).then(function (result) {
+ *   // result now equals 'done'
  * });
- * function myFirstFunction(callback) {
- *     callback(null, 'one', 'two');
+ * async function myFirstFunction() {
+ *   return ['one', 'two'];
  * }
- * function mySecondFunction(arg1, arg2, callback) {
- *     // arg1 now equals 'one' and arg2 now equals 'two'
- *     callback(null, 'three');
+ * async function mySecondFunction(arg1, arg2, callback) {
+ *   // arg1 now equals 'one' and arg2 now equals 'two'
+ *   return 'three';
  * }
- * function myLastFunction(arg1, callback) {
- *     // arg1 now equals 'three'
- *     callback(null, 'done');
+ * async function myLastFunction(arg1, callback) {
+ *   // arg1 now equals 'three'
+ *   return 'done';
  * }
  */
 
+export type WaterfallTaskFunction = (...args: any[]) => Promise<any>;
+export type WaterfallTaskFunctions = WaterfallTaskFunction[];
+
 export default function waterfall(
-  tasks: Array<(...args: any[]) => Promise<any>>
+  tasks: WaterfallTaskFunctions
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     asyncWaterfall(
@@ -69,7 +70,7 @@ export default function waterfall(
   });
 }
 
-function callBackTransform(tasks: Array<(...args: any[]) => Promise<any>>) {
+function callBackTransform(tasks: WaterfallTaskFunctions) {
   if (Array.isArray(tasks)) {
     return tasks.map(func => {
       return (...allArgs: any[]) => {
