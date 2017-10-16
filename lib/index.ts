@@ -77,3 +77,4 @@ export {default as setImmediate} from './setImmediate';
 export {default as reject} from './reject';
 export {default as rejectLimit} from './rejectLimit';
 export {default as rejectSeries} from './rejectSeries';
+export {default as waterfall} from './waterfall';

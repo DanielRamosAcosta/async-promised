@@ -7,7 +7,7 @@ Current implement status: 11%
 * [ ] apply.ts
 * [ ] applyEach.ts
 * [x] asyncFunctions.ts
-* [x] asyncify.ts
+* [ ] asyncify.ts
 * [ ] auto.ts
 * [ ] autoInject.ts
 * [ ] cargo.ts
@@ -47,5 +47,5 @@ Current implement status: 11%
 * [ ] transform.ts
 * [ ] tryEach.ts
 * [ ] until.ts
-* [ ] waterfall.ts
+* [x] waterfall.ts
 * [ ] whilst.ts

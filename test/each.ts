@@ -20,20 +20,8 @@ describe('each', () => {
       });
   });
 
-  /* This doesn't make sense with async/await
-  it('each extra callback', done => {
-    let count = 0;
-    async.each([1, 3, 2], (val, callback) => {
-      count++;
-      const done_ = count === 3;
-      callback();
-      assert.throws(callback);
-      if (done_) {
-        done();
-      }
-    });
-  });
-  */
+  // Removed 'each extra callback', there cannot be extra callback calls with async functions
+  // https://github.com/caolan/async/blob/b870cd1ea6b795e0cb8116478261217c44604310/mocha_test/each.js#L29
 
   it('each empty array', () => {
     let count = 0;
@@ -118,10 +106,11 @@ describe('each', () => {
     return prom;
   });
 
-  /**
-   * Removed 'eachSeries single item', as it should have been removed from
-   * v2.0.0: https://github.com/caolan/async/blob/b870cd1ea6b795e0cb8116478261217c44604310/mocha_test/each.js#L115
-   */
+  // Removed 'eachSeries single item', as it should have been removed from v2.0.0
+  // https://github.com/caolan/async/blob/b870cd1ea6b795e0cb8116478261217c44604310/mocha_test/each.js#L116
+
+  // Removed 'eachSeries single item', as it should have been removed from v2.0.0
+  // https://github.com/caolan/async/blob/b870cd1ea6b795e0cb8116478261217c44604310/mocha_test/each.js#L128
 
   it('eachSeries error', () => {
     const callOrder = [];
