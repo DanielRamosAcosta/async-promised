@@ -62,6 +62,8 @@
  * @module Utils
  */
 
+export {default as applyEach} from './applyEach';
+export {default as applyEachSeries} from './applyEachSeries';
 export {default as each} from './each';
 export {default as eachLimit} from './eachLimit';
 export {default as eachSeries} from './eachSeries';

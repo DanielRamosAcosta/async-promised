@@ -1,4 +1,5 @@
 import { waterfall as asyncWaterfall } from 'async';
+import { AsyncResultPromise, callbackifyFuncs } from './internal/asyncTransforms';
 
 /**
  * Runs the `tasks` array of functions in series, each passing their results to
@@ -56,31 +57,13 @@ import { waterfall as asyncWaterfall } from 'async';
  * }
  */
 
-export type WaterfallTaskFunction = (...args: any[]) => Promise<any>;
-export type WaterfallTaskFunctions = WaterfallTaskFunction[];
-
 export default function waterfall(
-  tasks: WaterfallTaskFunctions
+  tasks: AsyncResultPromise[]
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     asyncWaterfall(
-      callBackTransform(tasks),
+      callbackifyFuncs(tasks),
       err => (err ? reject(err) : resolve())
     );
   });
-}
-
-function callBackTransform(tasks: WaterfallTaskFunctions) {
-  if (Array.isArray(tasks)) {
-    return tasks.map(func => {
-      return (...allArgs: any[]) => {
-        const callback = allArgs[allArgs.length - 1];
-        const args = allArgs.slice(0, allArgs.length - 1);
-        func(...args)
-          .then(result => callback(null, result))
-          .catch(err => callback(err));
-      };
-    });
-  }
-  return tasks;
 }

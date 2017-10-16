@@ -1,98 +1,102 @@
 import * as assert from 'assert';
-import * as async from 'async';
 import { expect } from 'chai';
+import * as async from '../lib';
+import sleep from './support/sleep';
 
 describe('applyEach', () => {
-  it('applyEach', done => {
-    const call_order = [];
-    const one = (val, cb) => {
+  it('applyEach', () => {
+    const callOrder = [];
+    const one = async val => {
       expect(val).to.equal(5);
-      setTimeout(() => {
-        call_order.push('one');
-        cb(null, 1);
-      }, 12);
+      await sleep(12);
+      callOrder.push('one');
+      return 1;
     };
-    const two = (val, cb) => {
+    const two = async val => {
       expect(val).to.equal(5);
-      setTimeout(() => {
-        call_order.push('two');
-        cb(null, 2);
-      }, 2);
+      await sleep(2);
+      callOrder.push('two');
+      return 2;
     };
-    const three = (val, cb) => {
+    const three = async val => {
       expect(val).to.equal(5);
-      setTimeout(() => {
-        call_order.push('three');
-        cb(null, 3);
-      }, 18);
+      await sleep(18);
+      callOrder.push('three');
+      return 3;
     };
-    async.applyEach([one, two, three], 5, (err, results) => {
-      assert(err === null, `${err} passed instead of 'null'`);
-      expect(call_order).to.eql(['two', 'one', 'three']);
-      expect(results).to.eql([1, 2, 3]);
-      done();
+
+    return async.applyEach([one, two, three], 5)
+      .catch(err => {
+        expect(err).to.not.exist;
+      })
+      .then(results => {
+        expect(callOrder).to.eql(['two', 'one', 'three']);
+        expect(results).to.eql([1, 2, 3]);
+      });
+  });
+
+  it('applyEachSeries', () => {
+    const callOrder = [];
+
+    const one = async val => {
+      expect(val).to.equal(5);
+      await sleep(10);
+      callOrder.push('one');
+      return 1;
+    };
+    const two = async val => {
+      expect(val).to.equal(5);
+      await sleep(5);
+      callOrder.push('two');
+      return 2;
+    };
+    const three = async val => {
+      expect(val).to.equal(5);
+      await sleep(15);
+      callOrder.push('three');
+      return 3;
+    };
+
+    return async.applyEachSeries([one, two, three], 5)
+      .catch(err => {
+        expect(err).to.not.exist;
+      })
+      .then(results => {
+        expect(callOrder).to.eql(['one', 'two', 'three']);
+        expect(results).to.eql([1, 2, 3]);
+      });
     });
   });
 
-  it('applyEachSeries', done => {
-    const call_order = [];
-    const one = (val, cb) => {
-      expect(val).to.equal(5);
-      setTimeout(() => {
-        call_order.push('one');
-        cb(null, 1);
-      }, 10);
-    };
-    const two = (val, cb) => {
-      expect(val).to.equal(5);
-      setTimeout(() => {
-        call_order.push('two');
-        cb(null, 2);
-      }, 5);
-    };
-    const three = (val, cb) => {
-      expect(val).to.equal(5);
-      setTimeout(() => {
-        call_order.push('three');
-        cb(null, 3);
-      }, 15);
-    };
-    async.applyEachSeries([one, two, three], 5, (err, results) => {
-      assert(err === null, `${err} passed instead of 'null'`);
-      expect(call_order).to.eql(['one', 'two', 'three']);
-      expect(results).to.eql([1, 2, 3]);
-      done();
-    });
-  });
+it('applyEach partial application', () => {
+  const callOrder = [];
+  const one = async val => {
+    expect(val).to.equal(5);
+    await sleep(10);
+    callOrder.push('one');
+    return 1;
+  };
+  const two = async val => {
+    expect(val).to.equal(5);
+    await sleep(5);
+    callOrder.push('two');
+    return 2;
+  };
+  const three = async val => {
+    expect(val).to.equal(5);
+    await sleep(15);
+    callOrder.push('three');
+    return 3;
+  };
 
-  it('applyEach partial application', done => {
-    const call_order = [];
-    const one = (val, cb) => {
-      expect(val).to.equal(5);
-      setTimeout(() => {
-        call_order.push('one');
-        cb(null, 1);
-      }, 10);
-    };
-    const two = (val, cb) => {
-      expect(val).to.equal(5);
-      setTimeout(() => {
-        call_order.push('two');
-        cb(null, 2);
-      }, 5);
-    };
-    const three = (val, cb) => {
-      expect(val).to.equal(5);
-      setTimeout(() => {
-        call_order.push('three');
-        cb(null, 3);
-      }, 15);
-    };
-    async.applyEach([one, two, three])(5, (err, results) => {
-      if (err) throw err;
-      expect(call_order).to.eql(['two', 'one', 'three']);
+  const fn = async.applyEach([one, two, three]);
+  return fn(5)
+    .catch(err => {
+      expect(err).to.not.exist;
+    })
+    .then(results => {
+      expect(callOrder).to.eql(['two', 'one', 'three']);
       expect(results).to.eql([1, 2, 3]);
-      done();
     });
   });
-});
+})
