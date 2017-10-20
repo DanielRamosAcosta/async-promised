@@ -99,7 +99,8 @@ export default function auto<R extends Dictionary<any>>(
   concurrency: number = Infinity
 ): Promise<R> {
   return new Promise((resolve, reject) => {
-    const newTaks = Object.entries(tasks).reduce((previusValue: object, [taskName, dependencies]) => {
+    const newTaks = Object.keys(tasks).reduce((previusValue: object, taskName) => {
+      const dependencies = tasks[taskName];
       return {
         ...previusValue,
         [taskName]: Array.isArray(dependencies)
