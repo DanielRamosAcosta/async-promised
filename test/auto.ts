@@ -1,61 +1,56 @@
 import * as async from 'async';
 import { expect } from 'chai';
 import * as _ from 'lodash';
+import * as pasync from '../lib';
+import sleep from './support/sleep';
 
 describe('auto', () => {
-  it('basics', done => {
+  it('basics', () => {
     const callOrder = [];
-    async.auto(
-      {
+    return pasync
+      .auto({
         task1: [
           'task2',
-          (results, callback) => {
-            setTimeout(() => {
-              callOrder.push('task1');
-              callback();
-            }, 25);
+          async results => {
+            await sleep(25);
+            callOrder.push('task1');
           }
         ],
-        task2(callback) {
-          setTimeout(() => {
-            callOrder.push('task2');
-            callback();
-          }, 50);
+        async task2() {
+          callOrder.push('task2');
+          await sleep(50);
         },
         task3: [
           'task2',
-          (results, callback) => {
+          async results => {
             callOrder.push('task3');
-            callback();
           }
         ],
         task4: [
           'task1',
           'task2',
-          (results, callback) => {
+          async results => {
             callOrder.push('task4');
-            callback();
           }
         ],
         task5: [
           'task2',
-          (results, callback) => {
-            setTimeout(() => {
-              callOrder.push('task5');
-              callback();
-            }, 0);
+          async results => {
+            await sleep(0);
+            callOrder.push('task5');
           }
         ],
         task6: [
           'task2',
-          (results, callback) => {
+          async results => {
             callOrder.push('task6');
-            callback();
           }
         ]
-      },
-      err => {
-        expect(err).to.equal(null);
+      })
+      .catch(err => {
+        expect(err).to.not.exist;
+      })
+      .then(() => {
         expect(callOrder).to.eql([
           'task2',
           'task3',
@@ -64,9 +59,7 @@ describe('auto', () => {
           'task1',
           'task4'
         ]);
-        done();
-      }
-    );
+      });
   });
 
   it('auto concurrency', done => {
