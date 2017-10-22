@@ -7,6 +7,11 @@
     "test": "test"
   },
   "scripts": {
+    "build-es": "gulp build-es",
+    "build-es-config": "gulp build-es-config",
+    "build": "gulp build",
+    "build-config": "gulp build-config",
+    "build-bundle": "gulp build-bundle",
     "build": "gulp build",
     "test": "jest",
     "test:watch": "jest --watch",

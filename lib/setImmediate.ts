@@ -1,10 +1,10 @@
 import { setImmediate as asyncSetImmediate } from 'async';
 
 /**
- * Calls `callback` on a later loop around the event loop. In Node.js this just
- * calls `setImmediate`.  In the browser it will use `setImmediate` if
+ * Resolves the promise on a later loop around the event loop. In Node.js this
+ * just calls `setImmediate`. In the browser it will use `setImmediate` if
  * available, otherwise `setTimeout(callback, 0)`, which means other higher
- * priority events may precede the execution of `callback`.
+ * priority events may precede the resolution of the promise.
  *
  * This is used internally for browser-compatibility purposes.
  *
