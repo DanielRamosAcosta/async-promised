@@ -2,14 +2,14 @@
 
 > This file is generated, can be updated using `update-todo`
 
-Current implement status: 18%
+Current implement status: 20%
 
 * [ ] apply.ts
 * [x] applyEach.ts
 * [x] asyncFunctions.ts
 * [x] asyncify.ts
 * [x] auto.ts
-* [ ] autoInject.ts
+* [x] autoInject.ts
 * [ ] cargo.ts
 * [ ] compose.ts
 * [ ] concat.ts
