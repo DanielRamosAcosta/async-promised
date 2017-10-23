@@ -12,10 +12,11 @@ const babelRollup                     = require('rollup-plugin-babel');
 const uglify                          = require('gulp-uglify');
 const rename                          = require('gulp-rename');
 const clone                           = require('gulp-clone')
+const del                             = require('del')
 
 const cloneSink = clone.sink();
 
-const buildES = () => src('./lib/*.ts')
+const buildES = () => src('./lib/**/*.ts')
   .pipe(ts({
     target: 'ES6',
     module: 'es2015',
@@ -25,7 +26,7 @@ const buildES = () => src('./lib/*.ts')
   .pipe(replace("from 'async'", "from 'async-es'"))
   .pipe(dest('./build-es'))
 
-const buildCommonJS = () => src('./lib/*.ts')
+const buildCommonJS = () => src('./lib/**/*.ts')
   .pipe(ts({
     target: 'ES6',
     module: 'es2015',
@@ -44,7 +45,7 @@ const buildCommonJS = () => src('./lib/*.ts')
 const buildBundle = () => rollup({
     input: './build-es/index.js',
     format: 'umd',
-    name: 'async',
+    name: 'async-promised',
     plugins: [
       nodeResolve(),
       babelRollup({
@@ -101,19 +102,27 @@ const buildEsConfig = parallel(
   syncEsPackage
 )
 
-const buildConfig = parallel(
+const buildCjsConfig = parallel(
   copyDistFiles('./build'),
   syncCJSPackage
 )
 
+const clean = () => del([
+  'docs',
+  'dist',
+  'build-es',
+  'build'
+])
+
 module.exports = {
   'build-es': buildES,
   'build-es-config': buildEsConfig,
-  'build': buildCommonJS,
-  'build-config': buildConfig,
+  'build-cjs': buildCommonJS,
+  'build-cjs-config': buildCjsConfig,
   'build-bundle': buildBundle,
   build: parallel(
     series(parallel(buildES, buildEsConfig), buildBundle),
-    parallel(buildCommonJS, buildConfig)
-  )
+    parallel(buildCommonJS, buildCjsConfig)
+  ),
+  clean
 }
