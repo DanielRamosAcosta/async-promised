@@ -3,6 +3,7 @@
   "version": "0.2.1",
   "description": "Async control flow patterns using promises based on https://github.com/caolan/async",
   "main": "./dist/async-promised.js",
+  "types": "./index.d.ts",
   "directories": {
     "test": "test"
   },

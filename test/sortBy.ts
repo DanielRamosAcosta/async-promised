@@ -1,52 +1,46 @@
-import * as assert from 'assert';
-import * as async from 'async';
 import { expect } from 'chai';
+import * as pasync from '../lib';
+import sleep from './support/sleep';
 
 describe('sortBy', () => {
-  it('sortBy', done => {
-    async.sortBy(
-      [{ a: 1 }, { a: 15 }, { a: 6 }],
-      (x, callback) => {
-        setTimeout(() => {
-          callback(null, x.a);
-        }, 0);
-      },
-      (err, result) => {
-        assert(err === null, `${err} passed instead of 'null'`);
+  it('sortBy', () => {
+    return pasync
+      .sortBy([{ a: 1 }, { a: 15 }, { a: 6 }], async x => {
+        await sleep(0);
+        return x.a;
+      })
+      .catch(err => {
+        expect(err).to.not.exist;
+      })
+      .then(result => {
         expect(result).to.eql([{ a: 1 }, { a: 6 }, { a: 15 }]);
-        done();
-      }
-    );
+      });
   });
 
-  it('sortBy inverted', done => {
-    async.sortBy(
-      [{ a: 1 }, { a: 15 }, { a: 6 }],
-      (x, callback) => {
-        setTimeout(() => {
-          callback(null, x.a * -1);
-        }, 0);
-      },
-      (err, result) => {
+  it('sortBy inverted', () => {
+    return pasync
+      .sortBy([{ a: 1 }, { a: 15 }, { a: 6 }], async x => {
+        await sleep(0);
+        return x.a * -1;
+      })
+      .catch(err => {
+        expect(err).to.not.exist;
+      })
+      .then(result => {
         expect(result).to.eql([{ a: 15 }, { a: 6 }, { a: 1 }]);
-        done();
-      }
-    );
+      });
   });
 
-  it('sortBy error', done => {
-    const error = new Error('asdas');
-    async.sortBy(
-      [{ a: 1 }, { a: 15 }, { a: 6 }],
-      (x, callback) => {
-        async.setImmediate(() => {
-          callback(error);
-        });
-      },
-      err => {
+  it('sortBy error', () => {
+    const error = new Error('error');
+    return pasync
+      .sortBy([{ a: 1 }, { a: 15 }, { a: 6 }], async x => {
+        await sleep(0);
+        throw error;
+      })
+      .catch(err => err)
+      .then(err => {
         expect(err).to.equal(error);
-        done();
-      }
-    );
+      });
   });
 });

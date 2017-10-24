@@ -79,6 +79,7 @@ export {default as forEachSeries} from './eachSeries';
 export {default as select} from './filter';
 export {default as selectSeries} from './filterSeries';
 export {default as setImmediate} from './setImmediate';
+export {default as sortBy} from './sortBy';
 export {default as reject} from './reject';
 export {default as rejectLimit} from './rejectLimit';
 export {default as rejectSeries} from './rejectSeries';
