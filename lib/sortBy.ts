@@ -52,7 +52,7 @@ export type Iterable<T> = T[] | IterableIterator<T>;
 
 export default function sortBy<T extends Iterable<U>, U, V>(
   coll: T,
-  iteratee: (item: T) => Promise<V>
+  iteratee: (item: U) => Promise<V>
 ): Promise<T> {
   return new Promise((resolve, reject) => {
     asyncSortBy(coll, callbackify(iteratee), resolveCallback(resolve, reject));
