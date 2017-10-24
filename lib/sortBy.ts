@@ -48,13 +48,13 @@ import { callbackify, resolveCallback } from './internal/asyncTransforms';
  * });
  */
 
-export type AsyncResultIterator<T, V> = (item: T) => Promise<V>;
-
 export default function sortBy<T, V>(
   coll: T[] | IterableIterator<T>,
   iteratee: (item: T) => Promise<V>
-): Promise<void> {
+): Promise<T> {
   return new Promise((resolve, reject) => {
     asyncSortBy(coll, callbackify(iteratee), resolveCallback(resolve, reject));
   });
 }
+
+export type AsyncResultIterator<T, V> = (item: T) => Promise<V>;
