@@ -1,213 +1,188 @@
-import * as async from 'async';
 import { expect } from 'chai';
 import * as _ from 'lodash';
+import * as async from '../lib';
+
+import sleep from './support/sleep';
 
 describe('detect', () => {
-  function detectIteratee(call_order, x, callback) {
-    setTimeout(() => {
-      call_order.push(x);
-      callback(null, x === 2);
-    }, x * 5);
-  }
+  const createCallOrderDetector = callOrder => async x => {
+    await sleep(x * 5);
+    callOrder.push(x);
+    return x === 2;
+  };
 
-  it('detect', function(done) {
-    const call_order = [];
-    async.detect(
-      [3, 2, 1],
-      detectIteratee.bind(this, call_order),
-      (err, result) => {
-        call_order.push('callback');
+  it('detect', async () => {
+    const callOrder = [];
+    await async.detect([3, 2, 1], createCallOrderDetector(callOrder))
+      .catch(err => {
         expect(err).to.equal(null);
+      })
+      .then(result => {
+        callOrder.push('callback');
         expect(result).to.equal(2);
-      }
-    );
-    setTimeout(() => {
-      expect(call_order).to.eql([1, 2, 'callback', 3]);
-      done();
-    }, 25);
+      });
+
+    await sleep(20);
+
+    expect(callOrder).to.eql([1, 2, 'callback', 3]);
   });
 
-  it('detect - mulitple matches', function(done) {
-    const call_order = [];
-    async.detect(
-      [3, 2, 2, 1, 2],
-      detectIteratee.bind(this, call_order),
-      (err, result) => {
-        call_order.push('callback');
+  it('detect - mulitple matches', async () => {
+    const callOrder = [];
+    await async.detect([3, 2, 2, 1, 2], createCallOrderDetector(callOrder))
+      .catch(err => {
         expect(err).to.equal(null);
+      })
+      .then(result => {
+        callOrder.push('callback');
         expect(result).to.equal(2);
-      }
-    );
-    setTimeout(() => {
-      expect(call_order).to.eql([1, 2, 'callback', 2, 2, 3]);
-      done();
-    }, 25);
+      });
+
+    await sleep(20);
+
+    expect(callOrder).to.eql([1, 2, 2, 2, 'callback', 3]);
   });
 
-  it('detect error', done => {
-    async.detect(
-      [3, 2, 1],
-      (x, callback) => {
-        setTimeout(() => {
-          callback('error');
-        }, 0);
-      },
-      (err, result) => {
-        expect(err).to.equal('error');
-        expect(result).to.not.exist;
-        done();
-      }
-    );
+  it('detect error', async () => {
+    await async.detect([3, 2, 1], async x => {
+      await sleep(0);
+      throw new Error('error');
+    })
+    .catch(err => err)
+    .then(err => {
+      expect(err.message).to.equal('error');
+    });
   });
 
-  it('detectSeries', function(done) {
-    const call_order = [];
-    async.detectSeries(
-      [3, 2, 1],
-      detectIteratee.bind(this, call_order),
-      (err, result) => {
-        call_order.push('callback');
+  it('detectSeries', async () => {
+    const callOrder = [];
+
+    await async.detectSeries([3, 2, 1], createCallOrderDetector(callOrder))
+      .catch(err => {
         expect(err).to.equal(null);
+      })
+      .then(result => {
+        callOrder.push('callback');
         expect(result).to.equal(2);
-      }
-    );
-    setTimeout(() => {
-      expect(call_order).to.eql([3, 2, 'callback']);
-      done();
-    }, 50);
+      });
+
+    expect(callOrder).to.eql([3, 2, 'callback']);
   });
 
-  it('detectSeries - multiple matches', function(done) {
-    const call_order = [];
-    async.detectSeries(
-      [3, 2, 2, 1, 2],
-      detectIteratee.bind(this, call_order),
-      (err, result) => {
-        call_order.push('callback');
-        expect(err).to.equal(null);
-        expect(result).to.equal(2);
-      }
-    );
-    setTimeout(() => {
-      expect(call_order).to.eql([3, 2, 'callback']);
-      done();
-    }, 50);
-  });
+  it('detectSeries - multiple matches', async () => {
+    const callOrder = [];
 
-  it('detect no callback', done => {
-    const calls = [];
-
-    async.detect([1, 2, 3], (val, cb) => {
-      calls.push(val);
-      cb();
+    await async.detectSeries([3, 2, 2, 1, 2], createCallOrderDetector(callOrder))
+    .catch(err => {
+      expect(err).to.equal(null);
+    })
+    .then(result => {
+      callOrder.push('callback');
+      expect(result).to.equal(2);
     });
 
-    setTimeout(() => {
-      expect(calls).to.eql([1, 2, 3]);
-      done();
-    }, 10);
+    expect(callOrder).to.eql([3, 2, 'callback']);
   });
 
-  it('detectSeries - ensure stop', done => {
-    async.detectSeries(
-      [1, 2, 3, 4, 5],
-      (num, cb) => {
-        if (num > 3) throw new Error('detectSeries did not stop iterating');
-        cb(null, num === 3);
-      },
-      (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.equal(3);
-        done();
+  // Removed 'detect no callback', doesn't make sense with promises
+  // https://github.com/caolan/async/blob/master/mocha_test/detect.js#L76
+
+  it('detectSeries - ensure stop', () => {
+    return async.detectSeries([1, 2, 3, 4, 5], async num => {
+      if (num > 3) {
+        throw new Error('detectSeries did not stop iterating');
       }
-    );
+      return num === 3;
+    })
+    .catch(err => {
+      expect(err).to.equal(null);
+    })
+    .then(result => {
+      expect(result).to.equal(3);
+    });
   });
 
-  it('detectLimit', function(done) {
-    const call_order = [];
-    async.detectLimit(
-      [3, 2, 1],
-      2,
-      detectIteratee.bind(this, call_order),
-      (err, result) => {
-        call_order.push('callback');
-        expect(err).to.equal(null);
-        expect(result).to.equal(2);
+  it('detectLimit', async () => {
+    const callOrder = [];
+
+    await async.detectLimit([3, 2, 1], 2, createCallOrderDetector(callOrder))
+    .catch(err => {
+      expect(err).to.equal(null);
+    })
+    .then(result => {
+      callOrder.push('callback');
+      expect(result).to.equal(2);
+    });
+
+    await sleep(20);
+
+    expect(callOrder).to.eql([2, 'callback', 3]);
+  });
+
+  it('detectLimit - multiple matches', async () => {
+    const callOrder = [];
+
+    await async.detectLimit([3, 2, 2, 1, 2], 2, createCallOrderDetector(callOrder))
+    .catch(err => {
+      expect(err).to.equal(null);
+    })
+    .then(result => {
+      callOrder.push('callback');
+      expect(result).to.equal(2);
+    });
+
+    await sleep(40);
+
+    expect(callOrder).to.eql([2, 'callback', 3]);
+  });
+
+  it('detectLimit - ensure stop', () => {
+    return async.detectLimit([3, 2, 2, 1, 2], 2, async num => {
+      if (num > 4) {
+        throw new Error('detectLimit did not stop iterating');
       }
-    );
-    setTimeout(() => {
-      expect(call_order).to.eql([2, 'callback', 3]);
-      done();
-    }, 50);
+      return num === 3;
+    })
+    .catch(err => {
+      expect(err).to.equal(null);
+    })
+    .then(result => {
+      expect(result).to.equal(3);
+    });
   });
 
-  it('detectLimit - multiple matches', function(done) {
-    const call_order = [];
-    async.detectLimit(
-      [3, 2, 2, 1, 2],
-      2,
-      detectIteratee.bind(this, call_order),
-      (err, result) => {
-        call_order.push('callback');
-        expect(err).to.equal(null);
-        expect(result).to.equal(2);
-      }
-    );
-    setTimeout(() => {
-      expect(call_order).to.eql([2, 'callback', 3]);
-      done();
-    }, 50);
-  });
-
-  it('detectLimit - ensure stop', done => {
-    async.detectLimit(
-      [1, 2, 3, 4, 5],
-      2,
-      (num, cb) => {
-        if (num > 4) throw new Error('detectLimit did not stop iterating');
-        cb(null, num === 3);
-      },
-      (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.equal(3);
-        done();
-      }
-    );
-  });
-
-  it('detectSeries doesn\'t cause stack overflow (#1293)', done => {
+  it('detectSeries doesn\'t cause stack overflow (#1293)', async () => {
     const arr = _.range(10000);
     let calls = 0;
-    async.detectSeries(
-      arr,
-      (data, cb) => {
-        calls += 1;
-        async.setImmediate(_.partial(cb, null, true));
-      },
-      err => {
-        expect(err).to.equal(null);
-        expect(calls).to.equal(1);
-        done();
-      }
-    );
+
+    return async.detectSeries(arr, async data => {
+      calls += 1;
+      await async.setImmediate();
+      return true;
+    })
+    .catch(err => {
+      expect(err).to.equal(null);
+    })
+    .then(() => {
+      expect(calls).to.equal(1);
+    });
   });
 
-  it('detectLimit doesn\'t cause stack overflow (#1293)', done => {
+  it('detectLimit doesn\'t cause stack overflow (#1293)', async () => {
     const arr = _.range(10000);
     let calls = 0;
-    async.detectLimit(
-      arr,
-      100,
-      (data, cb) => {
-        calls += 1;
-        async.setImmediate(_.partial(cb, null, true));
-      },
-      err => {
-        expect(err).to.equal(null);
-        expect(calls).to.equal(100);
-        done();
-      }
-    );
+
+    return async.detectLimit(arr, 100, async data => {
+      calls += 1;
+      await async.setImmediate();
+      return true;
+    })
+    .catch(err => {
+      expect(err).to.equal(null);
+    })
+    .then(() => {
+      expect(calls).to.equal(100);
+    });
   });
 
   it('find alias', () => {

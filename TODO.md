@@ -2,7 +2,7 @@
 
 > This file is generated, can be updated using `update-todo`
 
-Current implement status: 20%
+Current implement status: 24%
 
 * [ ] apply.ts
 * [x] applyEach.ts
@@ -15,7 +15,7 @@ Current implement status: 20%
 * [ ] concat.ts
 * [ ] consoleFunctions.ts
 * [ ] constant.ts
-* [ ] detect.ts
+* [x] detect.ts
 * [ ] during.ts
 * [x] each.ts
 * [ ] eachOf.ts
@@ -41,7 +41,7 @@ Current implement status: 20%
 * [x] setImmediate.ts
 * [ ] slice.ts
 * [ ] some.ts
-* [ ] sortBy.ts
+* [x] sortBy.ts
 * [ ] timeout.ts
 * [ ] times.ts
 * [ ] transform.ts
