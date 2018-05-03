@@ -67,6 +67,7 @@ export {default as applyEachSeries} from './applyEachSeries';
 export {default as asyncify} from './asyncify';
 export {default as auto} from './auto';
 export {default as autoInject} from './autoInject';
+export {default as compose} from './compose';
 export {default as detect} from './detect';
 export {default as detectLimit} from './detectLimit';
 export {default as detectSeries} from './detectSeries';
@@ -91,4 +92,3 @@ export {default as selectSeries} from './filterSeries';
 export {default as setImmediate} from './setImmediate';
 export {default as sortBy} from './sortBy';
 export {default as waterfall} from './waterfall';
-
