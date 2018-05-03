@@ -82,6 +82,7 @@ export {default as findSeries} from './detectSeries';
 export {default as forEach} from './each';
 export {default as forEachLimit} from './eachLimit';
 export {default as forEachSeries} from './eachSeries';
+export {default as race} from './race';
 export {default as reject} from './reject';
 export {default as rejectLimit} from './rejectLimit';
 export {default as rejectSeries} from './rejectSeries';
@@ -90,3 +91,4 @@ export {default as selectSeries} from './filterSeries';
 export {default as setImmediate} from './setImmediate';
 export {default as sortBy} from './sortBy';
 export {default as waterfall} from './waterfall';
+

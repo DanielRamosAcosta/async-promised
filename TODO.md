@@ -2,7 +2,7 @@
 
 > This file is generated, can be updated using `update-todo`
 
-Current implement status: 24%
+Current implement status: 27%
 
 * [ ] apply.ts
 * [x] applyEach.ts
@@ -32,7 +32,7 @@ Current implement status: 24%
 * [ ] parallel.ts
 * [ ] priorityQueue.ts
 * [ ] queue.ts
-* [ ] race.ts
+* [x] race.ts
 * [ ] reduce.ts
 * [ ] retry.ts
 * [ ] retryable.ts

@@ -1,71 +1,67 @@
-import * as assert from 'assert';
-import * as async from 'async';
+import * as async from '../lib';
+import sleep from './support/sleep';
 
 describe('race', () => {
-  it('should call each function in parallel and callback with first result', function raceTest10(
-    done
-  ) {
+  it('should call each function in parallel and callback with first result', () => {
     let finished = 0;
     const tasks = [];
-    function eachTest(i) {
-      const index = i;
-      return next => {
-        finished++;
-        next(null, index);
-      };
+
+    const eachTest = i => async () => {
+      await sleep(i * 10)
+      finished++;
+      return i;
     }
+
     for (let i = 0; i < 10; i++) {
       tasks[i] = eachTest(i);
     }
-    async.race(tasks, (err, result) => {
-      assert.ifError(err);
-      // 0 finished first
-      assert.strictEqual(result, 0);
-      assert.strictEqual(finished, 1);
-      async.setImmediate(() => {
-        assert.strictEqual(finished, 10);
-        done();
+
+    return async.race(tasks)
+      .then(result => {
+        expect(result).toEqual(0)
+        expect(finished).toEqual(1)
+        return sleep(120)
+      .then(() => {
+          expect(finished).toEqual(10)
+        });
       });
-    });
   });
-  it('should callback with the first error', function raceTest20(done) {
+  it('should callback with the first error', () => {
     const tasks = [];
-    function eachTest(i) {
-      const index = i;
-      return next => {
-        setTimeout(() => {
-          next(new Error(`ERR${index}`));
-        }, 50 - index * 2);
-      };
+
+    const eachTest = i => async next => {
+      await sleep(50 - i * 2);
+      throw new Error(`ERR${i}`);
     }
+
     for (let i = 0; i <= 5; i++) {
       tasks[i] = eachTest(i);
     }
-    async.race(tasks, (err, result) => {
-      assert.ok(err);
-      assert.ok(err instanceof Error);
-      assert.strictEqual(typeof result, 'undefined');
-      assert.strictEqual(err.message, 'ERR5');
-      done();
-    });
+
+    return async.race(tasks)
+      .catch(err => err)
+      .then(err => {
+        expect(err).toBeTruthy()
+        expect(err).toBeInstanceOf(Error)
+        expect(err.message).toEqual('ERR5')
+      })
   });
-  it('should callback when task is empty', function raceTest30(done) {
-    async.race([], (err, result) => {
-      assert.ifError(err);
-      assert.strictEqual(typeof result, 'undefined');
-      done();
-    });
+  it('should callback when task is empty', () => {
+    return async.race([])
+      .then(result => {
+        expect(typeof result).toEqual('undefined');
+      })
   });
-  it('should callback in error the task arg is not an Array', function raceTest40() {
+  it('should callback in error the task arg is not an Array', () => {
     const errors = [];
-    async.race(null, err => {
-      errors.push(err);
+
+    const prom1 = async.race(null).catch(err => err);
+    const prom2 = async.race({}).catch(err => err);
+
+    return Promise.all([prom1, prom2]).then(errors => {
+      expect(errors).toHaveLength(2);
+      expect(errors[0]).toBeInstanceOf(TypeError)
+      expect(errors[1]).toBeInstanceOf(TypeError)
     });
-    async.race({}, err => {
-      errors.push(err);
-    });
-    assert.strictEqual(errors.length, 2);
-    assert.ok(errors[0] instanceof TypeError);
-    assert.ok(errors[1] instanceof TypeError);
   });
 });

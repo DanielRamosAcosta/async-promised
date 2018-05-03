@@ -10,7 +10,7 @@ export function callbackify(func: AsyncResultPromise): AsyncResultCallback {
 }
 
 export function resolveCallback<T>(resolve: Function, reject: Function) {
-  return (err: Error, results: T) =>
+  return (err: Error | undefined, results: T) =>
     err
     ? reject(err)
     : resolve(results);
