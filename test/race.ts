@@ -7,10 +7,10 @@ describe('race', () => {
     const tasks = [];
 
     const eachTest = i => async () => {
-      await sleep(i * 10)
+      await sleep(i * 10);
       finished++;
       return i;
-    }
+    };
 
     for (let i = 0; i < 10; i++) {
       tasks[i] = eachTest(i);
@@ -18,11 +18,11 @@ describe('race', () => {
 
     return async.race(tasks)
       .then(result => {
-        expect(result).toEqual(0)
-        expect(finished).toEqual(1)
+        expect(result).toEqual(0);
+        expect(finished).toEqual(1);
         return sleep(120)
       .then(() => {
-          expect(finished).toEqual(10)
+          expect(finished).toEqual(10);
         });
       });
   });
@@ -32,7 +32,7 @@ describe('race', () => {
     const eachTest = i => async next => {
       await sleep(50 - i * 2);
       throw new Error(`ERR${i}`);
-    }
+    };
 
     for (let i = 0; i <= 5; i++) {
       tasks[i] = eachTest(i);
@@ -41,16 +41,16 @@ describe('race', () => {
     return async.race(tasks)
       .catch(err => err)
       .then(err => {
-        expect(err).toBeTruthy()
-        expect(err).toBeInstanceOf(Error)
-        expect(err.message).toEqual('ERR5')
-      })
+        expect(err).toBeTruthy();
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual('ERR5');
+      });
   });
   it('should callback when task is empty', () => {
     return async.race([])
       .then(result => {
         expect(typeof result).toEqual('undefined');
-      })
+      });
   });
   it('should callback in error the task arg is not an Array', () => {
     const errors = [];
@@ -60,8 +60,8 @@ describe('race', () => {
 
     return Promise.all([prom1, prom2]).then(errors => {
       expect(errors).toHaveLength(2);
-      expect(errors[0]).toBeInstanceOf(TypeError)
-      expect(errors[1]).toBeInstanceOf(TypeError)
+      expect(errors[0]).toBeInstanceOf(TypeError);
+      expect(errors[1]).toBeInstanceOf(TypeError);
     });
   });
 });

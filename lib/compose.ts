@@ -37,12 +37,12 @@ import { AsyncResultCallback, AsyncResultPromise, callbackifyFuncs, resolveCallb
  * });
  */
 
-export default function compose (...funcs: AsyncResultPromise[]) {
-  const composed = asyncCompose(...callbackifyFuncs(funcs))
+export default function compose(...funcs: AsyncResultPromise[]) {
+  const composed = asyncCompose(...callbackifyFuncs(funcs));
 
-  return function (this: any, x: any) {
+  return function(this: any, x: any) {
     return new Promise((resolve, reject) => {
-      composed.call(this, x, resolveCallback(resolve, reject))
-    })
-  }
+      composed.call(this, x, resolveCallback(resolve, reject));
+    });
+  };
 }

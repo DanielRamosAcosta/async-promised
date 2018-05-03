@@ -6,11 +6,11 @@ describe('compose', () => {
   describe('all functions succeed', () => {
     it('yields the result of the composition of the functions', () => {
       const add2 = async (n: number) => {
-        await sleep(0)
-        return  n + 2
+        await sleep(0);
+        return  n + 2;
       };
       const mul3 = async (n: number) => {
-        await sleep(0)
+        await sleep(0);
         return n * 3;
       };
       const add1 = async (n: number) => {
@@ -22,7 +22,7 @@ describe('compose', () => {
       return add2mul3add1(3)
         .then(result => {
           expect(result).toEqual(16);
-        })
+        });
     });
   });
 
@@ -31,11 +31,11 @@ describe('compose', () => {
       let add1called = false;
       const mul3error = new Error('mul3 error');
       const add2 = async (n: number) => {
-        await sleep(0)
-        return  n + 2
+        await sleep(0);
+        return  n + 2;
       };
       const mul3 = async (n: number) => {
-        await sleep(0)
+        await sleep(0);
         throw mul3error;
       };
       const add1 = async (n: number) => {
@@ -47,7 +47,7 @@ describe('compose', () => {
       return add2mul3add1(3)
         .catch(err => err)
         .then(err => {
-          expect(err).toEqual(mul3error)
+          expect(err).toEqual(mul3error);
           expect(add1called).toBeFalsy();
         });
     });
@@ -57,13 +57,13 @@ describe('compose', () => {
     const context = {};
     let add2Context = null;
     let mul3Context = null;
-    const add2 = async function (n: number) {
+    const add2 = async function(n: number) {
       add2Context = this;
       await sleep(0);
       return n + 2;
     };
 
-    const mul3 = async function  (n: number) {
+    const mul3 = async function(n: number) {
       mul3Context = this;
       await sleep(0);
       return n * 3;
@@ -76,6 +76,6 @@ describe('compose', () => {
         expect(result).toEqual(15);
         expect(add2Context).toEqual(context);
         expect(mul3Context).toEqual(context);
-      })
+      });
   });
 });
