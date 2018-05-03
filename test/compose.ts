@@ -1,5 +1,4 @@
-import * as async from 'async';
-import * as pasync from '../lib';
+import * as async from '../lib';
 import sleep from './support/sleep';
 
 describe('compose', () => {
@@ -17,7 +16,7 @@ describe('compose', () => {
         await sleep(0);
         return n + 1;
       };
-      const add2mul3add1 = pasync.compose(add1, mul3, add2);
+      const add2mul3add1 = async.compose(add1, mul3, add2);
 
       return add2mul3add1(3)
         .then(result => {
@@ -43,7 +42,7 @@ describe('compose', () => {
         await sleep(0);
         return n + 1;
       };
-      const add2mul3add1 = pasync.compose(add1, mul3, add2);
+      const add2mul3add1 = async.compose(add1, mul3, add2);
       return add2mul3add1(3)
         .catch(err => err)
         .then(err => {
@@ -69,7 +68,7 @@ describe('compose', () => {
       return n * 3;
     };
 
-    const add2mul3 = pasync.compose(mul3, add2);
+    const add2mul3 = async.compose(mul3, add2);
 
     return add2mul3.call(context, 3)
       .then(result => {
