@@ -1,11 +1,11 @@
-import * as pasync from '../lib';
+import * as async from '../lib';
 import { supportsArrowFunction, supportsAsyncAwait, supportsDefaultObjectParameter } from './support/detect-ES6-features';
 import sleep from './support/sleep';
 
 describe('autoInject', () => {
   it('basics', () => {
     const callOrder = [];
-    return pasync
+    return async
       .autoInject({
         task1: async ({ task2 }) => {
           expect(task2).toEqual(2);
@@ -56,7 +56,7 @@ describe('autoInject', () => {
 
   it('should work with function insted of arrow functions', () => {
     const callOrder = [];
-    return pasync
+    return async
       .autoInject({
         async task1({ task2 }) {
           expect(task2).toEqual(2);
@@ -108,7 +108,7 @@ describe('autoInject', () => {
   it('should work with array tasks', () => {
     const callOrder = [];
 
-    return pasync
+    return async
       .autoInject({
         task1: async () => {
           callOrder.push('task1');
@@ -133,7 +133,7 @@ describe('autoInject', () => {
   });
 
   it('should handle array tasks with just a function', () => {
-    return pasync.autoInject({
+    return async.autoInject({
       a: [
         async () => {
           return 1;
@@ -149,7 +149,7 @@ describe('autoInject', () => {
   });
 
   it('should handle array tasks with just a function', () => {
-    return pasync.autoInject({
+    return async.autoInject({
       a: [
         async () => {
           return 1;
@@ -173,7 +173,7 @@ describe('autoInject', () => {
     eval(`
       () => {
         it('should work with es6 arrow syntax', function() {
-          return pasync
+          return async
             .autoInject({
               task1: async () => 1,
               task2: async ({ task3 }) => 2,
@@ -194,7 +194,7 @@ describe('autoInject', () => {
       eval(`
         (() => {
           it('should work with es6 obj method syntax', () => {
-            return pasync.autoInject(
+            return async.autoInject(
               {
                 async task1() {
                   return 1
@@ -222,7 +222,7 @@ describe('autoInject', () => {
       eval(`
         (() => {
           it('should work with es6 obj method syntax & arrow functions', () => {
-            return pasync.autoInject(
+            return async.autoInject(
               {
                 task1: async () => 1,
                 task2: async ({task3}) => 2,

@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import * as pasync from '../lib';
+import * as async from '../lib';
 import sleep from './support/sleep';
 
 describe('concat', () => {
@@ -20,14 +20,14 @@ describe('concat', () => {
     it('basics', () => {
       const callOrder = [];
       const concatIterateee = createConcatIteratee(callOrder);
-      return pasync.concat([1, 3, 2], concatIterateee)
+      return async.concat([1, 3, 2], concatIterateee)
         .then(result => {
           expect(result).toEqual([1, 2, 3, 4, 2, 3]);
         });
     });
 
     it('error', () => {
-      return pasync.concat([1, 3, 2], async val => {
+      return async.concat([1, 3, 2], async val => {
         if (val === 3) {
           throw new Error('fail');
         }
@@ -41,7 +41,7 @@ describe('concat', () => {
 
     it('original untouched', () => {
       const arr = ['foo', 'bar', 'baz'];
-      return pasync.concat(arr, async val => {
+      return async.concat(arr, async val => {
         return ([val, val]);
       })
       .then(result => {
@@ -52,7 +52,7 @@ describe('concat', () => {
 
     it('empty results', () => {
       const arr = ['foo', 'bar', 'baz'];
-      return pasync.concat(arr, async val => {})
+      return async.concat(arr, async val => {})
         .then(result => {
           expect(result).toBeInstanceOf(Array);
           expect(result).toHaveLength(0);
@@ -62,7 +62,7 @@ describe('concat', () => {
     it('empty arrays', () => {
       const arr = ['foo', 'bar', 'baz'];
 
-      return pasync.concat(arr, async val => {
+      return async.concat(arr, async val => {
         return [];
       })
       .then(result => {
@@ -72,7 +72,7 @@ describe('concat', () => {
     });
 
     it('handles empty object', () => {
-      return pasync.concat({}, async val => {
+      return async.concat({}, async val => {
         assert(false, 'iteratee should not be called');
       })
       .then(result => {
@@ -88,7 +88,7 @@ describe('concat', () => {
     it('flattens arrays', () => {
       const arr = ['foo', 'bar'];
 
-      return pasync.concat(arr, async val => {
+      return async.concat(arr, async val => {
         return ([val, [val]]);
       })
       .then(result => {
@@ -101,7 +101,7 @@ describe('concat', () => {
     xit('handles fasly values', () => {
       const falsy = [null, undefined, 0, ''];
 
-      return pasync.concat(falsy, async val => {
+      return async.concat(falsy, async val => {
         return val;
       })
       .then(result => {
@@ -111,7 +111,7 @@ describe('concat', () => {
 
     it('handles objects', () => {
       const obj = { a: 'foo', b: 'bar', c: 'baz' };
-      return pasync.concat(obj, async val => val)
+      return async.concat(obj, async val => val)
         .then(result => {
           expect(result).toEqual(['foo', 'bar', 'baz']);
         });
@@ -127,7 +127,7 @@ describe('concat', () => {
     it('preserves order', () => {
       const arr = [30, 15];
 
-      return pasync.concat(arr, async x => {
+      return async.concat(arr, async x => {
         await sleep(x);
         return x;
       })
@@ -143,7 +143,7 @@ describe('concat', () => {
 
       const map = new Map([['a', 'b'], ['b', 'c'], ['c', 'd']]);
 
-      return pasync.concat(map, async val => {
+      return async.concat(map, async val => {
         return val;
       })
       .then(result => {
@@ -154,7 +154,7 @@ describe('concat', () => {
     it('handles sparse results', () => {
       const arr = [1, 2, 3, 4];
 
-      return pasync.concat(arr, async val => {
+      return async.concat(arr, async val => {
         if (val === 1 || val === 3) {
           return val + 1;
         } else if (val === 2) {
@@ -177,7 +177,7 @@ describe('concat', () => {
       let running = 0;
       const concurrency = { foo: 2, bar: 2, baz: 1 };
 
-      return pasync.concatLimit(arr, 2, async val => {
+      return async.concatLimit(arr, 2, async val => {
         running++;
         if (val === 'foo') {
           await sleep(0);
@@ -196,7 +196,7 @@ describe('concat', () => {
 
     it('error', () => {
       const arr = ['foo', 'bar', 'baz'];
-      return pasync.concatLimit(arr, 1, async val => {
+      return async.concatLimit(arr, 1, async val => {
         if (val === 'bar') {
           throw new Error('fail');
         }
@@ -209,7 +209,7 @@ describe('concat', () => {
     });
 
     it('handles objects', () => {
-      return pasync.concatLimit({ foo: 1, bar: 2, baz: 3 }, 2, async val => {
+      return async.concatLimit({ foo: 1, bar: 2, baz: 3 }, 2, async val => {
         return val + 1;
       })
       .then(result => {
@@ -218,7 +218,7 @@ describe('concat', () => {
     });
 
     it('handles empty object', () => {
-      return pasync.concatLimit({}, 2, async val => {
+      return async.concatLimit({}, 2, async val => {
         assert(false, 'iteratee should not be called');
       })
       .then(result => {
@@ -228,7 +228,7 @@ describe('concat', () => {
     });
 
     it('handles undefined', () => {
-      return pasync.concatLimit(undefined, 2, async val => {
+      return async.concatLimit(undefined, 2, async val => {
         assert(false, 'iteratee should not be called');
       })
       .then(result => {
@@ -241,7 +241,7 @@ describe('concat', () => {
       const callOrder = [];
       const concatIterateee = createConcatIteratee(callOrder);
 
-      return pasync.concatLimit([3, 2, 2, 1], 10, concatIterateee)
+      return async.concatLimit([3, 2, 2, 1], 10, concatIterateee)
         .then(result => {
           expect(result).toEqual([3, 4, 2, 3, 2, 3, 1, 2]);
           expect(callOrder).toEqual([1, 2, 2, 3]);
@@ -251,7 +251,7 @@ describe('concat', () => {
     it('limit equal size', () => {
       const callOrder = [];
       const concatIterateee = createConcatIteratee(callOrder);
-      return pasync.concatLimit([3, 2, 2, 1], 4, concatIterateee)
+      return async.concatLimit([3, 2, 2, 1], 4, concatIterateee)
         .then(result => {
           expect(result).toEqual([3, 4, 2, 3, 2, 3, 1, 2]);
           expect(callOrder).toEqual([1, 2, 2, 3]);
@@ -259,7 +259,7 @@ describe('concat', () => {
     });
 
     it('zero limit', () => {
-      return pasync.concatLimit([3, 2, 2, 1], 0, async val => {
+      return async.concatLimit([3, 2, 2, 1], 0, async val => {
         assert(false, 'iteratee should not be called');
       })
       .then(result => {
@@ -275,7 +275,7 @@ describe('concat', () => {
       const step = 0;
       const maxSteps = arr.length;
 
-      return pasync.concatLimit(arr, limit, async val => {
+      return async.concatLimit(arr, limit, async val => {
         started++;
         if (started === 3) {
           throw new Error('fail');
@@ -305,7 +305,7 @@ describe('concat', () => {
         }
         return r;
       };
-      return pasync.concatSeries([1, 3, 2], iteratee)
+      return async.concatSeries([1, 3, 2], iteratee)
         .then(results => {
           expect(results).toEqual([1, 3, 2, 1, 2, 1]);
           expect(running).toEqual(0);
@@ -314,7 +314,7 @@ describe('concat', () => {
     });
 
     it('error', () => {
-      return pasync.concatSeries(
+      return async.concatSeries(
         ['foo', 'bar', 'baz'],
         async val => {
           if (val === 'bar') {
@@ -329,7 +329,7 @@ describe('concat', () => {
     });
 
     it('handles objects', () => {
-      return pasync.concatSeries(
+      return async.concatSeries(
         { foo: 1, bar: 2, baz: 3 },
         async val => ([val, val + 1])
       ).then(result => {
@@ -338,7 +338,7 @@ describe('concat', () => {
     });
 
     it('handles empty object', () => {
-      return pasync.concatSeries({}, async val => {
+      return async.concatSeries({}, async val => {
         assert(false, 'iteratee should not be called');
       }).then(result => {
         expect(result).toBeInstanceOf(Array);
@@ -347,7 +347,7 @@ describe('concat', () => {
     });
 
     it('handles undefined', () => {
-      return pasync.concatSeries(undefined, async val => {
+      return async.concatSeries(undefined, async val => {
         assert(false, 'iteratee should not be called');
       })
       .then(result => {

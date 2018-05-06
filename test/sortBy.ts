@@ -1,9 +1,9 @@
-import * as pasync from '../lib';
+import * as async from '../lib';
 import sleep from './support/sleep';
 
 describe('sortBy', () => {
   it('sortBy', () => {
-    return pasync
+    return async
       .sortBy([{ a: 1 }, { a: 15 }, { a: 6 }], async x => {
         await sleep(0);
         return x.a;
@@ -14,7 +14,7 @@ describe('sortBy', () => {
   });
 
   it('sortBy inverted', () => {
-    return pasync
+    return async
       .sortBy([{ a: 1 }, { a: 15 }, { a: 6 }], async x => {
         await sleep(0);
         return x.a * -1;
@@ -26,7 +26,7 @@ describe('sortBy', () => {
 
   it('sortBy error', () => {
     const error = new Error('error');
-    return pasync
+    return async
       .sortBy([{ a: 1 }, { a: 15 }, { a: 6 }], async x => {
         await sleep(0);
         throw error;

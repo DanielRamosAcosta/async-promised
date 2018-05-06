@@ -1,10 +1,10 @@
-import * as pasync from '../lib';
+import * as async from '../lib';
 import sleep from './support/sleep';
 
 describe('auto', () => {
   it('basics', () => {
     const callOrder = [];
-    return pasync
+    return async
       .auto({
         task1: [
           'task2',
@@ -69,7 +69,7 @@ describe('auto', () => {
       };
     }
 
-    return pasync
+    return async
       .auto(
         {
           task1: ['task2', makeCallback('task1')],
@@ -92,7 +92,7 @@ describe('auto', () => {
 
   it('auto petrify', () => {
     const callOrder = [];
-    return pasync
+    return async
       .auto({
         task1: [
           'task2',
@@ -126,7 +126,7 @@ describe('auto', () => {
 
   it('auto results', () => {
     const callOrder = [];
-    return pasync
+    return async
       .auto({
         task1: [
           'task2',
@@ -175,11 +175,11 @@ describe('auto', () => {
   });
 
   it('auto empty object', () => {
-    return pasync.auto({});
+    return async.auto({});
   });
 
   it('auto error', () => {
-    return pasync
+    return async
       .auto({
         async task1() {
           throw new Error('testerror');
@@ -201,7 +201,7 @@ describe('auto', () => {
   });
 
   it('auto no callback', done => {
-    pasync.auto({
+    async.auto({
       async task1() {},
       task2: [
         'task1',
@@ -213,7 +213,7 @@ describe('auto', () => {
   });
 
   it('auto concurrency no callback', done => {
-    pasync.auto(
+    async.auto(
       {
         async task1() {},
         task2: [
@@ -233,7 +233,7 @@ describe('auto', () => {
   // Issue 24 on github: https://github.com/caolan/async/issues#issue/24
   // Issue 76 on github: https://github.com/caolan/async/issues#issue/76
   it('auto removeListener has side effect on loop iteratee', done => {
-    pasync.auto({
+    async.auto({
       task1: [
         'task3',
         async () => {
@@ -256,7 +256,7 @@ describe('auto', () => {
   // https://github.com/caolan/async/blob/master/mocha_test/auto.js#L185
 
   it('auto calls callback multiple times with parallel functions', () => {
-    return pasync
+    return async
       .auto({
         async task1() {
           throw new Error('err');
@@ -273,7 +273,7 @@ describe('auto', () => {
 
   // Issue 462 on github: https://github.com/caolan/async/issues/462
   it('auto modifying results causes final callback to run early', () => {
-    return pasync
+    return async
       .auto({
         async task1(callback) {
           return 'task1';
@@ -302,7 +302,7 @@ describe('auto', () => {
 
   // Issue 263 on github: https://github.com/caolan/async/issues/263
   it('auto prevent dead-locks due to inexistant dependencies', () => {
-    return pasync
+    return async
       .auto({
         task1: [
           'noexist',
@@ -319,7 +319,7 @@ describe('auto', () => {
 
   // Issue 263 on github: https://github.com/caolan/async/issues/263
   it('auto prevent dead-locks due to cyclic dependencies', () => {
-    return pasync
+    return async
       .auto({
         task1: [
           'task2',
@@ -347,7 +347,7 @@ describe('auto', () => {
     const task = name => async results => {
       return `task ${name}`;
     };
-    pasync
+    async
       .auto({
         a: ['c', task('a')],
         b: ['a', task('b')],
@@ -363,7 +363,7 @@ describe('auto', () => {
 
   // Issue 988 on github: https://github.com/caolan/async/issues/988
   it('auto stops running tasks on error', () => {
-    return pasync
+    return async
       .auto(
         {
           async task1() {
@@ -382,7 +382,7 @@ describe('auto', () => {
   });
 
   it('ignores results after an error', () => {
-    return pasync
+    return async
       .auto({
         async task1() {
           await sleep(25);
@@ -409,7 +409,7 @@ describe('auto', () => {
   // https://github.com/caolan/async/blob/master/mocha_test/auto.js#L357
 
   it('should handle array tasks with just a function', () => {
-    return pasync
+    return async
       .auto({
         a: [async () => 1],
         b: [
@@ -424,7 +424,7 @@ describe('auto', () => {
   it('should avoid unncecessary deferrals', () => {
     let isSync = true;
 
-    return pasync
+    return async
       .auto({
         step1: async () => 1,
         step2: ['step1', async results => {}]
@@ -438,7 +438,7 @@ describe('auto', () => {
 
   // Issue 1358 on github: https://github.com/caolan/async/issues/1358
   it('should report errors when a task name is an array method', () => {
-    return pasync
+    return async
       .auto({
         async one() {
           throw new Error('Something bad happened here');
@@ -456,7 +456,7 @@ describe('auto', () => {
   });
 
   it('should report errors when a task name is an obj prototype method', () => {
-    return pasync
+    return async
       .auto({
         async one() {
           throw new Error('Something bad happened here');

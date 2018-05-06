@@ -2,7 +2,7 @@
 
 > This file is generated, can be updated using `update-todo`
 
-Current implement status: 29%
+Current implement status: 31%
 
 * [ ] apply.ts
 * [x] applyEach.ts
@@ -12,7 +12,7 @@ Current implement status: 29%
 * [x] autoInject.ts
 * [ ] cargo.ts
 * [x] compose.ts
-* [ ] concat.ts
+* [x] concat.ts
 * [ ] consoleFunctions.ts
 * [ ] constant.ts
 * [x] detect.ts

@@ -1,11 +1,11 @@
 import * as assert from 'assert';
-import * as pasync from '../lib';
+import * as async from '../lib';
 import sleep from './support/sleep';
 
 describe('waterfall', () => {
   it('basics', () => {
     const callOrder = [];
-    return pasync.waterfall([
+    return async.waterfall([
       async () => {
         callOrder.push('fn1');
         await sleep(0);
@@ -34,14 +34,14 @@ describe('waterfall', () => {
   });
 
   it('empty array', () => {
-    return pasync.waterfall([])
+    return async.waterfall([])
       .then(result => {
         expect(result).toBeUndefined();
       });
   });
 
   it('non-array', () => {
-    return pasync.waterfall({})
+    return async.waterfall({})
       .catch(err => err)
       .then(err => {
         expect(err).toBeInstanceOf(Error);
@@ -58,7 +58,7 @@ describe('waterfall', () => {
   // https://github.com/caolan/async/blob/9b0f9eb1854cbc30960251a71ff8ce08bfa9dc0a/mocha_test/waterfall.js#L59
 
   it('error', () => {
-    return pasync.waterfall([
+    return async.waterfall([
       async () => {
         throw new Error('error');
       },
@@ -82,7 +82,7 @@ describe('waterfall', () => {
   it('call in another context @nycinvalid @nodeonly', done => {
     const vm = require('vm');
     const sandbox = {
-      async: pasync,
+      async,
       done
     };
 
