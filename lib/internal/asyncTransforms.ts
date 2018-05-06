@@ -13,12 +13,12 @@ export function resolveCallback<T>(resolve: Function, reject: Function) {
   return (err: Error | undefined, results: T) =>
     err
     ? reject(err)
-    : resolve(results);
+    : results === undefined ? resolve() : resolve(results);
 }
 
 export function linkCB(prom: Promise<any>, callback: Function) {
   prom
-    .then(results => callback(null, results))
+    .then(results => results === undefined ? callback(null) : callback(null, results))
     .catch(err => callback(err));
 }
 
