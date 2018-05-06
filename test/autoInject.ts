@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import * as pasync from '../lib';
 import { supportsArrowFunction, supportsAsyncAwait, supportsDefaultObjectParameter } from './support/detect-ES6-features';
 import sleep from './support/sleep';
@@ -9,7 +8,7 @@ describe('autoInject', () => {
     return pasync
       .autoInject({
         task1: async ({ task2 }) => {
-          expect(task2).to.equal(2);
+          expect(task2).toEqual(2);
           await sleep(25);
           callOrder.push('task1');
           return 1;
@@ -20,36 +19,31 @@ describe('autoInject', () => {
           return 2;
         },
         task3: async ({ task2 }) => {
-          expect(task2).to.equal(2);
+          expect(task2).toEqual(2);
           callOrder.push('task3');
           return 3;
         },
         task4: async ({ task1, task2 }) => {
-          expect(task1).to.equal(1);
-          expect(task2).to.equal(2);
+          expect(task1).toEqual(1);
+          expect(task2).toEqual(2);
           callOrder.push('task4');
           return 4;
         },
         task5: async ({ task2 }) => {
-          expect(task2).to.equal(2);
+          expect(task2).toEqual(2);
           await sleep(0);
           callOrder.push('task5');
           return 5;
         },
         task6: async ({ task2 }) => {
-          expect(task2).to.equal(2);
+          expect(task2).toEqual(2);
           callOrder.push('task6');
           return 6;
         }
       })
-      .catch(err => {
-        console.log(err);
-        throw err;
-        expect(err).to.not.exist;
-      })
       .then(results => {
-        expect(results.task6).to.equal(6);
-        expect(callOrder).to.eql([
+        expect(results.task6).toEqual(6);
+        expect(callOrder).toEqual([
           'task2',
           'task3',
           'task6',
@@ -65,7 +59,7 @@ describe('autoInject', () => {
     return pasync
       .autoInject({
         async task1({ task2 }) {
-          expect(task2).to.equal(2);
+          expect(task2).toEqual(2);
           await sleep(25);
           callOrder.push('task1');
           return 1;
@@ -76,36 +70,31 @@ describe('autoInject', () => {
           return 2;
         },
         async task3({ task2 }) {
-          expect(task2).to.equal(2);
+          expect(task2).toEqual(2);
           callOrder.push('task3');
           return 3;
         },
         async task4({ task1, task2 }) {
-          expect(task1).to.equal(1);
-          expect(task2).to.equal(2);
+          expect(task1).toEqual(1);
+          expect(task2).toEqual(2);
           callOrder.push('task4');
           return 4;
         },
         async task5({ task2 }) {
-          expect(task2).to.equal(2);
+          expect(task2).toEqual(2);
           await sleep(0);
           callOrder.push('task5');
           return 5;
         },
         async task6({ task2 }) {
-          expect(task2).to.equal(2);
+          expect(task2).toEqual(2);
           callOrder.push('task6');
           return 6;
         }
       })
-      .catch(err => {
-        console.log(err);
-        throw err;
-        expect(err).to.not.exist;
-      })
       .then(results => {
-        expect(results.task6).to.equal(6);
-        expect(callOrder).to.eql([
+        expect(results.task6).toEqual(6);
+        expect(callOrder).toEqual([
           'task2',
           'task3',
           'task6',
@@ -128,7 +117,7 @@ describe('autoInject', () => {
         task2: [
           'task3',
           async ({ task3 }) => {
-            expect(task3).to.equal(3);
+            expect(task3).toEqual(3);
             callOrder.push('task2');
             return 2;
           }
@@ -138,11 +127,8 @@ describe('autoInject', () => {
           return 3;
         }
       })
-      .catch(err => {
-        expect(err).not.to.exist;
-      })
       .then(() => {
-        expect(callOrder).to.eql(['task1', 'task3', 'task2']);
+        expect(callOrder).toEqual(['task1', 'task3', 'task2']);
       });
   });
 
@@ -156,7 +142,7 @@ describe('autoInject', () => {
       b: [
         'a',
         async ({ a }) => {
-          expect(a).to.equal(1);
+          expect(a).toEqual(1);
         }
       ]
     });
@@ -172,7 +158,7 @@ describe('autoInject', () => {
       b: [
         'a',
         async ({ a }) => {
-          expect(a).to.equal(1);
+          expect(a).toEqual(1);
         }
       ]
     });

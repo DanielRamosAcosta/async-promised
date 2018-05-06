@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import * as pasync from '../lib';
 import sleep from './support/sleep';
 
@@ -9,11 +8,8 @@ describe('sortBy', () => {
         await sleep(0);
         return x.a;
       })
-      .catch(err => {
-        expect(err).to.not.exist;
-      })
       .then(result => {
-        expect(result).to.eql([{ a: 1 }, { a: 6 }, { a: 15 }]);
+        expect(result).toEqual([{ a: 1 }, { a: 6 }, { a: 15 }]);
       });
   });
 
@@ -23,11 +19,8 @@ describe('sortBy', () => {
         await sleep(0);
         return x.a * -1;
       })
-      .catch(err => {
-        expect(err).to.not.exist;
-      })
       .then(result => {
-        expect(result).to.eql([{ a: 15 }, { a: 6 }, { a: 1 }]);
+        expect(result).toEqual([{ a: 15 }, { a: 6 }, { a: 1 }]);
       });
   });
 
@@ -40,7 +33,7 @@ describe('sortBy', () => {
       })
       .catch(err => err)
       .then(err => {
-        expect(err).to.equal(error);
+        expect(err).toEqual(error);
       });
   });
 });

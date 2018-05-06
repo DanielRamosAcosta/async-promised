@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import * as pasync from '../lib';
 import sleep from './support/sleep';
 
@@ -45,11 +44,8 @@ describe('auto', () => {
           }
         ]
       })
-      .catch(err => {
-        expect(err).to.not.exist;
-      })
       .then(() => {
-        expect(callOrder).to.eql([
+        expect(callOrder).toEqual([
           'task2',
           'task3',
           'task6',
@@ -85,14 +81,11 @@ describe('auto', () => {
         },
         concurrency
       )
-      .catch(err => {
-        expect(err).to.not.exist;
-      })
       .then(results => {
         Object.keys(results)
           .map(key => results[key])
           .forEach(result => {
-            expect(result.length).to.be.below(concurrency + 1);
+            expect(result.length).toBeLessThan(concurrency + 1);
           });
       });
   });
@@ -126,11 +119,8 @@ describe('auto', () => {
           }
         ]
       })
-      .catch(err => {
-        expect(err).to.not.exist;
-      })
       .then(() => {
-        expect(callOrder).to.eql(['task2', 'task3', 'task1', 'task4']);
+        expect(callOrder).toEqual(['task2', 'task3', 'task1', 'task4']);
       });
   });
 
@@ -141,7 +131,7 @@ describe('auto', () => {
         task1: [
           'task2',
           async results => {
-            expect(results.task2).to.eql('task2');
+            expect(results.task2).toEqual('task2');
             await sleep(25);
             callOrder.push('task1');
             return ['task1a', 'task1b'];
@@ -155,7 +145,7 @@ describe('auto', () => {
         task3: [
           'task2',
           async results => {
-            expect(results.task2).to.eql('task2');
+            expect(results.task2).toEqual('task2');
             callOrder.push('task3');
           }
         ],
@@ -163,8 +153,8 @@ describe('auto', () => {
           'task1',
           'task2',
           async results => {
-            expect(results.task1).to.eql(['task1a', 'task1b']);
-            expect(results.task2).to.eql('task2');
+            expect(results.task1).toEqual(['task1a', 'task1b']);
+            expect(results.task2).toEqual('task2');
             callOrder.push('task4');
             return 'task4';
           }
@@ -174,8 +164,8 @@ describe('auto', () => {
         expect(err).to.not.exist;
       })
       .then(results => {
-        expect(callOrder).to.eql(['task2', 'task3', 'task1', 'task4']);
-        expect(results).to.eql({
+        expect(callOrder).toEqual(['task2', 'task3', 'task1', 'task4']);
+        expect(results).toEqual({
           task1: ['task1a', 'task1b'],
           task2: 'task2',
           task3: undefined,
@@ -184,10 +174,9 @@ describe('auto', () => {
       });
   });
 
-  it('auto empty object', () =>
-    pasync.auto({}).catch(err => {
-      expect(err).not.to.exist;
-    }));
+  it('auto empty object', () => {
+    return pasync.auto({});
+  });
 
   it('auto error', () => {
     return pasync
@@ -207,7 +196,7 @@ describe('auto', () => {
       })
       .catch(err => err)
       .catch(err => {
-        expect(err.message).to.equal('testerror');
+        expect(err.message).toEqual('testerror');
       });
   });
 
@@ -278,7 +267,7 @@ describe('auto', () => {
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).to.equal('err');
+        expect(err.message).toEqual('err');
       });
   });
 
@@ -306,8 +295,8 @@ describe('auto', () => {
         expect(err).not.to.exist;
       })
       .then(results => {
-        expect(results.inserted).to.equal(true);
-        expect(results.task3).to.equal('task3');
+        expect(results.inserted).toEqual(true);
+        expect(results.task3).toEqual('task3');
       });
   });
 
@@ -324,7 +313,7 @@ describe('auto', () => {
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).to.match(/dependency `noexist`/);
+        expect(err.message).toMatch(/dependency `noexist`/);
       });
   });
 
@@ -347,7 +336,7 @@ describe('auto', () => {
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).to.eql(
+        expect(err.message).toEqual(
           'async.auto cannot execute tasks due to a recursive dependency'
         );
       });
@@ -366,7 +355,7 @@ describe('auto', () => {
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).to.eql(
+        expect(err.message).toEqual(
           'async.auto cannot execute tasks due to a recursive dependency'
         );
       });
@@ -388,7 +377,7 @@ describe('auto', () => {
       )
       .catch(err => err)
       .then(err => {
-        expect(err.message).to.equal('error');
+        expect(err.message).toEqual('error');
       });
   });
 
@@ -411,7 +400,7 @@ describe('auto', () => {
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).to.equal('error');
+        expect(err.message).toEqual('error');
       });
   });
 
@@ -426,12 +415,9 @@ describe('auto', () => {
         b: [
           'a',
           async results => {
-            expect(results.a).to.equal(1);
+            expect(results.a).toEqual(1);
           }
         ]
-      })
-      .catch(err => {
-        expect(err).to.not.exist;
       });
   });
 
@@ -444,7 +430,7 @@ describe('auto', () => {
         step2: ['step1', async results => {}]
       })
       .then(() => {
-        expect(isSync).to.equal(true);
+        expect(isSync).toEqual(true);
       });
 
     isSync = false;
@@ -465,7 +451,7 @@ describe('auto', () => {
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).to.equal('Something bad happened here');
+        expect(err.message).toEqual('Something bad happened here');
       });
   });
 
@@ -483,7 +469,7 @@ describe('auto', () => {
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).to.equal('Something bad happened here');
+        expect(err.message).toEqual('Something bad happened here');
       });
   });
 });

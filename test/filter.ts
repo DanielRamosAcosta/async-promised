@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import * as async from '../lib';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -25,41 +24,32 @@ function testLimit<T>(
     return iter(x);
   })
   .then(result => {
-    expect(args).to.eql(arr);
+    expect(args).toEqual(arr);
     return result;
   });
 }
 
 describe('filter', () => {
-  it('filter', () =>
+  it('filter', () => {
     async.filter([3, 2, 1], filterIteratee)
-      .catch(err => {
-        expect(err).to.equal(null);
-      })
       .then(results => {
-        expect(results).to.eql([3, 1]);
-      })
-  );
+        expect(results).toEqual([3, 1]);
+      });
+  });
   it('filter original untouched', () => {
     const a = [3, 1, 2];
     return async.filter(a, filterIteratee)
-      .catch(err => {
-        expect(err).to.equal(null);
-      })
       .then(results => {
-        expect(results).to.eql([3, 1]);
-        expect(a).to.eql([3, 1, 2]);
+        expect(results).toEqual([3, 1]);
+        expect(a).toEqual([3, 1, 2]);
       });
   });
   it('filter collection', () => {
     const a = {a: 3, b: 1, c: 2};
     return async.filter(a, async x => !!(x % 2))
-      .catch(err => {
-        expect(err).to.equal(null);
-      })
       .then(results => {
-        expect(results).to.eql([3, 1]);
-        expect(a).to.eql({a: 3, b: 1, c: 2});
+        expect(results).toEqual([3, 1]);
+        expect(a).toEqual({a: 3, b: 1, c: 2});
       });
   });
   if (typeof Symbol === 'function' && Symbol.iterator) {
@@ -84,11 +74,8 @@ describe('filter', () => {
     it('filter iterator', () => {
       const a = makeIterator([500, 20, 100]);
       return async.filter(a, async x => x > 20)
-        .catch(err => {
-          expect(err).to.equal(null);
-        })
         .then(results => {
-          expect(results).to.eql([500, 100]);
+          expect(results).toEqual([500, 100]);
         });
     });
   }
@@ -96,37 +83,30 @@ describe('filter', () => {
     return async.filter([3, 1, 2], async x => {
       throw new Error('error');
     })
-    .catch(err => {
-      expect(err.message).to.equal('error');
-    })
-    .then(results => {
-      expect(results).to.not.exist;
+    .catch(err => err)
+    .then(err => {
+      expect(err).toBeInstanceOf(Error);
+      expect(err.message).toEqual('error');
     });
   });
   it('filterSeries', () => {
     return async.filterSeries([3, 1, 2], filterIteratee)
-      .catch(err => {
-        expect(err).to.equal(null);
-      })
       .then(results => {
-        expect(results).to.eql([3, 1]);
+        expect(results).toEqual([3, 1]);
       });
   });
   it('select alias', () => {
-    expect(async.select).to.equal(async.filter);
+    expect(async.select).toEqual(async.filter);
   });
   it('selectSeries alias', () => {
-    expect(async.selectSeries).to.equal(async.filterSeries);
+    expect(async.selectSeries).toEqual(async.filterSeries);
   });
   it('filterLimit', () => {
     return testLimit([5, 4, 3, 2, 1], async.filterLimit, 2, async x => {
       return !!(x % 2);
     })
-    .catch(err => {
-      expect(err).to.not.exist;
-    })
     .then(result => {
-      expect(result).to.eql([5, 3, 1]);
+      expect(result).toEqual([5, 3, 1]);
     });
   });
 });
@@ -134,53 +114,43 @@ describe('filter', () => {
 describe('reject', () => {
   it('reject', () => {
     return async.reject([3, 2, 1], filterIteratee)
-      .catch(err => {
-        expect(err).to.equal(null);
-      })
       .then(results => {
-        expect(results).to.eql([2]);
+        expect(results).toEqual([2]);
       });
   });
   it('reject original untouched', () => {
     const a = [3, 1, 2];
     return async.reject(a, async x => !!(x % 2))
       .catch(err => {
-        expect(err).to.equal(null);
+        expect(err).toEqual(null);
       })
       .then(results => {
-        expect(results).to.eql([2]);
-        expect(a).to.eql([3, 1, 2]);
+        expect(results).toEqual([2]);
+        expect(a).toEqual([3, 1, 2]);
       });
   });
   it('reject error', () => {
     return async.reject([3, 1, 2], async x => {
       throw new Error('error');
     })
-    .catch(err => {
-      expect(err.message).to.equal('error');
-    })
-    .then(results => {
-      expect(results).to.not.exist;
+    .catch(err => err)
+    .then(err => {
+      expect(err).toBeInstanceOf(Error);
+      expect(err.message).toEqual('error');
     });
   });
-  it('rejectSeries', () =>
-    async.reject([3, 2, 1], filterIteratee)
-      .catch(err => {
-        expect(err).to.equal(null);
-      })
+  it('rejectSeries', () => {
+    return async.reject([3, 2, 1], filterIteratee)
       .then(results => {
-        expect(results).to.eql([2]);
-      })
-  );
+        expect(results).toEqual([2]);
+      });
+  });
   it('rejectLimit', () => {
     return testLimit([5, 4, 3, 2, 1], async.rejectLimit, 2, async x => {
       return !!(x % 2);
     })
-    .catch(err => {
-      expect(err).to.not.exist;
-    })
     .then(result => {
-      expect(result).to.eql([4, 2]);
+      expect(result).toEqual([4, 2]);
     });
   });
   it('filter fails', () => {
@@ -190,11 +160,10 @@ describe('reject', () => {
       }
       return true;
     })
-    .then(results => {
-      expect(results).to.not.exist;
-    })
-    .catch(err => {
-      expect(err.message).to.equal('error');
+    .catch(err => err)
+    .then(err => {
+      expect(err).toBeInstanceOf(Error);
+      expect(err.message).toEqual('error');
     });
   });
 });

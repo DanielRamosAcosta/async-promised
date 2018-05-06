@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import * as _ from 'lodash';
 import * as async from '../lib';
 
@@ -15,32 +14,32 @@ describe('detect', () => {
     const callOrder = [];
     await async.detect([3, 2, 1], createCallOrderDetector(callOrder))
       .catch(err => {
-        expect(err).to.equal(null);
+        expect(err).toEqual(null);
       })
       .then(result => {
         callOrder.push('callback');
-        expect(result).to.equal(2);
+        expect(result).toEqual(2);
       });
 
     await sleep(20);
 
-    expect(callOrder).to.eql([1, 2, 'callback', 3]);
+    expect(callOrder).toEqual([1, 2, 'callback', 3]);
   });
 
   it('detect - mulitple matches', async () => {
     const callOrder = [];
     await async.detect([3, 2, 2, 1, 2], createCallOrderDetector(callOrder))
       .catch(err => {
-        expect(err).to.equal(null);
+        expect(err).toEqual(null);
       })
       .then(result => {
         callOrder.push('callback');
-        expect(result).to.equal(2);
+        expect(result).toEqual(2);
       });
 
     await sleep(20);
 
-    expect(callOrder).to.eql([1, 2, 2, 2, 'callback', 3]);
+    expect(callOrder).toEqual([1, 2, 2, 2, 'callback', 3]);
   });
 
   it('detect error', async () => {
@@ -50,7 +49,7 @@ describe('detect', () => {
     })
     .catch(err => err)
     .then(err => {
-      expect(err.message).to.equal('error');
+      expect(err.message).toEqual('error');
     });
   });
 
@@ -59,14 +58,14 @@ describe('detect', () => {
 
     await async.detectSeries([3, 2, 1], createCallOrderDetector(callOrder))
       .catch(err => {
-        expect(err).to.equal(null);
+        expect(err).toEqual(null);
       })
       .then(result => {
         callOrder.push('callback');
-        expect(result).to.equal(2);
+        expect(result).toEqual(2);
       });
 
-    expect(callOrder).to.eql([3, 2, 'callback']);
+    expect(callOrder).toEqual([3, 2, 'callback']);
   });
 
   it('detectSeries - multiple matches', async () => {
@@ -74,14 +73,14 @@ describe('detect', () => {
 
     await async.detectSeries([3, 2, 2, 1, 2], createCallOrderDetector(callOrder))
     .catch(err => {
-      expect(err).to.equal(null);
+      expect(err).toEqual(null);
     })
     .then(result => {
       callOrder.push('callback');
-      expect(result).to.equal(2);
+      expect(result).toEqual(2);
     });
 
-    expect(callOrder).to.eql([3, 2, 'callback']);
+    expect(callOrder).toEqual([3, 2, 'callback']);
   });
 
   // Removed 'detect no callback', doesn't make sense with promises
@@ -95,10 +94,10 @@ describe('detect', () => {
       return num === 3;
     })
     .catch(err => {
-      expect(err).to.equal(null);
+      expect(err).toEqual(null);
     })
     .then(result => {
-      expect(result).to.equal(3);
+      expect(result).toEqual(3);
     });
   });
 
@@ -107,16 +106,16 @@ describe('detect', () => {
 
     await async.detectLimit([3, 2, 1], 2, createCallOrderDetector(callOrder))
     .catch(err => {
-      expect(err).to.equal(null);
+      expect(err).toEqual(null);
     })
     .then(result => {
       callOrder.push('callback');
-      expect(result).to.equal(2);
+      expect(result).toEqual(2);
     });
 
     await sleep(20);
 
-    expect(callOrder).to.eql([2, 'callback', 3]);
+    expect(callOrder).toEqual([2, 'callback', 3]);
   });
 
   it('detectLimit - multiple matches', async () => {
@@ -124,16 +123,16 @@ describe('detect', () => {
 
     await async.detectLimit([3, 2, 2, 1, 2], 2, createCallOrderDetector(callOrder))
     .catch(err => {
-      expect(err).to.equal(null);
+      expect(err).toEqual(null);
     })
     .then(result => {
       callOrder.push('callback');
-      expect(result).to.equal(2);
+      expect(result).toEqual(2);
     });
 
     await sleep(40);
 
-    expect(callOrder).to.eql([2, 'callback', 3]);
+    expect(callOrder).toEqual([2, 'callback', 3]);
   });
 
   it('detectLimit - ensure stop', () => {
@@ -144,10 +143,10 @@ describe('detect', () => {
       return num === 3;
     })
     .catch(err => {
-      expect(err).to.equal(null);
+      expect(err).toEqual(null);
     })
     .then(result => {
-      expect(result).to.equal(3);
+      expect(result).toEqual(3);
     });
   });
 
@@ -161,10 +160,10 @@ describe('detect', () => {
       return true;
     })
     .catch(err => {
-      expect(err).to.equal(null);
+      expect(err).toEqual(null);
     })
     .then(() => {
-      expect(calls).to.equal(1);
+      expect(calls).toEqual(1);
     });
   });
 
@@ -178,23 +177,23 @@ describe('detect', () => {
       return true;
     })
     .catch(err => {
-      expect(err).to.equal(null);
+      expect(err).toEqual(null);
     })
     .then(() => {
-      expect(calls).to.equal(100);
+      expect(calls).toEqual(100);
     });
   });
 
   it('find alias', () => {
-    expect(async.find).to.equal(async.detect);
+    expect(async.find).toEqual(async.detect);
   });
 
   it('findLimit alias', () => {
-    expect(async.findLimit).to.equal(async.detectLimit);
+    expect(async.findLimit).toEqual(async.detectLimit);
   });
 
   it('findSeries alias', () => {
-    expect(async.findSeries).to.be.a('function');
-    expect(async.findSeries).to.equal(async.detectSeries);
+    expect(async.findSeries).toBeInstanceOf(Function);
+    expect(async.findSeries).toEqual(async.detectSeries);
   });
 });

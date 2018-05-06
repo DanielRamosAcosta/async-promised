@@ -1,5 +1,3 @@
-import * as assert from 'assert';
-import { expect } from 'chai';
 import * as async from '../lib';
 import sleep from './support/sleep';
 
@@ -12,11 +10,8 @@ describe('each', () => {
   it('each', () => {
     const args = [];
     return async.each([1, 3, 2], promiseEachIteratee.bind(null, args))
-      .catch(err => {
-        expect(err).to.not.exist;
-      })
       .then(() => {
-        expect(args).to.eql([1, 2, 3]);
+        expect(args).toEqual([1, 2, 3]);
       });
   });
 
@@ -28,11 +23,8 @@ describe('each', () => {
     return async.each([], async x => {
       count += 1;
     })
-    .catch(err => {
-      expect(err).to.not.exist;
-    })
     .then(() => {
-      expect(count).to.equal(0);
+      expect(count).toEqual(0);
     });
   });
 
@@ -43,11 +35,8 @@ describe('each', () => {
     return async.each(myArray, async x => {
       count += 1;
     })
-    .catch(err => {
-      expect(err).to.not.exist;
-    })
     .then(() => {
-      expect(count).to.equal(0);
+      expect(count).toEqual(0);
     });
   });
 
@@ -57,24 +46,21 @@ describe('each', () => {
     })
     .catch(err => err)
     .then(err => {
-      expect(err.message).to.equal('error');
+      expect(err.message).toEqual('error');
     });
   });
 
   it('each no callback', () => {
     return async.each([1], async x => {
-      expect(x).to.equal(1);
+      expect(x).toEqual(1);
     });
   });
 
   it('eachSeries', () => {
     const args = [];
     return async.eachSeries([1, 3, 2], promiseEachIteratee.bind(null, args))
-      .catch(err => {
-        expect(err).to.not.exist;
-      })
       .then(() => {
-        expect(args).to.eql([1, 3, 2]);
+        expect(args).toEqual([1, 3, 2]);
       });
   });
 
@@ -83,27 +69,23 @@ describe('each', () => {
     return async.eachSeries([], async x => {
       count += 1;
     })
-    .catch(err => {
-      expect(err).to.not.exist;
-    })
     .then(() => {
-      expect(count).to.equal(0);
+      expect(count).toEqual(0);
     });
   });
 
-  it('eachSeries array modification', () => {
+  it('eachSeries array modification', async () => {
     const arr = [1, 2, 3, 4];
     const prom = async.eachSeries(arr, async x => {
       await async.setImmediate();
-    })
-    .then(() => {
-      assert(true, 'should call callback');
     });
+
+    await expect(prom).resolves.toBeUndefined();
 
     arr.pop();
     arr.splice(0, 1);
 
-    return prom;
+    await prom;
   });
 
   // Removed 'eachSeries single item', as it should have been removed from v2.0.0
@@ -120,14 +102,14 @@ describe('each', () => {
     })
     .catch(err => err)
     .then(err => {
-      expect(callOrder).to.eql([1]);
-      expect(err.message).to.equal('error');
+      expect(callOrder).toEqual([1]);
+      expect(err.message).toEqual('error');
     });
   });
 
   it('eachSeries no callback', () => {
     return async.eachSeries([1], async x => {
-      expect(x).to.equal(1);
+      expect(x).toEqual(1);
     });
   });
 
@@ -138,11 +120,8 @@ describe('each', () => {
       await sleep(x * 5);
       args.push(x);
     })
-    .catch(err => {
-      expect(err).to.not.exist;
-    })
     .then(() => {
-      expect(args).to.eql(arr);
+      expect(args).toEqual(arr);
     });
   });
 
@@ -151,11 +130,8 @@ describe('each', () => {
     return async.eachLimit([], 2, async x => {
         count += 1;
     })
-    .catch(err => {
-      expect(err).to.not.exist;
-    })
     .then(() => {
-      expect(count).to.equal(0);
+      expect(count).toEqual(0);
     });
   });
 
@@ -163,11 +139,8 @@ describe('each', () => {
     const args = [];
     const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     return async.eachLimit(arr, 20, promiseEachIteratee.bind(null, args))
-      .catch(err => {
-        expect(err).to.not.exist;
-      })
       .then(() => {
-        expect(args).to.eql(arr);
+        expect(args).toEqual(arr);
       });
   });
 
@@ -175,25 +148,18 @@ describe('each', () => {
     const args = [];
     const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     return async.eachLimit(arr, 10, promiseEachIteratee.bind(null, args))
-      .catch(err => {
-        expect(err).to.not.exist;
-      })
       .then(() => {
-        expect(args).to.eql(arr);
+        expect(args).toEqual(arr);
       });
   });
 
-  it('eachLimit zero limit', () => {
+  it('eachLimit zero limit', async () => {
     let count = 0;
-    return async.eachLimit([0, 1, 2, 3, 4, 5], 0, async x => {
+    const prom = async.eachLimit([0, 1, 2, 3, 4, 5], 0, async x => {
       count += 1;
-    })
-    .catch(err => {
-      expect(err).to.not.exist;
-    })
-    .then(() => {
-      assert(true, 'should call callback');
     });
+
+    await expect(prom).resolves.toBeUndefined();
   });
 
   it('eachLimit error', () => {
@@ -209,14 +175,14 @@ describe('each', () => {
     })
     .catch(err => err)
     .then(err => {
-      expect(callOrder).to.eql([0, 1, 2]);
-      expect(err.message).to.equal('error');
+      expect(callOrder).toEqual([0, 1, 2]);
+      expect(err.message).toEqual('error');
     });
   });
 
   it('eachLimit no callback', () => {
     return async.eachLimit([1], 1, async x => {
-      expect(x).to.equal(1);
+      expect(x).toEqual(1);
     });
   });
 
@@ -226,11 +192,8 @@ describe('each', () => {
     return async.eachLimit(arr, 5, async x => {
       args.push(x);
     })
-    .catch(err => {
-      expect(err).to.not.exist;
-    })
     .then(() => {
-      expect(args).to.eql(arr);
+      expect(args).toEqual(arr);
     });
   });
 
@@ -250,20 +213,20 @@ describe('each', () => {
     })
     .catch(err => err)
     .then(err => {
-      expect(started).to.equal(3);
-      expect(err.message).to.equal('Test Error');
+      expect(started).toEqual(3);
+      expect(err.message).toEqual('Test Error');
     });
   });
 
   it('forEach alias', () => {
-    assert.strictEqual(async.each, async.forEach);
+    expect(async.each).toEqual(async.forEach);
   });
 
   it('forEachSeries alias', () => {
-    assert.strictEqual(async.eachSeries, async.forEachSeries);
+    expect(async.eachSeries).toEqual(async.forEachSeries);
   });
 
   it('forEachLimit alias', () => {
-    assert.strictEqual(async.eachLimit, async.forEachLimit);
+    expect(async.eachLimit).toEqual(async.forEachLimit);
   });
 });

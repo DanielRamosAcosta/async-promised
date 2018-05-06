@@ -1,5 +1,4 @@
 import * as assert from 'assert';
-import { expect } from 'chai';
 import * as pasync from '../lib';
 import sleep from './support/sleep';
 
@@ -14,40 +13,39 @@ describe('waterfall', () => {
       },
       async ([arg1, arg2]) => {
         callOrder.push('fn2');
-        expect(arg1).to.equal('one');
-        expect(arg2).to.equal('two');
+        expect(arg1).toEqual('one');
+        expect(arg2).toEqual('two');
         await sleep(25);
         return [arg1, arg2, 'three'];
       },
       async ([arg1, arg2, arg3]) => {
         callOrder.push('fn3');
-        expect(arg1).to.equal('one');
-        expect(arg2).to.equal('two');
-        expect(arg3).to.equal('three');
+        expect(arg1).toEqual('one');
+        expect(arg2).toEqual('two');
+        expect(arg3).toEqual('three');
         return 'four';
       },
       async arg4 => {
         callOrder.push('fn4');
-        expect(callOrder).to.eql(['fn1', 'fn2', 'fn3', 'fn4']);
+        expect(callOrder).toEqual(['fn1', 'fn2', 'fn3', 'fn4']);
         return 'test';
       }
-    ])
-    .catch(err => {
-      expect(err).to.not.exist;
-    });
+    ]);
   });
 
   it('empty array', () => {
     return pasync.waterfall([])
-      .catch(err => {
-        expect(err).to.not.exist;
+      .then(result => {
+        expect(result).toBeUndefined();
       });
   });
 
   it('non-array', () => {
     return pasync.waterfall({})
-      .catch(err => {
-        expect(err.message).to.equal(
+      .catch(err => err)
+      .then(err => {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual(
           'First argument to waterfall must be an array of functions'
         );
       });
@@ -70,7 +68,8 @@ describe('waterfall', () => {
     ])
     .catch(err => err)
     .then(err => {
-      expect(err.message).to.equal('error');
+      expect(err).toBeInstanceOf(Error);
+      expect(err.message).toEqual('error');
     });
   });
 

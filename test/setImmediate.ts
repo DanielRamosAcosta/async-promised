@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import * as async from '../lib';
 
 describe('setImmediate', () => {
@@ -11,7 +10,7 @@ describe('setImmediate', () => {
 
     callOrder.push('one');
     await prom;
-    expect(callOrder).to.eql(['one', 'two']);
+    expect(callOrder).toEqual(['one', 'two']);
   });
 
   /**
@@ -20,7 +19,7 @@ describe('setImmediate', () => {
    */
   it('extra args', () => {
     return async.setImmediate(1, 2, 3).then(args => {
-      expect(args).to.eql([1, 2, 3]);
+      expect(args).toEqual([1, 2, 3]);
     });
   });
 });
