@@ -64,19 +64,19 @@ it('applyEach partial application', () => {
   const callOrder = [];
   const one = async val => {
     expect(val).toEqual(5);
-    await sleep(10);
+    await sleep(30);
     callOrder.push('one');
     return 1;
   };
   const two = async val => {
     expect(val).toEqual(5);
-    await sleep(5);
+    await sleep(15);
     callOrder.push('two');
     return 2;
   };
   const three = async val => {
     expect(val).toEqual(5);
-    await sleep(15);
+    await sleep(45);
     callOrder.push('three');
     return 3;
   };
