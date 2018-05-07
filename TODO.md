@@ -2,9 +2,9 @@
 
 > This file is generated, can be updated using `update-todo`
 
-Current implement status: 31%
+Current implement status: 33%
 
-* [ ] apply.ts
+* [x] apply.ts
 * [x] applyEach.ts
 * [x] asyncFunctions.ts
 * [x] asyncify.ts

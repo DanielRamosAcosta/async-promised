@@ -1,10 +1,9 @@
-import * as async from 'async';
-import { expect } from 'chai';
+import * as async from '../lib';
 
 describe('concat', () => {
   it('apply', done => {
     const fn = (...args) => {
-      expect(args).to.eql([1, 2, 3, 4]);
+      expect(args).toEqual([1, 2, 3, 4]);
     };
 
     async.apply(fn, 1, 2, 3, 4)();
@@ -13,7 +12,9 @@ describe('concat', () => {
     async.apply(fn, 1)(2, 3, 4);
     async.apply(fn)(1, 2, 3, 4);
 
-    expect(async.apply(name => `hello ${name}`, 'world')()).to.equal(
+    expect(
+      async.apply(name => `hello ${name}`, 'world')()
+    ).toEqual(
       'hello world'
     );
     done();

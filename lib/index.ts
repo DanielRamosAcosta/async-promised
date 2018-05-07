@@ -62,6 +62,7 @@
  * @module Utils
  */
 
+export {default as apply} from './apply';
 export {default as applyEach} from './applyEach';
 export {default as applyEachSeries} from './applyEachSeries';
 export {default as asyncify} from './asyncify';
