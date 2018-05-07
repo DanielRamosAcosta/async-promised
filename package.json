@@ -46,6 +46,8 @@
     "@types/chai": "^4.0.4",
     "@types/jest": "^21.1.2",
     "@types/lodash": "^4.14.77",
+    "async": "^2.6.0",
+    "async-es": "^2.6.0",
     "babel-core": "^6.26.0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
@@ -101,8 +103,5 @@
       "support"
     ]
   },
-  "dependencies": {
-    "async": "^2.5.0",
-    "async-es": "^2.5.0"
-  }
+  "dependencies": {}
 }
