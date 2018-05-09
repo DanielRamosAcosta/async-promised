@@ -72,6 +72,7 @@ export {default as compose} from './compose';
 export {default as concat} from './concat';
 export {default as concatLimit} from './concatLimit';
 export {default as concatSeries} from './concatSeries';
+export {default as constant} from './constant';
 export {default as detect} from './detect';
 export {default as detectLimit} from './detectLimit';
 export {default as detectSeries} from './detectSeries';
