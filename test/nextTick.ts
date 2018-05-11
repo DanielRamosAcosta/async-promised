@@ -1,41 +1,33 @@
-import * as async from 'async';
-import { expect } from 'chai';
+import * as async from '../lib';
+import sleep from './support/sleep';
 
 describe('nextTick', () => {
-  it('basics', done => {
-    const call_order = [];
-    async.nextTick(() => {
-      call_order.push('two');
-    });
-    call_order.push('one');
-    setTimeout(() => {
-      expect(call_order).to.eql(['one', 'two']);
-      done();
-    }, 50);
-  });
-
-  it('nextTick in the browser @nodeonly', done => {
-    const call_order = [];
-    async.nextTick(() => {
-      call_order.push('two');
+  it('basics', async () => {
+    const callOrder = [];
+    async.nextTick().then(() => {
+      callOrder.push('two');
     });
 
-    call_order.push('one');
-    setTimeout(() => {
-      expect(call_order).to.eql(['one', 'two']);
-      done();
-    }, 50);
+    callOrder.push('one');
+    await sleep(50);
+    expect(callOrder).toEqual(['one', 'two']);
   });
 
-  it('extra args', done => {
-    async.nextTick(
-      (a, b, c) => {
-        expect([a, b, c]).to.eql([1, 2, 3]);
-        done();
-      },
-      1,
-      2,
-      3
-    );
+  it('nextTick in the browser @nodeonly', async () => {
+    const callOrder = [];
+    async.nextTick().then(() => {
+      callOrder.push('two');
+    });
+
+    callOrder.push('one');
+    await sleep(50);
+    expect(callOrder).toEqual(['one', 'two']);
+  });
+
+  it('extra args', async () => {
+    await async.nextTick(1, 2, 3)
+      .then(([a, b, c]) => {
+        expect([a, b, c]).toEqual([1, 2, 3]);
+      });
   });
 });
