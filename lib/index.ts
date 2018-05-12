@@ -71,6 +71,7 @@ export {default as autoInject} from './autoInject';
 export {default as compose} from './compose';
 export {default as concat} from './concat';
 export {default as concatLimit} from './concatLimit';
+export {default as forever} from './forever';
 export {default as nextTick} from './nextTick';
 export {default as concatSeries} from './concatSeries';
 export {default as constant} from './constant';
