@@ -1,19 +1,22 @@
-import * as DLL from 'async/internal/DoublyLinkedList';
-import { expect } from 'chai';
+import DLL from '../lib/internal/DoublyLinkedList';
+
+interface INodeContent {
+  data: number;
+}
 
 describe('DoublyLinkedList', () => {
   it('toArray', () => {
-    const list = new DLL();
-    expect(list.toArray()).to.eql([]);
+    const list = new DLL<INodeContent>();
+    expect(list.toArray()).toEqual([]);
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
     }
-    expect(list.toArray()).to.eql([0, 1, 2, 3, 4]);
+    expect(list.toArray()).toEqual([0, 1, 2, 3, 4]);
   });
 
   it('remove', () => {
-    const list = new DLL();
+    const list = new DLL<INodeContent>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -21,11 +24,11 @@ describe('DoublyLinkedList', () => {
 
     list.remove(node => node.data === 3);
 
-    expect(list.toArray()).to.eql([0, 1, 2, 4]);
+    expect(list.toArray()).toEqual([0, 1, 2, 4]);
   });
 
   it('remove (head)', () => {
-    const list = new DLL();
+    const list = new DLL<INodeContent>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -33,11 +36,11 @@ describe('DoublyLinkedList', () => {
 
     list.remove(node => node.data === 0);
 
-    expect(list.toArray()).to.eql([1, 2, 3, 4]);
+    expect(list.toArray()).toEqual([1, 2, 3, 4]);
   });
 
   it('remove (tail)', () => {
-    const list = new DLL();
+    const list = new DLL<INodeContent>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -45,11 +48,11 @@ describe('DoublyLinkedList', () => {
 
     list.remove(node => node.data === 4);
 
-    expect(list.toArray()).to.eql([0, 1, 2, 3]);
+    expect(list.toArray()).toEqual([0, 1, 2, 3]);
   });
 
   it('remove (all)', () => {
-    const list = new DLL();
+    const list = new DLL<INodeContent>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -57,11 +60,11 @@ describe('DoublyLinkedList', () => {
 
     list.remove(node => node.data < 5);
 
-    expect(list.toArray()).to.eql([]);
+    expect(list.toArray()).toEqual([]);
   });
 
   it('empty', () => {
-    const list = new DLL();
+    const list = new DLL<INodeContent>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -69,7 +72,7 @@ describe('DoublyLinkedList', () => {
 
     const empty = list.empty();
 
-    expect(list).to.equal(empty);
-    expect(list.toArray()).to.eql([]);
+    expect(list).toEqual(empty);
+    expect(list.toArray()).toEqual([]);
   });
 });
