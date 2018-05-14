@@ -1,12 +1,8 @@
 import DLL from '../lib/internal/DoublyLinkedList';
 
-interface INodeContent {
-  data: number;
-}
-
 describe('DoublyLinkedList', () => {
   it('toArray', () => {
-    const list = new DLL<INodeContent>();
+    const list = new DLL<{data: number}>();
     expect(list.toArray()).toEqual([]);
 
     for (let i = 0; i < 5; i++) {
@@ -16,7 +12,7 @@ describe('DoublyLinkedList', () => {
   });
 
   it('remove', () => {
-    const list = new DLL<INodeContent>();
+    const list = new DLL<{data: number}>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -28,7 +24,7 @@ describe('DoublyLinkedList', () => {
   });
 
   it('remove (head)', () => {
-    const list = new DLL<INodeContent>();
+    const list = new DLL<{data: number}>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -40,7 +36,7 @@ describe('DoublyLinkedList', () => {
   });
 
   it('remove (tail)', () => {
-    const list = new DLL<INodeContent>();
+    const list = new DLL<{data: number}>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -52,7 +48,7 @@ describe('DoublyLinkedList', () => {
   });
 
   it('remove (all)', () => {
-    const list = new DLL<INodeContent>();
+    const list = new DLL<{data: number}>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -64,7 +60,7 @@ describe('DoublyLinkedList', () => {
   });
 
   it('empty', () => {
-    const list = new DLL<INodeContent>();
+    const list = new DLL<{data: number}>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
