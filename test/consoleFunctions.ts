@@ -1,79 +1,74 @@
-import * as async from 'async';
-import { expect } from 'chai';
+import * as async from '../lib';
+import sleep from './support/sleep';
 
 describe('console functions', () => {
-  const names = [
-    'log',
-    'dir'
-    /* 'info'
-        'warn'
-        'error' */
-  ];
+  describe('log', () => {
+    it('works', async () => {
+      const fn = async arg1 => {
+        expect(arg1).toEqual('one');
+        await sleep(0);
+        return 'test';
+      };
 
-  // generates tests for console functions such as async.log
-  names.forEach(name => {
-    if (typeof console !== 'undefined') {
-      it(name, done => {
-        const fn = (arg1, callback) => {
-          expect(arg1).to.equal('one');
-          setTimeout(() => {
-            callback(null, 'test');
-          }, 0);
-        };
-        const fn_err = (arg1, callback) => {
-          expect(arg1).to.equal('one');
-          setTimeout(() => {
-            callback('error');
-          }, 0);
-        };
-        const _console_fn = console[name];
-        const _error = console.error;
-        console[name] = function(val) {
-          expect(val).to.equal('test');
-          expect(arguments.length).to.equal(1);
-          console.error = val => {
-            expect(val).to.equal('error');
-            console[name] = _console_fn;
-            console.error = _error;
-            done();
-          };
-          async[name](fn_err, 'one');
-        };
-        async[name](fn, 'one');
-      });
+      const fnErr = async arg1 => {
+        expect(arg1).toEqual('one');
+        await sleep(0);
+        throw new Error('error');
+      };
 
-      it(`${name} with multiple result params`, done => {
-        const fn = callback => {
-          callback(null, 'one', 'two', 'three');
-        };
-        const _console_fn = console[name];
-        const called_with = [];
-        console[name] = x => {
-          called_with.push(x);
-        };
-        async[name](fn);
-        expect(called_with).to.eql(['one', 'two', 'three']);
-        console[name] = _console_fn;
-        done();
-      });
-    }
+      global.console = {
+        log: jest.fn(),
+        error: jest.fn()
+      };
 
-    // browser-only test
-    if (typeof window !== 'undefined') {
-      it(`${name} without console.${name}`, done => {
-        const _console = window.console;
-        window.console = undefined;
-        const fn = callback => {
-          callback(null, 'val');
-        };
-        const fn_err = callback => {
-          callback('error');
-        };
-        async[name](fn);
-        async[name](fn_err);
-        window.console = _console;
-        done();
-      });
-    }
+      async.log(fnErr, 'one');
+      async.log(fn, 'one');
+
+      await sleep(10);
+
+      expect(global.console.log).toHaveBeenCalled();
+      expect(global.console.log).toHaveBeenCalledWith('test');
+      expect(global.console.error).toHaveBeenCalled();
+      expect(global.console.error).toHaveBeenCalledWith(new Error('error'));
+    });
+
+    // Removed 'log with multiple result params', as a promise can't be
+    // resolved with multiple values
+    // https://github.com/caolan/async/blob/master/mocha_test/consoleFunctions.js#L42
+  });
+
+  describe('dir', () => {
+    it('works', async () => {
+      const fn = async arg1 => {
+        expect(arg1).toEqual('one');
+        await sleep(0);
+        return 'test';
+      };
+
+      const fnErr = async arg1 => {
+        expect(arg1).toEqual('one');
+        await sleep(0);
+        throw new Error('error');
+      };
+
+      global.console = {
+        dir: jest.fn(),
+        error: jest.fn()
+      };
+
+      async.dir(fnErr, 'one');
+      async.dir(fn, 'one');
+
+      await sleep(10);
+
+      expect(global.console.dir).toHaveBeenCalled();
+      expect(global.console.dir).toHaveBeenCalledWith('test');
+      expect(global.console.error).toHaveBeenCalled();
+      expect(global.console.error).toHaveBeenCalledWith(new Error('error'));
+    });
+
+    // Removed 'dir with multiple result params', as a promise can't be
+    // resolved with multiple values
+    // https://github.com/caolan/async/blob/master/mocha_test/consoleFunctions.js#L42
   });
 });
