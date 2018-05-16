@@ -39,8 +39,6 @@ describe('detect', () => {
 
     await sleep(20);
 
-    expect(callOrder).toEqual([1, 2, 2, 2, 'callback', 3]);
-
     // Promise might be fulfilled before reaching the third "2", depending on
     // hardware speed.
     try {
