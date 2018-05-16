@@ -1,81 +1,58 @@
-import * as async from 'async';
-import { expect } from 'chai';
+import transform from '../lib/transform';
+import sleep from './support/sleep';
+const async = { transform };
 
 describe('transform', () => {
-  it('transform implictly determines memo if not provided', done => {
-    async.transform(
-      [1, 2, 3],
-      (memo, x, v, callback) => {
+  it('transform implictly determines memo if not provided', () => {
+    return async
+      .transform([1, 2, 3], async (memo, x, v) => {
         memo.push(x + 1);
-        callback();
-      },
-      (err, result) => {
-        expect(result).to.eql([2, 3, 4]);
-        done();
-      }
-    );
+      })
+      .then(result => {
+        expect(result).toEqual([2, 3, 4]);
+      });
   });
 
-  it('transform async with object memo', done => {
-    async.transform(
-      [1, 3, 2],
-      {},
-      (memo, v, k, callback) => {
-        setTimeout(() => {
-          memo[k] = v;
-          callback();
-        });
-      },
-      (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.eql({
+  it('transform async with object memo', () => {
+    return async
+      .transform([1, 3, 2], {}, async (memo, v, k) => {
+        await sleep(0);
+        memo[k] = v;
+      })
+      .then(result => {
+        expect(result).toEqual({
           0: 1,
           1: 3,
           2: 2
         });
-        done();
-      }
-    );
-  });
-
-  it('transform iterating object', done => {
-    async.transform(
-      { a: 1, b: 3, c: 2 },
-      (memo, v, k, callback) => {
-        setTimeout(() => {
-          memo[k] = v + 1;
-          callback();
-        });
-      },
-      (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.eql({ a: 2, b: 4, c: 3 });
-        done();
-      }
-    );
-  });
-
-  it('transform error', done => {
-    async.transform(
-      [1, 2, 3],
-      (a, v, k, callback) => {
-        callback('error');
-      },
-      err => {
-        expect(err).to.equal('error');
-        done();
-      }
-    );
-  });
-
-  it('transform with two arguments', done => {
-    try {
-      async.transform([1, 2, 3], (a, v, k, callback) => {
-        callback();
       });
-      done();
-    } catch (e) {
-      expect.fail();
-    }
+  });
+
+  it('transform iterating object', () => {
+    async
+      .transform({ a: 1, b: 3, c: 2 }, async (memo, v, k) => {
+        await sleep(0);
+        memo[k] = v + 1;
+      })
+      .then(result => {
+        expect(result).toEqual({ a: 2, b: 4, c: 3 });
+      });
+  });
+
+  it('transform error', () => {
+    return async
+      .transform([1, 2, 3], async (a, v, k) => {
+        throw new Error('error');
+      })
+      .catch(err => err)
+      .then(err => {
+        expect(err).toEqual(new Error('error'));
+      });
+  });
+
+  it('transform with two arguments', () => {
+    return async.transform([1, 2, 3], async (a, v, k) => {
+      return null;
+    });
   });
 });
