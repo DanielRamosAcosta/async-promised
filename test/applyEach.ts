@@ -6,19 +6,19 @@ describe('applyEach', () => {
     const callOrder = [];
     const one = async val => {
       expect(val).toEqual(5);
-      await sleep(12);
+      await sleep(24);
       callOrder.push('one');
       return 1;
     };
     const two = async val => {
       expect(val).toEqual(5);
-      await sleep(2);
+      await sleep(0);
       callOrder.push('two');
       return 2;
     };
     const three = async val => {
       expect(val).toEqual(5);
-      await sleep(18);
+      await sleep(36);
       callOrder.push('three');
       return 3;
     };
