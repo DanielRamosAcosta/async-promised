@@ -1,84 +1,84 @@
-import * as assert from 'assert';
-import * as async from 'async';
-import { expect } from 'chai';
+import * as assert from "assert";
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
-describe('ensureAsync', () => {
-  const passContext = function(cb) {
-    cb(this);
+describe("ensureAsync", () => {
+  const passContext = async function() {
+    return this;
   };
 
-  it('defer sync functions', done => {
+  it("defer sync functions", () => {
     let sync = true;
-    async.ensureAsync((arg1, arg2, cb) => {
-      expect(arg1).to.equal(1);
-      expect(arg2).to.equal(2);
-      cb(null, 4, 5);
-    })(1, 2, (err, arg4, arg5) => {
-      expect(err).to.equal(null);
-      expect(arg4).to.equal(4);
-      expect(arg5).to.equal(5);
-      assert(!sync, 'callback called on same tick');
-      done();
-    });
-    sync = false;
-  });
 
-  it('do not defer async functions', done => {
-    let sync = false;
-    async.ensureAsync((arg1, arg2, cb) => {
-      expect(arg1).to.equal(1);
-      expect(arg2).to.equal(2);
-      async.setImmediate(() => {
-        sync = true;
-        cb(null, 4, 5);
-        sync = false;
+    const prom = async
+      .ensureAsync(async (arg1: number, arg2: number) => {
+        expect(arg1).toEqual(1);
+        expect(arg2).toEqual(2);
+        return 4;
+      })(1, 2)
+      .then(result => {
+        expect(result).toEqual(4);
+        assert(!sync, "callback called on same tick");
       });
-    })(1, 2, (err, arg4, arg5) => {
-      expect(err).to.equal(null);
-      expect(arg4).to.equal(4);
-      expect(arg5).to.equal(5);
-      assert(sync, 'callback called on next tick');
-      done();
-    });
-  });
 
-  it('double wrapping', done => {
-    let sync = true;
-    async.ensureAsync(
-      async.ensureAsync((arg1, arg2, cb) => {
-        expect(arg1).to.equal(1);
-        expect(arg2).to.equal(2);
-        cb(null, 4, 5);
-      })
-    )(1, 2, (err, arg4, arg5) => {
-      expect(err).to.equal(null);
-      expect(arg4).to.equal(4);
-      expect(arg5).to.equal(5);
-      assert(!sync, 'callback called on same tick');
-      done();
-    });
     sync = false;
+
+    return prom;
   });
 
-  it('should propely bind context to the wrapped function', done => {
+  it("do not defer async functions", () => {
+    let sync = false;
+
+    return async
+      .ensureAsync(async (arg1: number, arg2: number) => {
+        expect(arg1).toEqual(1);
+        expect(arg2).toEqual(2);
+        await sleep(0);
+        sync = true;
+        return 4;
+      })(1, 2)
+      .then(result => {
+        expect(result).toEqual(4);
+        assert(sync, "callback called on next tick");
+      });
+  });
+
+  it("double wrapping", () => {
+    let sync = true;
+
+    const prom = async
+      .ensureAsync(
+        async.ensureAsync(async (arg1: number, arg2: number) => {
+          expect(arg1).toEqual(1);
+          expect(arg2).toEqual(2);
+          return 4;
+        })
+      )(1, 2)
+      .then(result => {
+        expect(result).toEqual(4);
+        assert(!sync, "callback called on same tick");
+      });
+    sync = false;
+    return prom;
+  });
+
+  it("should propely bind context to the wrapped function", () => {
     // call bind after wrapping with ensureAsync
-    const context = { context: 'post' };
+    const context = { context: "post" };
     let postBind = async.ensureAsync(passContext);
     postBind = postBind.bind(context);
-    postBind(ref => {
-      expect(ref).to.equal(context);
-      done();
+    return postBind().then(ref => {
+      expect(ref).toEqual(context);
     });
   });
 
-  it('should not override the bound context of a function when wrapping', done => {
+  it("should not override the bound context of a function when wrapping", () => {
     // call bind before wrapping with ensureAsync
-    const context = { context: 'pre' };
+    const context = { context: "pre" };
     let preBind = passContext.bind(context);
     preBind = async.ensureAsync(preBind);
-    preBind(ref => {
-      expect(ref).to.equal(context);
-      done();
+    return preBind().then(ref => {
+      expect(ref).toEqual(context);
     });
   });
 });

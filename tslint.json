@@ -11,7 +11,7 @@
     ],
     "quotemark": [
       true,
-      "single"
+      "double"
     ],
     "arrow-parens": [
       true,
