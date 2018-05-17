@@ -1,5 +1,5 @@
-import { sortBy as asyncSortBy } from 'async';
-import { callbackify, resolveCallback } from './internal/asyncTransforms';
+import { sortBy as asyncSortBy } from "async";
+import { callbackify, resolveCallback } from "./internal/asyncTransforms";
 
 /**
  * Sorts a list by the results of running each `coll` value through an async

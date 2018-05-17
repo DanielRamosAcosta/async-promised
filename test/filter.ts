@@ -1,4 +1,4 @@
-import * as async from '../lib';
+import * as async from "../lib";
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -22,47 +22,45 @@ function testLimit<T>(
   return limitFunc(arr, limit, x => {
     args.push(x);
     return iter(x);
-  })
-  .then(result => {
+  }).then(result => {
     expect(args).toEqual(arr);
     return result;
   });
 }
 
-describe('filter', () => {
-  it('filter', () => {
-    async.filter([3, 2, 1], filterIteratee)
-      .then(results => {
-        expect(results).toEqual([3, 1]);
-      });
+describe("filter", () => {
+  it("filter", () => {
+    async.filter([3, 2, 1], filterIteratee).then(results => {
+      expect(results).toEqual([3, 1]);
+    });
   });
-  it('filter original untouched', () => {
+  it("filter original untouched", () => {
     const a = [3, 1, 2];
-    return async.filter(a, filterIteratee)
-      .then(results => {
-        expect(results).toEqual([3, 1]);
-        expect(a).toEqual([3, 1, 2]);
-      });
+    return async.filter(a, filterIteratee).then(results => {
+      expect(results).toEqual([3, 1]);
+      expect(a).toEqual([3, 1, 2]);
+    });
   });
-  it('filter collection', () => {
-    const a = {a: 3, b: 1, c: 2};
-    return async.filter(a, async x => !!(x % 2))
-      .then(results => {
-        expect(results).toEqual([3, 1]);
-        expect(a).toEqual({a: 3, b: 1, c: 2});
-      });
+  it("filter collection", () => {
+    const a = { a: 3, b: 1, c: 2 };
+    return async.filter(a, async x => !!(x % 2)).then(results => {
+      expect(results).toEqual([3, 1]);
+      expect(a).toEqual({ a: 3, b: 1, c: 2 });
+    });
   });
-  if (typeof Symbol === 'function' && Symbol.iterator) {
+  if (typeof Symbol === "function" && Symbol.iterator) {
     function makeIterator(array) {
       let nextIndex;
       const iterator = {
         next() {
-          return nextIndex < array.length ? {
-            done: false,
-            value: array[nextIndex++]
-          } : {
-            done: true
-          };
+          return nextIndex < array.length
+            ? {
+                done: false,
+                value: array[nextIndex++]
+              }
+            : {
+                done: true
+              };
         }
       };
       iterator[Symbol.iterator] = () => {
@@ -71,56 +69,54 @@ describe('filter', () => {
       };
       return iterator;
     }
-    it('filter iterator', () => {
+    it("filter iterator", () => {
       const a = makeIterator([500, 20, 100]);
-      return async.filter(a, async x => x > 20)
-        .then(results => {
-          expect(results).toEqual([500, 100]);
-        });
+      return async.filter(a, async x => x > 20).then(results => {
+        expect(results).toEqual([500, 100]);
+      });
     });
   }
-  it('filter error', () => {
-    return async.filter([3, 1, 2], async x => {
-      throw new Error('error');
-    })
-    .catch(err => err)
-    .then(err => {
-      expect(err).toBeInstanceOf(Error);
-      expect(err.message).toEqual('error');
-    });
-  });
-  it('filterSeries', () => {
-    return async.filterSeries([3, 1, 2], filterIteratee)
-      .then(results => {
-        expect(results).toEqual([3, 1]);
+  it("filter error", () => {
+    return async
+      .filter([3, 1, 2], async x => {
+        throw new Error("error");
+      })
+      .catch(err => err)
+      .then(err => {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual("error");
       });
   });
-  it('select alias', () => {
+  it("filterSeries", () => {
+    return async.filterSeries([3, 1, 2], filterIteratee).then(results => {
+      expect(results).toEqual([3, 1]);
+    });
+  });
+  it("select alias", () => {
     expect(async.select).toEqual(async.filter);
   });
-  it('selectSeries alias', () => {
+  it("selectSeries alias", () => {
     expect(async.selectSeries).toEqual(async.filterSeries);
   });
-  it('filterLimit', () => {
+  it("filterLimit", () => {
     return testLimit([5, 4, 3, 2, 1], async.filterLimit, 2, async x => {
       return !!(x % 2);
-    })
-    .then(result => {
+    }).then(result => {
       expect(result).toEqual([5, 3, 1]);
     });
   });
 });
 
-describe('reject', () => {
-  it('reject', () => {
-    return async.reject([3, 2, 1], filterIteratee)
-      .then(results => {
-        expect(results).toEqual([2]);
-      });
+describe("reject", () => {
+  it("reject", () => {
+    return async.reject([3, 2, 1], filterIteratee).then(results => {
+      expect(results).toEqual([2]);
+    });
   });
-  it('reject original untouched', () => {
+  it("reject original untouched", () => {
     const a = [3, 1, 2];
-    return async.reject(a, async x => !!(x % 2))
+    return async
+      .reject(a, async x => !!(x % 2))
       .catch(err => {
         expect(err).toEqual(null);
       })
@@ -129,41 +125,41 @@ describe('reject', () => {
         expect(a).toEqual([3, 1, 2]);
       });
   });
-  it('reject error', () => {
-    return async.reject([3, 1, 2], async x => {
-      throw new Error('error');
-    })
-    .catch(err => err)
-    .then(err => {
-      expect(err).toBeInstanceOf(Error);
-      expect(err.message).toEqual('error');
-    });
-  });
-  it('rejectSeries', () => {
-    return async.reject([3, 2, 1], filterIteratee)
-      .then(results => {
-        expect(results).toEqual([2]);
+  it("reject error", () => {
+    return async
+      .reject([3, 1, 2], async x => {
+        throw new Error("error");
+      })
+      .catch(err => err)
+      .then(err => {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual("error");
       });
   });
-  it('rejectLimit', () => {
+  it("rejectSeries", () => {
+    return async.reject([3, 2, 1], filterIteratee).then(results => {
+      expect(results).toEqual([2]);
+    });
+  });
+  it("rejectLimit", () => {
     return testLimit([5, 4, 3, 2, 1], async.rejectLimit, 2, async x => {
       return !!(x % 2);
-    })
-    .then(result => {
+    }).then(result => {
       expect(result).toEqual([4, 2]);
     });
   });
-  it('filter fails', () => {
-    return async.filter({a: 1, b: 2, c: 3}, async item => {
-      if (item === 3) {
-        throw new Error('error');
-      }
-      return true;
-    })
-    .catch(err => err)
-    .then(err => {
-      expect(err).toBeInstanceOf(Error);
-      expect(err.message).toEqual('error');
-    });
+  it("filter fails", () => {
+    return async
+      .filter({ a: 1, b: 2, c: 3 }, async item => {
+        if (item === 3) {
+          throw new Error("error");
+        }
+        return true;
+      })
+      .catch(err => err)
+      .then(err => {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual("error");
+      });
   });
 });

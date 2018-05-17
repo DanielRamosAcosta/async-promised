@@ -1,5 +1,5 @@
-import { log as asyncLog } from 'async';
-import { callbackify } from './internal/asyncTransforms';
+import { log as asyncLog } from "async";
+import { callbackify } from "./internal/asyncTransforms";
 
 /**
  * Logs the result of an `async` function to the `console`. Only works in
@@ -29,7 +29,10 @@ import { callbackify } from './internal/asyncTransforms';
  * 'hello world'
  */
 
-export default function log<T>(fn: (...args: any[]) => Promise<any>, ...args: any[]) {
+export default function log<T>(
+  fn: (...args: any[]) => Promise<any>,
+  ...args: any[]
+) {
   const fnCb = callbackify(fn);
   asyncLog(fnCb, ...args);
 }

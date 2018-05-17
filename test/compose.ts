@@ -1,12 +1,12 @@
-import * as async from '../lib';
-import sleep from './support/sleep';
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
-describe('compose', () => {
-  describe('all functions succeed', () => {
-    it('yields the result of the composition of the functions', () => {
+describe("compose", () => {
+  describe("all functions succeed", () => {
+    it("yields the result of the composition of the functions", () => {
       const add2 = async (n: number) => {
         await sleep(0);
-        return  n + 2;
+        return n + 2;
       };
       const mul3 = async (n: number) => {
         await sleep(0);
@@ -18,20 +18,19 @@ describe('compose', () => {
       };
       const add2mul3add1 = async.compose(add1, mul3, add2);
 
-      return add2mul3add1(3)
-        .then(result => {
-          expect(result).toEqual(16);
-        });
+      return add2mul3add1(3).then(result => {
+        expect(result).toEqual(16);
+      });
     });
   });
 
-  describe('a function errors', () => {
-    it('yields the error and does not call later functions', () => {
+  describe("a function errors", () => {
+    it("yields the error and does not call later functions", () => {
       let add1called = false;
-      const mul3error = new Error('mul3 error');
+      const mul3error = new Error("mul3 error");
       const add2 = async (n: number) => {
         await sleep(0);
-        return  n + 2;
+        return n + 2;
       };
       const mul3 = async (n: number) => {
         await sleep(0);
@@ -52,7 +51,7 @@ describe('compose', () => {
     });
   });
 
-  it('calls each function with the binding of the composed function', () => {
+  it("calls each function with the binding of the composed function", () => {
     const context = {};
     let add2Context = null;
     let mul3Context = null;
@@ -70,11 +69,10 @@ describe('compose', () => {
 
     const add2mul3 = async.compose(mul3, add2);
 
-    return add2mul3.call(context, 3)
-      .then(result => {
-        expect(result).toEqual(15);
-        expect(add2Context).toEqual(context);
-        expect(mul3Context).toEqual(context);
-      });
+    return add2mul3.call(context, 3).then(result => {
+      expect(result).toEqual(15);
+      expect(add2Context).toEqual(context);
+      expect(mul3Context).toEqual(context);
+    });
   });
 });

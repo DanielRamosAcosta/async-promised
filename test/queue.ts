@@ -1,12 +1,12 @@
-import * as assert from 'assert';
-import * as async from 'async';
-import { expect } from 'chai';
+import * as assert from "assert";
+import * as async from "async";
+import { expect } from "chai";
 
-describe('queue', function() {
+describe("queue", function() {
   // several tests of these tests are flakey with timing issues
   // TODO: this.retries(3);
 
-  it('basics', done => {
+  it("basics", done => {
     const call_order = [];
     const delays = [40, 10, 60, 10];
 
@@ -17,31 +17,31 @@ describe('queue', function() {
     const q = async.queue((task, callback) => {
       setTimeout(() => {
         call_order.push(`process ${task}`);
-        callback('error', 'arg');
+        callback("error", "arg");
       }, delays.shift());
     }, 2);
 
     q.push(1, (err, arg) => {
-      expect(err).to.equal('error');
-      expect(arg).to.equal('arg');
+      expect(err).to.equal("error");
+      expect(arg).to.equal("arg");
       expect(q.length()).to.equal(1);
       call_order.push(`callback ${1}`);
     });
     q.push(2, (err, arg) => {
-      expect(err).to.equal('error');
-      expect(arg).to.equal('arg');
+      expect(err).to.equal("error");
+      expect(arg).to.equal("arg");
       expect(q.length()).to.equal(2);
       call_order.push(`callback ${2}`);
     });
     q.push(3, (err, arg) => {
-      expect(err).to.equal('error');
-      expect(arg).to.equal('arg');
+      expect(err).to.equal("error");
+      expect(arg).to.equal("arg");
       expect(q.length()).to.equal(0);
       call_order.push(`callback ${3}`);
     });
     q.push(4, (err, arg) => {
-      expect(err).to.equal('error');
-      expect(arg).to.equal('arg');
+      expect(err).to.equal("error");
+      expect(arg).to.equal("arg");
       expect(q.length()).to.equal(0);
       call_order.push(`callback ${4}`);
     });
@@ -50,14 +50,14 @@ describe('queue', function() {
 
     q.drain = () => {
       expect(call_order).to.eql([
-        'process 2',
-        'callback 2',
-        'process 1',
-        'callback 1',
-        'process 4',
-        'callback 4',
-        'process 3',
-        'callback 3'
+        "process 2",
+        "callback 2",
+        "process 1",
+        "callback 1",
+        "process 4",
+        "callback 4",
+        "process 3",
+        "callback 3"
       ]);
       expect(q.concurrency).to.equal(2);
       expect(q.length()).to.equal(0);
@@ -65,7 +65,7 @@ describe('queue', function() {
     };
   });
 
-  it('default concurrency', done => {
+  it("default concurrency", done => {
     const call_order = [];
     const delays = [40, 10, 60, 10];
 
@@ -74,31 +74,31 @@ describe('queue', function() {
     const q = async.queue((task, callback) => {
       setTimeout(() => {
         call_order.push(`process ${task}`);
-        callback('error', 'arg');
+        callback("error", "arg");
       }, delays.shift());
     });
 
     q.push(1, (err, arg) => {
-      expect(err).to.equal('error');
-      expect(arg).to.equal('arg');
+      expect(err).to.equal("error");
+      expect(arg).to.equal("arg");
       expect(q.length()).to.equal(3);
       call_order.push(`callback ${1}`);
     });
     q.push(2, (err, arg) => {
-      expect(err).to.equal('error');
-      expect(arg).to.equal('arg');
+      expect(err).to.equal("error");
+      expect(arg).to.equal("arg");
       expect(q.length()).to.equal(2);
       call_order.push(`callback ${2}`);
     });
     q.push(3, (err, arg) => {
-      expect(err).to.equal('error');
-      expect(arg).to.equal('arg');
+      expect(err).to.equal("error");
+      expect(arg).to.equal("arg");
       expect(q.length()).to.equal(1);
       call_order.push(`callback ${3}`);
     });
     q.push(4, (err, arg) => {
-      expect(err).to.equal('error');
-      expect(arg).to.equal('arg');
+      expect(err).to.equal("error");
+      expect(arg).to.equal("arg");
       expect(q.length()).to.equal(0);
       call_order.push(`callback ${4}`);
     });
@@ -107,14 +107,14 @@ describe('queue', function() {
 
     q.drain = () => {
       expect(call_order).to.eql([
-        'process 1',
-        'callback 1',
-        'process 2',
-        'callback 2',
-        'process 3',
-        'callback 3',
-        'process 4',
-        'callback 4'
+        "process 1",
+        "callback 1",
+        "process 2",
+        "callback 2",
+        "process 3",
+        "callback 3",
+        "process 4",
+        "callback 4"
       ]);
       expect(q.concurrency).to.equal(1);
       expect(q.length()).to.equal(0);
@@ -122,7 +122,7 @@ describe('queue', function() {
     };
   });
 
-  it('zero concurrency', done => {
+  it("zero concurrency", done => {
     expect(() => {
       async.queue((task, callback) => {
         callback(null, task);
@@ -131,61 +131,61 @@ describe('queue', function() {
     done();
   });
 
-  it('error propagation', done => {
+  it("error propagation", done => {
     const results = [];
 
     const q = async.queue((task, callback) => {
-      callback(task.name === 'foo' ? new Error('fooError') : null);
+      callback(task.name === "foo" ? new Error("fooError") : null);
     }, 2);
 
     q.drain = () => {
-      expect(results).to.eql(['bar', 'fooError']);
+      expect(results).to.eql(["bar", "fooError"]);
       done();
     };
 
-    q.push({ name: 'bar' }, err => {
+    q.push({ name: "bar" }, err => {
       if (err) {
-        results.push('barError');
+        results.push("barError");
         return;
       }
 
-      results.push('bar');
+      results.push("bar");
     });
 
-    q.push({ name: 'foo' }, err => {
+    q.push({ name: "foo" }, err => {
       if (err) {
-        results.push('fooError');
+        results.push("fooError");
         return;
       }
 
-      results.push('foo');
+      results.push("foo");
     });
   });
 
-  it('global error handler', done => {
+  it("global error handler", done => {
     const results = [];
 
     const q = async.queue((task, callback) => {
-      callback(task.name === 'foo' ? new Error('fooError') : null);
+      callback(task.name === "foo" ? new Error("fooError") : null);
     }, 2);
 
     q.error = (error, task) => {
       expect(error).to.exist;
-      expect(error.message).to.equal('fooError');
-      expect(task.name).to.equal('foo');
-      results.push('fooError');
+      expect(error.message).to.equal("fooError");
+      expect(task.name).to.equal("foo");
+      results.push("fooError");
     };
 
     q.drain = () => {
-      expect(results).to.eql(['fooError', 'bar']);
+      expect(results).to.eql(["fooError", "bar"]);
       done();
     };
 
-    q.push({ name: 'foo' });
+    q.push({ name: "foo" });
 
-    q.push({ name: 'bar' }, error => {
+    q.push({ name: "bar" }, error => {
       expect(error).to.not.exist;
-      results.push('bar');
+      results.push("bar");
     });
   });
 
@@ -195,7 +195,7 @@ describe('queue', function() {
   // Start with a concurrency of 1. Wait until a leter event loop and change
   // the concurrency to 2. Wait again for a later loop then verify the concurrency
   // Repeat that one more time by chaning the concurrency to 5.
-  it('changing concurrency', done => {
+  it("changing concurrency", done => {
     const q = async.queue((task, callback) => {
       setTimeout(() => {
         callback();
@@ -203,7 +203,7 @@ describe('queue', function() {
     }, 1);
 
     for (let i = 0; i < 50; i++) {
-      q.push('');
+      q.push("");
     }
 
     q.drain = () => {
@@ -223,7 +223,7 @@ describe('queue', function() {
     }, 40);
   });
 
-  it('push without callback', function(done) {
+  it("push without callback", function(done) {
     // TODO: this.retries(3); // test can be flakey
 
     const call_order = [];
@@ -241,7 +241,7 @@ describe('queue', function() {
       setTimeout(() => {
         call_order.push(`process ${task}`);
         running--;
-        callback('error', 'arg');
+        callback("error", "arg");
       }, delays.shift());
     }, 2);
 
@@ -254,16 +254,16 @@ describe('queue', function() {
       expect(running).to.eql(0);
       expect(concurrencyList).to.eql([1, 2, 2, 2]);
       expect(call_order).to.eql([
-        'process 2',
-        'process 1',
-        'process 4',
-        'process 3'
+        "process 2",
+        "process 1",
+        "process 4",
+        "process 3"
       ]);
       done();
     };
   });
 
-  it('push with non-function', done => {
+  it("push with non-function", done => {
     const q = async.queue(() => {}, 1);
     expect(() => {
       q.push({}, 1);
@@ -271,7 +271,7 @@ describe('queue', function() {
     done();
   });
 
-  it('unshift', done => {
+  it("unshift", done => {
     const queue_order = [];
 
     const q = async.queue((task, callback) => {
@@ -290,7 +290,7 @@ describe('queue', function() {
     }, 100);
   });
 
-  it('too many callbacks', done => {
+  it("too many callbacks", done => {
     const q = async.queue((task, callback) => {
       callback();
       expect(() => {
@@ -302,7 +302,7 @@ describe('queue', function() {
     q.push(1);
   });
 
-  it('bulk task', done => {
+  it("bulk task", done => {
     const call_order = [];
     const delays = [40, 10, 60, 10];
 
@@ -313,12 +313,12 @@ describe('queue', function() {
     const q = async.queue((task, callback) => {
       setTimeout(() => {
         call_order.push(`process ${task}`);
-        callback('error', task);
+        callback("error", task);
       }, delays.splice(0, 1)[0]);
     }, 2);
 
     q.push([1, 2, 3, 4], (err, arg) => {
-      expect(err).to.equal('error');
+      expect(err).to.equal("error");
       call_order.push(`callback ${arg}`);
     });
 
@@ -327,14 +327,14 @@ describe('queue', function() {
 
     q.drain = () => {
       expect(call_order).to.eql([
-        'process 2',
-        'callback 2',
-        'process 1',
-        'callback 1',
-        'process 4',
-        'callback 4',
-        'process 3',
-        'callback 3'
+        "process 2",
+        "callback 2",
+        "process 1",
+        "callback 1",
+        "process 4",
+        "callback 4",
+        "process 3",
+        "callback 3"
       ]);
       expect(q.concurrency).to.equal(2);
       expect(q.length()).to.equal(0);
@@ -342,7 +342,7 @@ describe('queue', function() {
     };
   });
 
-  it('idle', done => {
+  it("idle", done => {
     const q = async.queue((task, callback) => {
       // Queue is busy when workers are running
       expect(q.idle()).to.equal(false);
@@ -367,11 +367,11 @@ describe('queue', function() {
     };
   });
 
-  it('pause', done => {
+  it("pause", done => {
     const call_order = [];
     let running = 0;
     const concurrencyList = [];
-    const pauseCalls = ['process 1', 'process 2', 'process 3'];
+    const pauseCalls = ["process 1", "process 2", "process 3"];
 
     const q = async.queue((task, callback) => {
       running++;
@@ -411,18 +411,18 @@ describe('queue', function() {
     function drain() {
       expect(concurrencyList).to.eql([1, 2, 2, 1, 2, 2]);
       expect(call_order).to.eql([
-        'process 1',
-        'process 2',
-        'process 3',
-        'process 4',
-        'process 5',
-        'process 6'
+        "process 1",
+        "process 2",
+        "process 3",
+        "process 4",
+        "process 5",
+        "process 6"
       ]);
       done();
     }
   });
 
-  it('pause in worker with concurrency', done => {
+  it("pause in worker with concurrency", done => {
     const call_order = [];
     const q = async.queue((task, callback) => {
       if (task.isLongRunning) {
@@ -450,7 +450,7 @@ describe('queue', function() {
     };
   });
 
-  it('start paused', done => {
+  it("start paused", done => {
     const q = async.queue((task, callback) => {
       setTimeout(() => {
         callback();
@@ -476,14 +476,14 @@ describe('queue', function() {
     };
   });
 
-  it('kill', done => {
+  it("kill", done => {
     const q = async.queue(() => /*task, callback*/ {
       setTimeout(() => {
-        throw new Error('Function should never be called');
+        throw new Error("Function should never be called");
       }, 20);
     }, 1);
     q.drain = () => {
-      throw new Error('Function should never be called');
+      throw new Error("Function should never be called");
     };
 
     q.push(0);
@@ -496,7 +496,7 @@ describe('queue', function() {
     }, 40);
   });
 
-  it('events', done => {
+  it("events", done => {
     const calls = [];
     const q = async.queue((task, cb) => {
       // nop
@@ -506,56 +506,56 @@ describe('queue', function() {
     q.concurrency = 3;
 
     q.saturated = () => {
-      assert(q.running() === 3, 'queue should be saturated now');
-      calls.push('saturated');
+      assert(q.running() === 3, "queue should be saturated now");
+      calls.push("saturated");
     };
     q.empty = () => {
-      assert(q.length() === 0, 'queue should be empty now');
-      calls.push('empty');
+      assert(q.length() === 0, "queue should be empty now");
+      calls.push("empty");
     };
     q.drain = () => {
       assert(
         q.length() === 0 && q.running() === 0,
-        'queue should be empty now and no more workers should be running'
+        "queue should be empty now and no more workers should be running"
       );
-      calls.push('drain');
+      calls.push("drain");
       expect(calls).to.eql([
-        'process foo',
-        'process bar',
-        'saturated',
-        'process zoo',
-        'foo cb',
-        'saturated',
-        'process poo',
-        'bar cb',
-        'empty',
-        'saturated',
-        'process moo',
-        'zoo cb',
-        'poo cb',
-        'moo cb',
-        'drain'
+        "process foo",
+        "process bar",
+        "saturated",
+        "process zoo",
+        "foo cb",
+        "saturated",
+        "process poo",
+        "bar cb",
+        "empty",
+        "saturated",
+        "process moo",
+        "zoo cb",
+        "poo cb",
+        "moo cb",
+        "drain"
       ]);
       done();
     };
-    q.push('foo', () => {
-      calls.push('foo cb');
+    q.push("foo", () => {
+      calls.push("foo cb");
     });
-    q.push('bar', () => {
-      calls.push('bar cb');
+    q.push("bar", () => {
+      calls.push("bar cb");
     });
-    q.push('zoo', () => {
-      calls.push('zoo cb');
+    q.push("zoo", () => {
+      calls.push("zoo cb");
     });
-    q.push('poo', () => {
-      calls.push('poo cb');
+    q.push("poo", () => {
+      calls.push("poo cb");
     });
-    q.push('moo', () => {
-      calls.push('moo cb');
+    q.push("moo", () => {
+      calls.push("moo cb");
     });
   });
 
-  it('empty', done => {
+  it("empty", done => {
     const calls = [];
     const q = async.queue((task, cb) => {
       // nop
@@ -566,17 +566,17 @@ describe('queue', function() {
     q.drain = () => {
       assert(
         q.length() === 0 && q.running() === 0,
-        'queue should be empty now and no more workers should be running'
+        "queue should be empty now and no more workers should be running"
       );
-      calls.push('drain');
-      expect(calls).to.eql(['drain']);
+      calls.push("drain");
+      expect(calls).to.eql(["drain"]);
       done();
     };
     q.push([]);
   });
 
   // #1367
-  it('empty and not idle()', done => {
+  it("empty and not idle()", done => {
     const calls = [];
     const q = async.queue((task, cb) => {
       // nop
@@ -585,23 +585,23 @@ describe('queue', function() {
     }, 1);
 
     q.empty = () => {
-      calls.push('empty');
+      calls.push("empty");
       assert(
         q.idle() === false,
-        'tasks should be running when empty is called'
+        "tasks should be running when empty is called"
       );
       expect(q.running()).to.equal(1);
     };
 
     q.drain = () => {
-      calls.push('drain');
-      expect(calls).to.eql(['empty', 'process 1', 'drain']);
+      calls.push("drain");
+      expect(calls).to.eql(["empty", "process 1", "drain"]);
       done();
     };
     q.push(1);
   });
 
-  it('saturated', done => {
+  it("saturated", done => {
     let saturatedCalled = false;
     const q = async.queue((task, cb) => {
       async.setImmediate(cb);
@@ -611,14 +611,14 @@ describe('queue', function() {
       saturatedCalled = true;
     };
     q.drain = () => {
-      assert(saturatedCalled, 'saturated not called');
+      assert(saturatedCalled, "saturated not called");
       done();
     };
 
-    q.push(['foo', 'bar', 'baz', 'moo']);
+    q.push(["foo", "bar", "baz", "moo"]);
   });
 
-  it('started', done => {
+  it("started", done => {
     const q = async.queue((task, cb) => {
       cb(null, task);
     });
@@ -629,56 +629,56 @@ describe('queue', function() {
     done();
   });
 
-  describe('q.saturated(): ', () => {
-    it('should call the saturated callback if tasks length is concurrency', done => {
+  describe("q.saturated(): ", () => {
+    it("should call the saturated callback if tasks length is concurrency", done => {
       const calls = [];
       const q = async.queue((task, cb) => {
         calls.push(`process ${task}`);
         async.setImmediate(cb);
       }, 4);
       q.saturated = () => {
-        calls.push('saturated');
+        calls.push("saturated");
       };
       q.empty = () => {
-        expect(calls.indexOf('saturated')).to.be.above(-1);
+        expect(calls.indexOf("saturated")).to.be.above(-1);
         setTimeout(() => {
           expect(calls).eql([
-            'process foo0',
-            'process foo1',
-            'process foo2',
-            'saturated',
-            'process foo3',
-            'foo0 cb',
-            'saturated',
-            'process foo4',
-            'foo1 cb',
-            'foo2 cb',
-            'foo3 cb',
-            'foo4 cb'
+            "process foo0",
+            "process foo1",
+            "process foo2",
+            "saturated",
+            "process foo3",
+            "foo0 cb",
+            "saturated",
+            "process foo4",
+            "foo1 cb",
+            "foo2 cb",
+            "foo3 cb",
+            "foo4 cb"
           ]);
           done();
         }, 50);
       };
-      q.push('foo0', () => {
-        calls.push('foo0 cb');
+      q.push("foo0", () => {
+        calls.push("foo0 cb");
       });
-      q.push('foo1', () => {
-        calls.push('foo1 cb');
+      q.push("foo1", () => {
+        calls.push("foo1 cb");
       });
-      q.push('foo2', () => {
-        calls.push('foo2 cb');
+      q.push("foo2", () => {
+        calls.push("foo2 cb");
       });
-      q.push('foo3', () => {
-        calls.push('foo3 cb');
+      q.push("foo3", () => {
+        calls.push("foo3 cb");
       });
-      q.push('foo4', () => {
-        calls.push('foo4 cb');
+      q.push("foo4", () => {
+        calls.push("foo4 cb");
       });
     });
   });
 
-  describe('q.unsaturated(): ', () => {
-    it('should have a default buffer property that equals 25% of the concurrenct rate', done => {
+  describe("q.unsaturated(): ", () => {
+    it("should have a default buffer property that equals 25% of the concurrenct rate", done => {
       const calls = [];
       const q = async.queue((task, cb) => {
         // nop
@@ -688,7 +688,7 @@ describe('queue', function() {
       expect(q.buffer).to.equal(2.5);
       done();
     });
-    it('should allow a user to change the buffer property', done => {
+    it("should allow a user to change the buffer property", done => {
       const calls = [];
       const q = async.queue((task, cb) => {
         // nop
@@ -700,58 +700,58 @@ describe('queue', function() {
       expect(q.buffer).to.equal(4);
       done();
     });
-    it('should call the unsaturated callback if tasks length is less than concurrency minus buffer', done => {
+    it("should call the unsaturated callback if tasks length is less than concurrency minus buffer", done => {
       const calls = [];
       const q = async.queue((task, cb) => {
         calls.push(`process ${task}`);
         async.setImmediate(cb);
       }, 4);
       q.unsaturated = () => {
-        calls.push('unsaturated');
+        calls.push("unsaturated");
       };
       q.empty = () => {
-        expect(calls.indexOf('unsaturated')).to.be.above(-1);
+        expect(calls.indexOf("unsaturated")).to.be.above(-1);
         setTimeout(() => {
           expect(calls).eql([
-            'process foo0',
-            'process foo1',
-            'process foo2',
-            'process foo3',
-            'foo0 cb',
-            'unsaturated',
-            'process foo4',
-            'foo1 cb',
-            'unsaturated',
-            'foo2 cb',
-            'unsaturated',
-            'foo3 cb',
-            'unsaturated',
-            'foo4 cb',
-            'unsaturated'
+            "process foo0",
+            "process foo1",
+            "process foo2",
+            "process foo3",
+            "foo0 cb",
+            "unsaturated",
+            "process foo4",
+            "foo1 cb",
+            "unsaturated",
+            "foo2 cb",
+            "unsaturated",
+            "foo3 cb",
+            "unsaturated",
+            "foo4 cb",
+            "unsaturated"
           ]);
           done();
         }, 50);
       };
-      q.push('foo0', () => {
-        calls.push('foo0 cb');
+      q.push("foo0", () => {
+        calls.push("foo0 cb");
       });
-      q.push('foo1', () => {
-        calls.push('foo1 cb');
+      q.push("foo1", () => {
+        calls.push("foo1 cb");
       });
-      q.push('foo2', () => {
-        calls.push('foo2 cb');
+      q.push("foo2", () => {
+        calls.push("foo2 cb");
       });
-      q.push('foo3', () => {
-        calls.push('foo3 cb');
+      q.push("foo3", () => {
+        calls.push("foo3 cb");
       });
-      q.push('foo4', () => {
-        calls.push('foo4 cb');
+      q.push("foo4", () => {
+        calls.push("foo4 cb");
       });
     });
   });
 
-  describe('workersList', () => {
-    it('should be the same length as running()', done => {
+  describe("workersList", () => {
+    it("should be the same length as running()", done => {
       const q = async.queue((task, cb) => {
         async.setImmediate(() => {
           expect(q.workersList().length).to.equal(q.running());
@@ -765,19 +765,19 @@ describe('queue', function() {
         done();
       };
 
-      q.push('foo');
-      q.push('bar');
-      q.push('baz');
+      q.push("foo");
+      q.push("bar");
+      q.push("baz");
     });
 
-    it('should contain the items being processed', done => {
+    it("should contain the items being processed", done => {
       const itemsBeingProcessed = {
-        foo: ['foo'],
-        foo_cb: ['foo', 'bar'],
-        bar: ['foo', 'bar'],
-        bar_cb: ['bar', 'baz'],
-        baz: ['bar', 'baz'],
-        baz_cb: ['baz']
+        foo: ["foo"],
+        foo_cb: ["foo", "bar"],
+        bar: ["foo", "bar"],
+        bar_cb: ["bar", "baz"],
+        baz: ["bar", "baz"],
+        baz_cb: ["baz"]
       };
 
       function getWorkersListData(q) {
@@ -802,13 +802,13 @@ describe('queue', function() {
         done();
       };
 
-      q.push('foo');
-      q.push('bar');
-      q.push('baz');
+      q.push("foo");
+      q.push("bar");
+      q.push("baz");
     });
   });
 
-  it('remove', done => {
+  it("remove", done => {
     const result = [];
     const q = async.queue((data, cb) => {
       result.push(data);

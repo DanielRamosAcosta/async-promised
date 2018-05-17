@@ -1,9 +1,9 @@
-import * as assert from 'assert';
-import * as async from 'async';
-import { expect } from 'chai';
+import * as assert from "assert";
+import * as async from "async";
+import { expect } from "chai";
 
-describe('times', () => {
-  it('times', done => {
+describe("times", () => {
+  it("times", done => {
     async.times(
       5,
       (n, next) => {
@@ -17,7 +17,7 @@ describe('times', () => {
     );
   });
 
-  it('times 3', done => {
+  it("times 3", done => {
     const args = [];
     async.times(
       3,
@@ -35,35 +35,35 @@ describe('times', () => {
     );
   });
 
-  it('times 0', done => {
+  it("times 0", done => {
     async.times(
       0,
       (n, callback) => {
-        assert(false, 'iteratee should not be called');
+        assert(false, "iteratee should not be called");
         callback();
       },
       err => {
         if (err) throw err;
-        assert(true, 'should call callback');
+        assert(true, "should call callback");
       }
     );
     setTimeout(done, 25);
   });
 
-  it('times error', done => {
+  it("times error", done => {
     async.times(
       3,
       (n, callback) => {
-        callback('error');
+        callback("error");
       },
       err => {
-        expect(err).to.equal('error');
+        expect(err).to.equal("error");
       }
     );
     setTimeout(done, 50);
   });
 
-  it('timesSeries', done => {
+  it("timesSeries", done => {
     const call_order = [];
     async.timesSeries(
       5,
@@ -81,20 +81,20 @@ describe('times', () => {
     );
   });
 
-  it('timesSeries error', done => {
+  it("timesSeries error", done => {
     async.timesSeries(
       5,
       (n, callback) => {
-        callback('error');
+        callback("error");
       },
       err => {
-        expect(err).to.equal('error');
+        expect(err).to.equal("error");
       }
     );
     setTimeout(done, 50);
   });
 
-  it('timesLimit', done => {
+  it("timesLimit", done => {
     const limit = 2;
     let running = 0;
     async.timesLimit(

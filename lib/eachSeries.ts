@@ -1,4 +1,4 @@
-import { eachSeries as asyncEachSeries } from 'async';
+import { eachSeries as asyncEachSeries } from "async";
 
 /**
  * The same as [`each`]{@link module:Collections.each} but runs only a single async operation at a time.

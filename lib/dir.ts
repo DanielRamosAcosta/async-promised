@@ -1,5 +1,5 @@
-import { dir as asyncDir } from 'async';
-import { callbackify } from './internal/asyncTransforms';
+import { dir as asyncDir } from "async";
+import { callbackify } from "./internal/asyncTransforms";
 
 /**
  * Logs the result of an [`async` function]{@link AsyncFunction} to the
@@ -31,7 +31,10 @@ import { callbackify } from './internal/asyncTransforms';
  * {hello: 'world'}
  */
 
-export default function dir<T>(fn: (...args: any[]) => Promise<any>, ...args: any[]) {
+export default function dir<T>(
+  fn: (...args: any[]) => Promise<any>,
+  ...args: any[]
+) {
   const fnCb = callbackify(fn);
   asyncDir(fnCb, ...args);
 }

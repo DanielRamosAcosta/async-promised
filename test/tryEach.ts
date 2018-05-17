@@ -1,20 +1,20 @@
-import * as assert from 'assert';
-import * as async from 'async';
-import { expect } from 'chai';
+import * as assert from "assert";
+import * as async from "async";
+import { expect } from "chai";
 
-describe('tryEach', () => {
-  it('no callback', () => {
+describe("tryEach", () => {
+  it("no callback", () => {
     async.tryEach([]);
   });
-  it('empty', done => {
+  it("empty", done => {
     async.tryEach([], (err, results) => {
       expect(err).to.equal(null);
       expect(results).to.eql(undefined);
       done();
     });
   });
-  it('one task, multiple results', done => {
-    const RESULTS = ['something', 'something2'];
+  it("one task, multiple results", done => {
+    const RESULTS = ["something", "something2"];
     async.tryEach(
       [
         callback => {
@@ -28,8 +28,8 @@ describe('tryEach', () => {
       }
     );
   });
-  it('one task', done => {
-    const RESULT = 'something';
+  it("one task", done => {
+    const RESULT = "something";
     async.tryEach(
       [
         callback => {
@@ -43,12 +43,12 @@ describe('tryEach', () => {
       }
     );
   });
-  it('two tasks, one failing', done => {
-    const RESULT = 'something';
+  it("two tasks, one failing", done => {
+    const RESULT = "something";
     async.tryEach(
       [
         callback => {
-          callback(new Error('Failure'), {});
+          callback(new Error("Failure"), {});
         },
         callback => {
           callback(null, RESULT);
@@ -61,12 +61,12 @@ describe('tryEach', () => {
       }
     );
   });
-  it('two tasks, both failing', done => {
-    const ERROR_RESULT = new Error('Failure2');
+  it("two tasks, both failing", done => {
+    const ERROR_RESULT = new Error("Failure2");
     async.tryEach(
       [
         callback => {
-          callback(new Error('Should not stop here'));
+          callback(new Error("Should not stop here"));
         },
         callback => {
           callback(ERROR_RESULT);
@@ -79,15 +79,15 @@ describe('tryEach', () => {
       }
     );
   });
-  it('two tasks, non failing', done => {
-    const RESULT = 'something';
+  it("two tasks, non failing", done => {
+    const RESULT = "something";
     async.tryEach(
       [
         callback => {
           callback(null, RESULT);
         },
         () => {
-          assert.fail('Should not been called');
+          assert.fail("Should not been called");
         }
       ],
       (err, results) => {

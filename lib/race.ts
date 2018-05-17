@@ -1,5 +1,5 @@
-import { race as asyncRace } from 'async';
-import { callbackify, resolveCallback } from './internal/asyncTransforms';
+import { race as asyncRace } from "async";
+import { callbackify, resolveCallback } from "./internal/asyncTransforms";
 
 /**
  * Runs the `tasks` array of functions in parallel, without waiting until the
@@ -33,7 +33,9 @@ import { callbackify, resolveCallback } from './internal/asyncTransforms';
 
 export default function race<T>(tasks: Array<(...args: any[]) => Promise<T>>) {
   if (!Array.isArray(tasks)) {
-    return Promise.reject(new TypeError('First argument to race must be an array of functions'));
+    return Promise.reject(
+      new TypeError("First argument to race must be an array of functions")
+    );
   }
   return new Promise((resolve, reject) => {
     asyncRace(tasks.map(t => callbackify(t)), resolveCallback(resolve, reject));

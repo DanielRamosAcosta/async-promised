@@ -1,4 +1,4 @@
-import { eachLimit as asyncEachLimit } from 'async';
+import { eachLimit as asyncEachLimit } from "async";
 
 /**
  * The same as [`each`]{@link module:Collections.each} but runs a maximum of `limit` async operations at a time.

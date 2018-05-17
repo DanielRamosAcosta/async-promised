@@ -1,4 +1,4 @@
-import { apply as asyncApply } from 'async';
+import { apply as asyncApply } from "async";
 
 /**
  * Creates a continuation function with some arguments already applied.

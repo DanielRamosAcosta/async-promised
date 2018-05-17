@@ -1,4 +1,4 @@
-import { rejectLimit as asyncRejectLimit } from 'async';
+import { rejectLimit as asyncRejectLimit } from "async";
 
 /**
  * The same as [`reject`]{@link module:Collections.reject} but runs a maximum of `limit` async operations at a

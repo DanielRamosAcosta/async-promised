@@ -1,4 +1,4 @@
-import { filterSeries as asyncFilterSeries } from 'async';
+import { filterSeries as asyncFilterSeries } from "async";
 
 /**
  * The same as [`filter`]{@link module:Collections.filter} but runs only a single async operation at a time.

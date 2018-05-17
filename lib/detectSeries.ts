@@ -1,4 +1,4 @@
-import { detectSeries as asyncDetectSeries } from 'async';
+import { detectSeries as asyncDetectSeries } from "async";
 
 /**
  * The same as [`detect`]{@link module:Collections.detect} but runs only a

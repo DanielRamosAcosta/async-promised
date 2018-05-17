@@ -1,8 +1,8 @@
-import DLL from '../lib/internal/DoublyLinkedList';
+import DLL from "../lib/internal/DoublyLinkedList";
 
-describe('DoublyLinkedList', () => {
-  it('toArray', () => {
-    const list = new DLL<{data: number}>();
+describe("DoublyLinkedList", () => {
+  it("toArray", () => {
+    const list = new DLL<{ data: number }>();
     expect(list.toArray()).toEqual([]);
 
     for (let i = 0; i < 5; i++) {
@@ -11,8 +11,8 @@ describe('DoublyLinkedList', () => {
     expect(list.toArray()).toEqual([0, 1, 2, 3, 4]);
   });
 
-  it('remove', () => {
-    const list = new DLL<{data: number}>();
+  it("remove", () => {
+    const list = new DLL<{ data: number }>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -23,8 +23,8 @@ describe('DoublyLinkedList', () => {
     expect(list.toArray()).toEqual([0, 1, 2, 4]);
   });
 
-  it('remove (head)', () => {
-    const list = new DLL<{data: number}>();
+  it("remove (head)", () => {
+    const list = new DLL<{ data: number }>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -35,8 +35,8 @@ describe('DoublyLinkedList', () => {
     expect(list.toArray()).toEqual([1, 2, 3, 4]);
   });
 
-  it('remove (tail)', () => {
-    const list = new DLL<{data: number}>();
+  it("remove (tail)", () => {
+    const list = new DLL<{ data: number }>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -47,8 +47,8 @@ describe('DoublyLinkedList', () => {
     expect(list.toArray()).toEqual([0, 1, 2, 3]);
   });
 
-  it('remove (all)', () => {
-    const list = new DLL<{data: number}>();
+  it("remove (all)", () => {
+    const list = new DLL<{ data: number }>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });
@@ -59,8 +59,8 @@ describe('DoublyLinkedList', () => {
     expect(list.toArray()).toEqual([]);
   });
 
-  it('empty', () => {
-    const list = new DLL<{data: number}>();
+  it("empty", () => {
+    const list = new DLL<{ data: number }>();
 
     for (let i = 0; i < 5; i++) {
       list.push({ data: i });

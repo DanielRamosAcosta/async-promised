@@ -26,7 +26,7 @@ async function main() {
       filename,
       usesCallbackAsync: usesCallbackAsync(content)
     }))
-  
+
   const todoContent = renderTodo(filesUsingCallbacksAsync)
   await fs.writeFile(resolve(__dirname, '../TODO.md'), todoContent)
 }
@@ -36,7 +36,7 @@ function renderTodo(filesUsingCallbacksAsync) {
     # Methods that needs to be implemented
 
     > This file is generated, can be updated using ${'`'}update-todo${'`'}
-    
+
     Current implement status: ${getImplementedPercentage(filesUsingCallbacksAsync)}%
 
     ${filesUsingCallbacksAsync.map(renderImplemented).join('\n')}

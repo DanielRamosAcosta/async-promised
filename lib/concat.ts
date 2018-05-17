@@ -1,5 +1,5 @@
-import { concat as asyncConcat } from 'async';
-import { callbackify, resolveCallback } from './internal/asyncTransforms';
+import { concat as asyncConcat } from "async";
+import { callbackify, resolveCallback } from "./internal/asyncTransforms";
 
 /**
  * Applies `iteratee` to each item in `coll`, concatenating the results. Returns

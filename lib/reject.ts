@@ -1,4 +1,4 @@
-import { reject as asyncReject } from 'async';
+import { reject as asyncReject } from "async";
 
 /**
  * The opposite of [`filter`]{@link module:Collections.filter}. Removes values that pass an `async` truth test.

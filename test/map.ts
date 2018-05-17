@@ -1,8 +1,8 @@
-import * as assert from 'assert';
-import * as async from 'async';
-import { expect } from 'chai';
+import * as assert from "assert";
+import * as async from "async";
+import { expect } from "chai";
 
-describe('map', () => {
+describe("map", () => {
   function mapIteratee(call_order, x, callback) {
     setTimeout(() => {
       call_order.push(x);
@@ -10,7 +10,7 @@ describe('map', () => {
     }, x * 25);
   }
 
-  it('basic', function(done) {
+  it("basic", function(done) {
     const call_order = [];
     async.map([1, 3, 2], mapIteratee.bind(this, call_order), (err, results) => {
       assert(err === null, `${err} passed instead of 'null'`);
@@ -20,7 +20,7 @@ describe('map', () => {
     });
   });
 
-  it('with reflect', done => {
+  it("with reflect", done => {
     const call_order = [];
     async.map(
       [1, 3, 2],
@@ -49,7 +49,7 @@ describe('map', () => {
     );
   });
 
-  it('error with reflect', done => {
+  it("error with reflect", done => {
     const call_order = [];
     async.map(
       [-1, 1, 3, 2],
@@ -57,7 +57,7 @@ describe('map', () => {
         setTimeout(() => {
           call_order.push(item);
           if (item < 0) {
-            cb('number less then zero');
+            cb("number less then zero");
           } else {
             cb(null, item * 2);
           }
@@ -68,7 +68,7 @@ describe('map', () => {
         expect(call_order).to.eql([-1, 1, 2, 3]);
         expect(results).to.eql([
           {
-            error: 'number less then zero'
+            error: "number less then zero"
           },
           {
             value: 2
@@ -85,7 +85,7 @@ describe('map', () => {
     );
   });
 
-  it('map original untouched', done => {
+  it("map original untouched", done => {
     const a = [1, 2, 3];
     async.map(
       a,
@@ -100,7 +100,7 @@ describe('map', () => {
     );
   });
 
-  it('map without main callback', done => {
+  it("map without main callback", done => {
     const a = [1, 2, 3];
     const r = [];
     async.map(a, (x, callback) => {
@@ -114,20 +114,20 @@ describe('map', () => {
     });
   });
 
-  it('map error', done => {
+  it("map error", done => {
     async.map(
       [1, 2, 3],
       (x, callback) => {
-        callback('error');
+        callback("error");
       },
       err => {
-        expect(err).to.equal('error');
+        expect(err).to.equal("error");
       }
     );
     setTimeout(done, 50);
   });
 
-  it('map undefined array', done => {
+  it("map undefined array", done => {
     async.map(
       undefined,
       (x, callback) => {
@@ -141,7 +141,7 @@ describe('map', () => {
     setTimeout(done, 50);
   });
 
-  it('map object', done => {
+  it("map object", done => {
     async.map(
       {
         a: 1,
@@ -154,7 +154,7 @@ describe('map', () => {
       (err, result) => {
         if (err) throw err;
         expect(Object.prototype.toString.call(result)).to.equal(
-          '[object Array]'
+          "[object Array]"
         );
         expect(result).to.contain(2);
         expect(result).to.contain(4);
@@ -164,7 +164,7 @@ describe('map', () => {
     );
   });
 
-  it('mapSeries', function(done) {
+  it("mapSeries", function(done) {
     const call_order = [];
     async.mapSeries(
       [1, 3, 2],
@@ -178,20 +178,20 @@ describe('map', () => {
     );
   });
 
-  it('mapSeries error', done => {
+  it("mapSeries error", done => {
     async.mapSeries(
       [1, 2, 3],
       (x, callback) => {
-        callback('error');
+        callback("error");
       },
       err => {
-        expect(err).to.equal('error');
+        expect(err).to.equal("error");
       }
     );
     setTimeout(done, 50);
   });
 
-  it('mapSeries undefined array', done => {
+  it("mapSeries undefined array", done => {
     async.mapSeries(
       undefined,
       (x, callback) => {
@@ -205,7 +205,7 @@ describe('map', () => {
     setTimeout(done, 50);
   });
 
-  it('mapSeries object', done => {
+  it("mapSeries object", done => {
     async.mapSeries(
       {
         a: 1,
@@ -225,7 +225,7 @@ describe('map', () => {
     );
   });
 
-  it('mapLimit', function(done) {
+  it("mapLimit", function(done) {
     const call_order = [];
     async.mapLimit(
       [2, 4, 3],
@@ -240,23 +240,23 @@ describe('map', () => {
     );
   });
 
-  it('mapLimit empty array', done => {
+  it("mapLimit empty array", done => {
     async.mapLimit(
       [],
       2,
       (x, callback) => {
-        assert(false, 'iteratee should not be called');
+        assert(false, "iteratee should not be called");
         callback();
       },
       err => {
         if (err) throw err;
-        assert(true, 'should call callback');
+        assert(true, "should call callback");
       }
     );
     setTimeout(done, 25);
   });
 
-  it('mapLimit undefined array', done => {
+  it("mapLimit undefined array", done => {
     async.mapLimit(
       undefined,
       2,
@@ -271,7 +271,7 @@ describe('map', () => {
     setTimeout(done, 50);
   });
 
-  it('mapLimit limit exceeds size', function(done) {
+  it("mapLimit limit exceeds size", function(done) {
     const call_order = [];
     async.mapLimit(
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -285,7 +285,7 @@ describe('map', () => {
     );
   });
 
-  it('mapLimit limit equal size', function(done) {
+  it("mapLimit limit equal size", function(done) {
     const call_order = [];
     async.mapLimit(
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -299,23 +299,23 @@ describe('map', () => {
     );
   });
 
-  it('mapLimit zero limit', done => {
+  it("mapLimit zero limit", done => {
     async.mapLimit(
       [0, 1, 2, 3, 4, 5],
       0,
       (x, callback) => {
-        assert(false, 'iteratee should not be called');
+        assert(false, "iteratee should not be called");
         callback();
       },
       (err, results) => {
         expect(results).to.eql([]);
-        assert(true, 'should call callback');
+        assert(true, "should call callback");
       }
     );
     setTimeout(done, 25);
   });
 
-  it('mapLimit error', done => {
+  it("mapLimit error", done => {
     const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     const call_order = [];
 
@@ -325,18 +325,18 @@ describe('map', () => {
       (x, callback) => {
         call_order.push(x);
         if (x === 2) {
-          callback('error');
+          callback("error");
         }
       },
       err => {
         expect(call_order).to.eql([0, 1, 2]);
-        expect(err).to.equal('error');
+        expect(err).to.equal("error");
       }
     );
     setTimeout(done, 25);
   });
 
-  it('mapLimit does not continue replenishing after error', done => {
+  it("mapLimit does not continue replenishing after error", done => {
     let started = 0;
     const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     const delay = 10;
@@ -349,7 +349,7 @@ describe('map', () => {
       (x, callback) => {
         started++;
         if (started === 3) {
-          return callback(new Error('Test Error'));
+          return callback(new Error("Test Error"));
         }
         setTimeout(() => {
           callback();
@@ -364,12 +364,12 @@ describe('map', () => {
     }, maxTime);
   });
 
-  it('map with Map', done => {
-    if (typeof Map !== 'function') return done();
+  it("map with Map", done => {
+    if (typeof Map !== "function") return done();
 
     const map = new Map();
-    map.set(1, 'a');
-    map.set(2, 'b');
+    map.set(1, "a");
+    map.set(2, "b");
     async.map(
       map,
       (val, cb) => {
@@ -378,7 +378,7 @@ describe('map', () => {
       (err, result) => {
         assert(
           Array.isArray(result),
-          'map should return an array for an iterable'
+          "map should return an array for an iterable"
         );
         done();
       }
@@ -386,7 +386,7 @@ describe('map', () => {
   });
 
   // Issue 1106 on github: https://github.com/caolan/async/issues/1106
-  it('map main callback is called only once', done => {
+  it("map main callback is called only once", done => {
     async.map(
       [1, 2],
       (item, callback) => {

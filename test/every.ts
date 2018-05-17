@@ -1,9 +1,9 @@
-import * as async from 'async';
-import { expect } from 'chai';
-import * as _ from 'lodash';
+import * as async from "async";
+import { expect } from "chai";
+import * as _ from "lodash";
 
-describe('every', () => {
-  it('everyLimit true', done => {
+describe("every", () => {
+  it("everyLimit true", done => {
     async.everyLimit(
       [3, 1, 2],
       1,
@@ -20,7 +20,7 @@ describe('every', () => {
     );
   });
 
-  it('everyLimit false', done => {
+  it("everyLimit false", done => {
     async.everyLimit(
       [3, 1, 2],
       2,
@@ -37,7 +37,7 @@ describe('every', () => {
     );
   });
 
-  it('everyLimit short-circuit', done => {
+  it("everyLimit short-circuit", done => {
     let calls = 0;
     async.everyLimit(
       [3, 1, 2],
@@ -55,7 +55,7 @@ describe('every', () => {
     );
   });
 
-  it('true', done => {
+  it("true", done => {
     async.every(
       [1, 2, 3],
       (x, callback) => {
@@ -71,7 +71,7 @@ describe('every', () => {
     );
   });
 
-  it('false', done => {
+  it("false", done => {
     async.every(
       [1, 2, 3],
       (x, callback) => {
@@ -87,7 +87,7 @@ describe('every', () => {
     );
   });
 
-  it('early return', done => {
+  it("early return", done => {
     const call_order = [];
     async.every(
       [1, 2, 3],
@@ -98,32 +98,32 @@ describe('every', () => {
         }, x * 5);
       },
       () => {
-        call_order.push('callback');
+        call_order.push("callback");
       }
     );
     setTimeout(() => {
-      expect(call_order).to.eql([1, 2, 'callback', 3]);
+      expect(call_order).to.eql([1, 2, "callback", 3]);
       done();
     }, 25);
   });
 
-  it('error', done => {
+  it("error", done => {
     async.every(
       [1, 2, 3],
       (x, callback) => {
         setTimeout(() => {
-          callback('error');
+          callback("error");
         }, 0);
       },
       (err, result) => {
-        expect(err).to.equal('error');
+        expect(err).to.equal("error");
         expect(result).to.not.exist;
         done();
       }
     );
   });
 
-  it('everySeries doesn\'t cause stack overflow (#1293)', done => {
+  it("everySeries doesn't cause stack overflow (#1293)", done => {
     const arr = _.range(10000);
     let calls = 0;
     async.everySeries(
@@ -140,7 +140,7 @@ describe('every', () => {
     );
   });
 
-  it('everyLimit doesn\'t cause stack overflow (#1293)', done => {
+  it("everyLimit doesn't cause stack overflow (#1293)", done => {
     const arr = _.range(10000);
     let calls = 0;
     async.everyLimit(
@@ -158,16 +158,16 @@ describe('every', () => {
     );
   });
 
-  it('all alias', () => {
+  it("all alias", () => {
     expect(async.all).to.equal(async.every);
   });
 
-  it('allLimit alias', () => {
+  it("allLimit alias", () => {
     expect(async.allLimit).to.equal(async.everyLimit);
   });
 
-  it('allSeries alias', () => {
-    expect(async.allSeries).to.be.a('function');
+  it("allSeries alias", () => {
+    expect(async.allSeries).to.be.a("function");
     expect(async.allSeries).to.equal(async.everySeries);
   });
 });

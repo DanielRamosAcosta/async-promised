@@ -1,4 +1,4 @@
-import { rejectSeries as asyncRejectSeries } from 'async';
+import { rejectSeries as asyncRejectSeries } from "async";
 
 /**
  * The same as [`reject`]{@link module:Collections.reject} but runs only a single async operation at a time.

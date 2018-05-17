@@ -1,9 +1,9 @@
-import * as assert from 'assert';
-import * as async from 'async';
-import { expect } from 'chai';
+import * as assert from "assert";
+import * as async from "async";
+import { expect } from "chai";
 
-describe('reduce', () => {
-  it('reduce', done => {
+describe("reduce", () => {
+  it("reduce", done => {
     const call_order = [];
     async.reduce(
       [1, 2, 3],
@@ -21,7 +21,7 @@ describe('reduce', () => {
     );
   });
 
-  it('reduce async with non-reference memo', done => {
+  it("reduce async with non-reference memo", done => {
     async.reduce(
       [1, 3, 2],
       0,
@@ -37,31 +37,31 @@ describe('reduce', () => {
     );
   });
 
-  it('reduce error', done => {
+  it("reduce error", done => {
     async.reduce(
       [1, 2, 3],
       0,
       (a, x, callback) => {
-        callback('error');
+        callback("error");
       },
       err => {
-        expect(err).to.equal('error');
+        expect(err).to.equal("error");
       }
     );
     setTimeout(done, 50);
   });
 
-  it('inject alias', done => {
+  it("inject alias", done => {
     expect(async.inject).to.equal(async.reduce);
     done();
   });
 
-  it('foldl alias', done => {
+  it("foldl alias", done => {
     expect(async.foldl).to.equal(async.reduce);
     done();
   });
 
-  it('reduceRight', done => {
+  it("reduceRight", done => {
     const call_order = [];
     const a = [1, 2, 3];
     async.reduceRight(
@@ -80,7 +80,7 @@ describe('reduce', () => {
     );
   });
 
-  it('foldr alias', done => {
+  it("foldr alias", done => {
     expect(async.foldr).to.equal(async.reduceRight);
     done();
   });

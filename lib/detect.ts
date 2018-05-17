@@ -1,4 +1,4 @@
-import { detect as asyncDetect } from 'async';
+import { detect as asyncDetect } from "async";
 
 /**
  * Returns the first value in `coll` that passes an async truth test. The

@@ -1,5 +1,9 @@
-import { auto as asyncAuto, Dictionary } from 'async';
-import { AsyncResultPromise, callbackify, resolveCallback } from './internal/asyncTransforms';
+import { auto as asyncAuto, Dictionary } from "async";
+import {
+  AsyncResultPromise,
+  callbackify,
+  resolveCallback
+} from "./internal/asyncTransforms";
 
 export type AsyncAutoTasks<R extends Dictionary<any>> = {
   [K in keyof R]: AsyncAutoTask<R[K], R>
@@ -92,19 +96,23 @@ export default function auto<R extends Dictionary<any>>(
   tasks: AsyncAutoTasks<R>,
   concurrency: number = Infinity
 ): Promise<R> {
-  const newTaks = Object.keys(tasks).reduce((previusValue: object, taskName) => {
-    const dependencies = tasks[taskName];
-    return {
-      ...previusValue,
-      [taskName]: Array.isArray(dependencies)
-        ? dependencies.map((something: AsyncResultPromise | string) =>
-          typeof something === 'function'
-          ? callbackify(something)
-          : something
-          )
-      : callbackify(dependencies)
-    };
-  }, {});
+  const newTaks = Object.keys(tasks).reduce(
+    (previusValue: object, taskName) => {
+      const dependencies = tasks[taskName];
+      return {
+        ...previusValue,
+        [taskName]: Array.isArray(dependencies)
+          ? dependencies.map(
+              (something: AsyncResultPromise | string) =>
+                typeof something === "function"
+                  ? callbackify(something)
+                  : something
+            )
+          : callbackify(dependencies)
+      };
+    },
+    {}
+  );
   return new Promise((resolve, reject) => {
     asyncAuto(newTaks, concurrency, resolveCallback(resolve, reject));
   });

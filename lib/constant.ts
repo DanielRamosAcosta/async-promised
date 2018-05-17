@@ -1,4 +1,4 @@
-import { constant as asyncConstant } from 'async';
+import { constant as asyncConstant } from "async";
 
 /**
  * Returns a function that when called, calls-back with the values provided.

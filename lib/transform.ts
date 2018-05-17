@@ -1,5 +1,5 @@
-import { transform as transformEach } from 'async';
-import { callbackify, resolveCallback } from './internal/asyncTransforms';
+import { transform as transformEach } from "async";
+import { callbackify, resolveCallback } from "./internal/asyncTransforms";
 
 /**
  * A relative of `reduce`.  Takes an Object or Array, and iterates over each

@@ -1,83 +1,83 @@
-import * as async from '../lib';
-import sleep from './support/sleep';
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
-describe('applyEach', () => {
-  it('applyEach', () => {
+describe("applyEach", () => {
+  it("applyEach", () => {
     const callOrder = [];
     const one = async val => {
       expect(val).toEqual(5);
       await sleep(24);
-      callOrder.push('one');
+      callOrder.push("one");
       return 1;
     };
     const two = async val => {
       expect(val).toEqual(5);
       await sleep(0);
-      callOrder.push('two');
+      callOrder.push("two");
       return 2;
     };
     const three = async val => {
       expect(val).toEqual(5);
       await sleep(36);
-      callOrder.push('three');
+      callOrder.push("three");
       return 3;
     };
 
     return async.applyEach([one, two, three], 5)
       .then(results => {
-        expect(callOrder).toEqual(['two', 'one', 'three']);
+        expect(callOrder).toEqual(["two", "one", "three"]);
         expect(results).toEqual([1, 2, 3]);
       });
   });
 
-  it('applyEachSeries', () => {
+  it("applyEachSeries", () => {
     const callOrder = [];
 
     const one = async val => {
       expect(val).toEqual(5);
       await sleep(10);
-      callOrder.push('one');
+      callOrder.push("one");
       return 1;
     };
     const two = async val => {
       expect(val).toEqual(5);
       await sleep(5);
-      callOrder.push('two');
+      callOrder.push("two");
       return 2;
     };
     const three = async val => {
       expect(val).toEqual(5);
       await sleep(15);
-      callOrder.push('three');
+      callOrder.push("three");
       return 3;
     };
 
     return async.applyEachSeries([one, two, three], 5)
       .then(results => {
-        expect(callOrder).toEqual(['one', 'two', 'three']);
+        expect(callOrder).toEqual(["one", "two", "three"]);
         expect(results).toEqual([1, 2, 3]);
       });
     });
   });
 
-it('applyEach partial application', () => {
+it("applyEach partial application", () => {
   const callOrder = [];
   const one = async val => {
     expect(val).toEqual(5);
     await sleep(30);
-    callOrder.push('one');
+    callOrder.push("one");
     return 1;
   };
   const two = async val => {
     expect(val).toEqual(5);
     await sleep(15);
-    callOrder.push('two');
+    callOrder.push("two");
     return 2;
   };
   const three = async val => {
     expect(val).toEqual(5);
     await sleep(45);
-    callOrder.push('three');
+    callOrder.push("three");
     return 3;
   };
 
@@ -87,7 +87,7 @@ it('applyEach partial application', () => {
       respect(err).to.not.exist;
     })
     .then(results => {
-      expect(callOrder).toEqual(['two', 'one', 'three']);
+      expect(callOrder).toEqual(["two", "one", "three"]);
       expect(results).toEqual([1, 2, 3]);
     });
   });

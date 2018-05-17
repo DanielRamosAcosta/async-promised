@@ -1,10 +1,10 @@
-import * as assert from 'assert';
-import * as async from 'async';
-import { expect } from 'chai';
-import getFunctionsObject from './support/get-function-object';
+import * as assert from "assert";
+import * as async from "async";
+import { expect } from "chai";
+import getFunctionsObject from "./support/get-function-object";
 
-describe('parallel', () => {
-  it('parallel', done => {
+describe("parallel", () => {
+  it("parallel", done => {
     const call_order = [];
     async.parallel(
       [
@@ -36,7 +36,7 @@ describe('parallel', () => {
     );
   });
 
-  it('parallel empty array', done => {
+  it("parallel empty array", done => {
     async.parallel([], (err, results) => {
       assert(err === null, `${err} passed instead of 'null'`);
       expect(results).to.eql([]);
@@ -44,24 +44,24 @@ describe('parallel', () => {
     });
   });
 
-  it('parallel error', done => {
+  it("parallel error", done => {
     async.parallel(
       [
         callback => {
-          callback('error', 1);
+          callback("error", 1);
         },
         callback => {
-          callback('error2', 2);
+          callback("error2", 2);
         }
       ],
       err => {
-        expect(err).to.equal('error');
+        expect(err).to.equal("error");
       }
     );
     setTimeout(done, 100);
   });
 
-  it('parallel no callback', done => {
+  it("parallel no callback", done => {
     async.parallel([
       callback => {
         callback();
@@ -73,7 +73,7 @@ describe('parallel', () => {
     ]);
   });
 
-  it('parallel object', done => {
+  it("parallel object", done => {
     const call_order = [];
     async.parallel(getFunctionsObject(call_order), (err, results) => {
       expect(err).to.equal(null);
@@ -88,7 +88,7 @@ describe('parallel', () => {
   });
 
   // Issue 10 on github: https://github.com/caolan/async/issues#issue/10
-  it('paralel falsy return values', done => {
+  it("paralel falsy return values", done => {
     function taskFalse(callback) {
       async.nextTick(() => {
         callback(null, false);
@@ -122,7 +122,7 @@ describe('parallel', () => {
     );
   });
 
-  it('parallel limit', done => {
+  it("parallel limit", done => {
     const call_order = [];
     async.parallelLimit(
       [
@@ -155,7 +155,7 @@ describe('parallel', () => {
     );
   });
 
-  it('parallel limit empty array', done => {
+  it("parallel limit empty array", done => {
     async.parallelLimit([], 2, (err, results) => {
       assert(err === null, `${err} passed instead of 'null'`);
       expect(results).to.eql([]);
@@ -163,25 +163,25 @@ describe('parallel', () => {
     });
   });
 
-  it('parallel limit error', done => {
+  it("parallel limit error", done => {
     async.parallelLimit(
       [
         callback => {
-          callback('error', 1);
+          callback("error", 1);
         },
         callback => {
-          callback('error2', 2);
+          callback("error2", 2);
         }
       ],
       1,
       err => {
-        expect(err).to.equal('error');
+        expect(err).to.equal("error");
       }
     );
     setTimeout(done, 100);
   });
 
-  it('parallel limit no callback', done => {
+  it("parallel limit no callback", done => {
     async.parallelLimit(
       [
         callback => {
@@ -196,7 +196,7 @@ describe('parallel', () => {
     );
   });
 
-  it('parallel limit object', done => {
+  it("parallel limit object", done => {
     const call_order = [];
     async.parallelLimit(getFunctionsObject(call_order), 2, (err, results) => {
       expect(err).to.equal(null);
@@ -210,35 +210,43 @@ describe('parallel', () => {
     });
   });
 
-  it('parallel call in another context @nycinvalid @nodeonly', done => {
-    const vm = require('vm');
+  it("parallel call in another context @nycinvalid @nodeonly", done => {
+    const vm = require("vm");
     const sandbox = {
-        async,
-        done
+      async,
+      done
     };
 
-    const fn = '(' + (function() {
-        async.parallel([function(callback) {
-            callback();
-        }], function(err) {
+    const fn =
+      "(" +
+      function() {
+        async.parallel(
+          [
+            function(callback) {
+              callback();
+            }
+          ],
+          function(err) {
             if (err) {
-                return done(err);
+              return done(err);
             }
             done();
-        });
-    }).toString() + '())';
+          }
+        );
+      }.toString() +
+      "())";
 
     vm.runInNewContext(fn, sandbox);
   });
 
-  it('parallel error with reflect', done => {
+  it("parallel error with reflect", done => {
     async.parallel(
       [
         async.reflect(callback => {
-          callback('error', 1);
+          callback("error", 1);
         }),
         async.reflect(callback => {
-          callback('error2', 2);
+          callback("error2", 2);
         }),
         async.reflect(callback => {
           callback(null, 2);
@@ -247,8 +255,8 @@ describe('parallel', () => {
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
         expect(results).to.eql([
-          { error: 'error' },
-          { error: 'error2' },
+          { error: "error" },
+          { error: "error2" },
           { value: 2 }
         ]);
         done();
@@ -256,34 +264,34 @@ describe('parallel', () => {
     );
   });
 
-  it('parallel object with reflect all (values and errors)', done => {
+  it("parallel object with reflect all (values and errors)", done => {
     const tasks = {
       one(callback) {
         setTimeout(() => {
-          callback(null, 'one');
+          callback(null, "one");
         }, 200);
       },
       two(callback) {
-        callback('two');
+        callback("two");
       },
       three(callback) {
         setTimeout(() => {
-          callback(null, 'three');
+          callback(null, "three");
         }, 100);
       }
     };
 
     async.parallel(async.reflectAll(tasks), (err, results) => {
       expect(results).to.eql({
-        one: { value: 'one' },
-        two: { error: 'two' },
-        three: { value: 'three' }
+        one: { value: "one" },
+        two: { error: "two" },
+        three: { value: "three" }
       });
       done();
     });
   });
 
-  it('parallel empty object with reflect all', done => {
+  it("parallel empty object with reflect all", done => {
     const tasks = {};
 
     async.parallel(async.reflectAll(tasks), (err, results) => {
@@ -292,53 +300,53 @@ describe('parallel', () => {
     });
   });
 
-  it('parallel empty object with reflect all (errors)', done => {
+  it("parallel empty object with reflect all (errors)", done => {
     const tasks = {
       one(callback) {
-        callback('one');
+        callback("one");
       },
       two(callback) {
-        callback('two');
+        callback("two");
       },
       three(callback) {
-        callback('three');
+        callback("three");
       }
     };
 
     async.parallel(async.reflectAll(tasks), (err, results) => {
       expect(results).to.eql({
-        one: { error: 'one' },
-        two: { error: 'two' },
-        three: { error: 'three' }
+        one: { error: "one" },
+        two: { error: "two" },
+        three: { error: "three" }
       });
       done();
     });
   });
 
-  it('parallel empty object with reflect all (values)', done => {
+  it("parallel empty object with reflect all (values)", done => {
     const tasks = {
       one(callback) {
-        callback(null, 'one');
+        callback(null, "one");
       },
       two(callback) {
-        callback(null, 'two');
+        callback(null, "two");
       },
       three(callback) {
-        callback(null, 'three');
+        callback(null, "three");
       }
     };
 
     async.parallel(async.reflectAll(tasks), (err, results) => {
       expect(results).to.eql({
-        one: { value: 'one' },
-        two: { value: 'two' },
-        three: { value: 'three' }
+        one: { value: "one" },
+        two: { value: "two" },
+        three: { value: "three" }
       });
       done();
     });
   });
 
-  it('parallel does not continue replenishing after error', done => {
+  it("parallel does not continue replenishing after error", done => {
     let started = 0;
     const arr = [
       funcToCall,
@@ -357,7 +365,7 @@ describe('parallel', () => {
     function funcToCall(callback) {
       started++;
       if (started === 3) {
-        return callback(new Error('Test Error'));
+        return callback(new Error("Test Error"));
       }
       setTimeout(() => {
         callback();

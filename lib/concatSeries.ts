@@ -1,5 +1,5 @@
-import { concatSeries as asyncConcatSeries } from 'async';
-import { callbackify, resolveCallback } from './internal/asyncTransforms';
+import { concatSeries as asyncConcatSeries } from "async";
+import { callbackify, resolveCallback } from "./internal/asyncTransforms";
 
 /**
  * The same as [`concat`]{@link module:Collections.concat} but runs only a single async operation at a time.
@@ -24,6 +24,10 @@ export default function concat<T>(
   iteratee: (item: T) => Promise<any>
 ): Promise<any> {
   return new Promise((resolve, reject) => {
-    asyncConcatSeries(coll, callbackify(iteratee), resolveCallback(resolve, reject));
+    asyncConcatSeries(
+      coll,
+      callbackify(iteratee),
+      resolveCallback(resolve, reject)
+    );
   });
 }

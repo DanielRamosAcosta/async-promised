@@ -1,5 +1,8 @@
-import { waterfall as asyncWaterfall } from 'async';
-import { AsyncResultPromise, callbackifyFuncs } from './internal/asyncTransforms';
+import { waterfall as asyncWaterfall } from "async";
+import {
+  AsyncResultPromise,
+  callbackifyFuncs
+} from "./internal/asyncTransforms";
 
 /**
  * Runs the `tasks` array of functions in series, each passing their results to
@@ -57,9 +60,7 @@ import { AsyncResultPromise, callbackifyFuncs } from './internal/asyncTransforms
  * }
  */
 
-export default function waterfall(
-  tasks: AsyncResultPromise[]
-): Promise<void> {
+export default function waterfall(tasks: AsyncResultPromise[]): Promise<void> {
   return new Promise((resolve, reject) => {
     asyncWaterfall(
       callbackifyFuncs(tasks),

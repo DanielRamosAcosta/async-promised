@@ -1,62 +1,62 @@
-import * as async from '../lib';
-import sleep from './support/sleep';
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
-describe('auto', () => {
-  it('basics', () => {
+describe("auto", () => {
+  it("basics", () => {
     const callOrder = [];
     return async
       .auto({
         task1: [
-          'task2',
+          "task2",
           async results => {
             await sleep(25);
-            callOrder.push('task1');
+            callOrder.push("task1");
           }
         ],
         async task2() {
-          callOrder.push('task2');
+          callOrder.push("task2");
           await sleep(50);
         },
         task3: [
-          'task2',
+          "task2",
           async results => {
-            callOrder.push('task3');
+            callOrder.push("task3");
           }
         ],
         task4: [
-          'task1',
-          'task2',
+          "task1",
+          "task2",
           async results => {
-            callOrder.push('task4');
+            callOrder.push("task4");
           }
         ],
         task5: [
-          'task2',
+          "task2",
           async results => {
             await sleep(0);
-            callOrder.push('task5');
+            callOrder.push("task5");
           }
         ],
         task6: [
-          'task2',
+          "task2",
           async results => {
-            callOrder.push('task6');
+            callOrder.push("task6");
           }
         ]
       })
       .then(() => {
         expect(callOrder).toEqual([
-          'task2',
-          'task3',
-          'task6',
-          'task5',
-          'task1',
-          'task4'
+          "task2",
+          "task3",
+          "task6",
+          "task5",
+          "task1",
+          "task4"
         ]);
       });
   });
 
-  it('auto concurrency', () => {
+  it("auto concurrency", () => {
     const concurrency = 2;
     const runningTasks = [];
 
@@ -72,12 +72,12 @@ describe('auto', () => {
     return async
       .auto(
         {
-          task1: ['task2', makeCallback('task1')],
-          task2: makeCallback('task2'),
-          task3: ['task2', makeCallback('task3')],
-          task4: ['task1', 'task2', makeCallback('task4')],
-          task5: ['task2', makeCallback('task5')],
-          task6: ['task2', makeCallback('task6')]
+          task1: ["task2", makeCallback("task1")],
+          task2: makeCallback("task2"),
+          task3: ["task2", makeCallback("task3")],
+          task4: ["task1", "task2", makeCallback("task4")],
+          task5: ["task2", makeCallback("task5")],
+          task6: ["task2", makeCallback("task6")]
         },
         concurrency
       )
@@ -90,73 +90,73 @@ describe('auto', () => {
       });
   });
 
-  it('auto petrify', () => {
+  it("auto petrify", () => {
     const callOrder = [];
     return async
       .auto({
         task1: [
-          'task2',
+          "task2",
           async results => {
             await sleep(100);
-            callOrder.push('task1');
+            callOrder.push("task1");
           }
         ],
         async task2() {
           await sleep(200);
-          callOrder.push('task2');
+          callOrder.push("task2");
         },
         task3: [
-          'task2',
+          "task2",
           async results => {
-            callOrder.push('task3');
+            callOrder.push("task3");
           }
         ],
         task4: [
-          'task1',
-          'task2',
+          "task1",
+          "task2",
           async results => {
-            callOrder.push('task4');
+            callOrder.push("task4");
           }
         ]
       })
       .then(() => {
-        expect(callOrder).toEqual(['task2', 'task3', 'task1', 'task4']);
+        expect(callOrder).toEqual(["task2", "task3", "task1", "task4"]);
       });
   });
 
-  it('auto results', () => {
+  it("auto results", () => {
     const callOrder = [];
     return async
       .auto({
         task1: [
-          'task2',
+          "task2",
           async results => {
-            expect(results.task2).toEqual('task2');
+            expect(results.task2).toEqual("task2");
             await sleep(25);
-            callOrder.push('task1');
-            return ['task1a', 'task1b'];
+            callOrder.push("task1");
+            return ["task1a", "task1b"];
           }
         ],
         async task2() {
           await sleep(50);
-          callOrder.push('task2');
-          return 'task2';
+          callOrder.push("task2");
+          return "task2";
         },
         task3: [
-          'task2',
+          "task2",
           async results => {
-            expect(results.task2).toEqual('task2');
-            callOrder.push('task3');
+            expect(results.task2).toEqual("task2");
+            callOrder.push("task3");
           }
         ],
         task4: [
-          'task1',
-          'task2',
+          "task1",
+          "task2",
           async results => {
-            expect(results.task1).toEqual(['task1a', 'task1b']);
-            expect(results.task2).toEqual('task2');
-            callOrder.push('task4');
-            return 'task4';
+            expect(results.task1).toEqual(["task1a", "task1b"]);
+            expect(results.task2).toEqual("task2");
+            callOrder.push("task4");
+            return "task4";
           }
         ]
       })
@@ -164,47 +164,47 @@ describe('auto', () => {
         expect(err).to.not.exist;
       })
       .then(results => {
-        expect(callOrder).toEqual(['task2', 'task3', 'task1', 'task4']);
+        expect(callOrder).toEqual(["task2", "task3", "task1", "task4"]);
         expect(results).toEqual({
-          task1: ['task1a', 'task1b'],
-          task2: 'task2',
+          task1: ["task1a", "task1b"],
+          task2: "task2",
           task3: undefined,
-          task4: 'task4'
+          task4: "task4"
         });
       });
   });
 
-  it('auto empty object', () => {
+  it("auto empty object", () => {
     return async.auto({});
   });
 
-  it('auto error', () => {
+  it("auto error", () => {
     return async
       .auto({
         async task1() {
-          throw new Error('testerror');
+          throw new Error("testerror");
         },
         task2: [
-          'task1',
+          "task1",
           async () => {
-            throw new Error('task2 should not be called');
+            throw new Error("task2 should not be called");
           }
         ],
         async task3() {
-          throw new Error('testerror2');
+          throw new Error("testerror2");
         }
       })
       .catch(err => err)
       .catch(err => {
-        expect(err.message).toEqual('testerror');
+        expect(err.message).toEqual("testerror");
       });
   });
 
-  it('auto no callback', done => {
+  it("auto no callback", done => {
     async.auto({
       async task1() {},
       task2: [
-        'task1',
+        "task1",
         async results => {
           done();
         }
@@ -212,12 +212,12 @@ describe('auto', () => {
     });
   });
 
-  it('auto concurrency no callback', done => {
+  it("auto concurrency no callback", done => {
     async.auto(
       {
         async task1() {},
         task2: [
-          'task1',
+          "task1",
           async results => {
             done();
           }
@@ -232,16 +232,16 @@ describe('auto', () => {
 
   // Issue 24 on github: https://github.com/caolan/async/issues#issue/24
   // Issue 76 on github: https://github.com/caolan/async/issues#issue/76
-  it('auto removeListener has side effect on loop iteratee', done => {
+  it("auto removeListener has side effect on loop iteratee", done => {
     async.auto({
       task1: [
-        'task3',
+        "task3",
         async () => {
           done();
         }
       ],
       task2: [
-        'task3',
+        "task3",
         async () => {
           /* by design: DON'T call callback */
         }
@@ -255,40 +255,40 @@ describe('auto', () => {
   // An error in the promise callback propagates through the promise chain
   // https://github.com/caolan/async/blob/master/mocha_test/auto.js#L185
 
-  it('auto calls callback multiple times with parallel functions', () => {
+  it("auto calls callback multiple times with parallel functions", () => {
     return async
       .auto({
         async task1() {
-          throw new Error('err');
+          throw new Error("err");
         },
         async task2() {
-          throw new Error('err');
+          throw new Error("err");
         }
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).toEqual('err');
+        expect(err.message).toEqual("err");
       });
   });
 
   // Issue 462 on github: https://github.com/caolan/async/issues/462
-  it('auto modifying results causes final callback to run early', () => {
+  it("auto modifying results causes final callback to run early", () => {
     return async
       .auto({
         async task1(callback) {
-          return 'task1';
+          return "task1";
         },
         task2: [
-          'task1',
+          "task1",
           async results => {
             await sleep(50);
             results.inserted = true;
-            return 'task2';
+            return "task2";
           }
         ],
         async task3() {
           await sleep(100);
-          return 'task3';
+          return "task3";
         }
       })
       .catch(err => {
@@ -296,18 +296,18 @@ describe('auto', () => {
       })
       .then(results => {
         expect(results.inserted).toEqual(true);
-        expect(results.task3).toEqual('task3');
+        expect(results.task3).toEqual("task3");
       });
   });
 
   // Issue 263 on github: https://github.com/caolan/async/issues/263
-  it('auto prevent dead-locks due to inexistant dependencies', () => {
+  it("auto prevent dead-locks due to inexistant dependencies", () => {
     return async
       .auto({
         task1: [
-          'noexist',
+          "noexist",
           async results => {
-            return 'task1';
+            return "task1";
           }
         ]
       })
@@ -318,89 +318,89 @@ describe('auto', () => {
   });
 
   // Issue 263 on github: https://github.com/caolan/async/issues/263
-  it('auto prevent dead-locks due to cyclic dependencies', () => {
+  it("auto prevent dead-locks due to cyclic dependencies", () => {
     return async
       .auto({
         task1: [
-          'task2',
+          "task2",
           async results => {
-            return 'task1';
+            return "task1";
           }
         ],
         task2: [
-          'task1',
+          "task1",
           async results => {
-            return 'task2';
+            return "task2";
           }
         ]
       })
       .catch(err => err)
       .then(err => {
         expect(err.message).toEqual(
-          'async.auto cannot execute tasks due to a recursive dependency'
+          "async.auto cannot execute tasks due to a recursive dependency"
         );
       });
   });
 
   // Issue 1092 on github: https://github.com/caolan/async/issues/1092
-  it('extended cycle detection', () => {
+  it("extended cycle detection", () => {
     const task = name => async results => {
       return `task ${name}`;
     };
     async
       .auto({
-        a: ['c', task('a')],
-        b: ['a', task('b')],
-        c: ['b', task('c')]
+        a: ["c", task("a")],
+        b: ["a", task("b")],
+        c: ["b", task("c")]
       })
       .catch(err => err)
       .then(err => {
         expect(err.message).toEqual(
-          'async.auto cannot execute tasks due to a recursive dependency'
+          "async.auto cannot execute tasks due to a recursive dependency"
         );
       });
   });
 
   // Issue 988 on github: https://github.com/caolan/async/issues/988
-  it('auto stops running tasks on error', () => {
+  it("auto stops running tasks on error", () => {
     return async
       .auto(
         {
           async task1() {
-            throw new Error('error');
+            throw new Error("error");
           },
           async task2() {
-            throw new Error('test2 should not be called');
+            throw new Error("test2 should not be called");
           }
         },
         1
       )
       .catch(err => err)
       .then(err => {
-        expect(err.message).toEqual('error');
+        expect(err.message).toEqual("error");
       });
   });
 
-  it('ignores results after an error', () => {
+  it("ignores results after an error", () => {
     return async
       .auto({
         async task1() {
           await sleep(25);
-          throw new Error('error');
+          throw new Error("error");
         },
         async task2(cb) {
           await sleep(30);
         },
         task3: [
-          'task2',
+          "task2",
           async () => {
-            throw new Error('task should not have been called');
+            throw new Error("task should not have been called");
           }
         ]
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).toEqual('error');
+        expect(err.message).toEqual("error");
       });
   });
 
@@ -408,26 +408,25 @@ describe('auto', () => {
   // You can't resolve the promise twice
   // https://github.com/caolan/async/blob/master/mocha_test/auto.js#L357
 
-  it('should handle array tasks with just a function', () => {
-    return async
-      .auto({
-        a: [async () => 1],
-        b: [
-          'a',
-          async results => {
-            expect(results.a).toEqual(1);
-          }
-        ]
-      });
+  it("should handle array tasks with just a function", () => {
+    return async.auto({
+      a: [async () => 1],
+      b: [
+        "a",
+        async results => {
+          expect(results.a).toEqual(1);
+        }
+      ]
+    });
   });
 
-  it('should avoid unncecessary deferrals', () => {
+  it("should avoid unncecessary deferrals", () => {
     let isSync = true;
 
     return async
       .auto({
         step1: async () => 1,
-        step2: ['step1', async results => {}]
+        step2: ["step1", async results => {}]
       })
       .then(() => {
         expect(isSync).toEqual(true);
@@ -437,39 +436,39 @@ describe('auto', () => {
   });
 
   // Issue 1358 on github: https://github.com/caolan/async/issues/1358
-  it('should report errors when a task name is an array method', () => {
+  it("should report errors when a task name is an array method", () => {
     return async
       .auto({
         async one() {
-          throw new Error('Something bad happened here');
+          throw new Error("Something bad happened here");
         },
         async filter() {
           await sleep(25);
-          return 'All fine here though';
+          return "All fine here though";
         },
-        finally: ['one', 'filter', async results => {}]
+        finally: ["one", "filter", async results => {}]
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).toEqual('Something bad happened here');
+        expect(err.message).toEqual("Something bad happened here");
       });
   });
 
-  it('should report errors when a task name is an obj prototype method', () => {
+  it("should report errors when a task name is an obj prototype method", () => {
     return async
       .auto({
         async one() {
-          throw new Error('Something bad happened here');
+          throw new Error("Something bad happened here");
         },
         async hasOwnProperty() {
           await sleep(25);
-          return 'All fine here though';
+          return "All fine here though";
         },
-        finally: ['one', 'hasOwnProperty', async results => {}]
+        finally: ["one", "hasOwnProperty", async results => {}]
       })
       .catch(err => err)
       .then(err => {
-        expect(err.message).toEqual('Something bad happened here');
+        expect(err.message).toEqual("Something bad happened here");
       });
   });
 });

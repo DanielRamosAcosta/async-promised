@@ -1,6 +1,6 @@
-import auto from './auto';
-import { callbackify as callbackify, resolveCallback } from './internal/asyncTransforms';
-import getParamsOfAsyncFunc from './internal/getParamsOfAsyncFunc';
+import auto from "./auto";
+import { callbackify, resolveCallback } from "./internal/asyncTransforms";
+import getParamsOfAsyncFunc from "./internal/getParamsOfAsyncFunc";
 
 /**
  * A dependency-injected version of the [async.auto]{@link module:ControlFlow.auto}
@@ -72,17 +72,20 @@ import getParamsOfAsyncFunc from './internal/getParamsOfAsyncFunc';
  */
 
 export default function autoInject(tasks: IAutoInject) {
-  const newTasks = Object.keys(tasks).reduce((previusValue: object, taskName) => {
-    const dependencies = Array.isArray(tasks[taskName])
-      ? tasks[taskName].splice(0, tasks[taskName].length - 1)
-      : getParamsOfAsyncFunc(tasks[taskName]);
-    return {
-      ...previusValue,
-      [taskName]: dependencies.length
-        ? dependencies.concat(tasks[taskName])
-        : tasks[taskName]
-    };
-  }, {});
+  const newTasks = Object.keys(tasks).reduce(
+    (previusValue: object, taskName) => {
+      const dependencies = Array.isArray(tasks[taskName])
+        ? tasks[taskName].splice(0, tasks[taskName].length - 1)
+        : getParamsOfAsyncFunc(tasks[taskName]);
+      return {
+        ...previusValue,
+        [taskName]: dependencies.length
+          ? dependencies.concat(tasks[taskName])
+          : tasks[taskName]
+      };
+    },
+    {}
+  );
 
   return auto(newTasks);
 }

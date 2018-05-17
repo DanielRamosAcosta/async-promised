@@ -1,9 +1,9 @@
-import * as assert from 'assert';
-import * as async from 'async';
-import { expect } from 'chai';
+import * as assert from "assert";
+import * as async from "async";
+import { expect } from "chai";
 
-describe('seq', () => {
-  it('seq', done => {
+describe("seq", () => {
+  it("seq", done => {
     const add2 = (n, cb) => {
       expect(n).to.equal(3);
       setTimeout(() => {
@@ -33,8 +33,8 @@ describe('seq', () => {
     });
   });
 
-  it('seq error', done => {
-    const testerr = new Error('test');
+  it("seq error", done => {
+    const testerr = new Error("test");
 
     const add2 = (n, cb) => {
       expect(n).to.equal(3);
@@ -49,7 +49,7 @@ describe('seq', () => {
       }, 15);
     };
     const add1 = (n, cb) => {
-      assert(false, 'add1 should not get called');
+      assert(false, "add1 should not get called");
       setTimeout(() => {
         cb(null, n + 1);
       }, 100);
@@ -61,8 +61,8 @@ describe('seq', () => {
     });
   });
 
-  it('seq binding', done => {
-    const testcontext = { name: 'foo' };
+  it("seq binding", done => {
+    const testcontext = { name: "foo" };
 
     const add2 = function(n, cb) {
       expect(this).to.equal(testcontext);
@@ -87,8 +87,8 @@ describe('seq', () => {
     });
   });
 
-  it('seq without callback', done => {
-    const testcontext = { name: 'foo' };
+  it("seq without callback", done => {
+    const testcontext = { name: "foo" };
 
     const add2 = function(n, cb) {
       expect(this).to.equal(testcontext);

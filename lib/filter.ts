@@ -1,4 +1,4 @@
-import { filter as asyncFilter } from 'async';
+import { filter as asyncFilter } from "async";
 
 /**
  * Returns a new array of all the values in `coll` which pass an async truth

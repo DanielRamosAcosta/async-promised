@@ -46,4 +46,5 @@
  *
  */
 
-export default (func: Function) => (...args: any[]) => Promise.resolve().then(() => func(...args));
+export default (func: Function) => (...args: any[]) =>
+  Promise.resolve().then(() => func(...args));

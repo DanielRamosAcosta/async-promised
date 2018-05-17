@@ -1,5 +1,5 @@
-import { concatLimit as asyncConcatLimit } from 'async';
-import { callbackify, resolveCallback } from './internal/asyncTransforms';
+import { concatLimit as asyncConcatLimit } from "async";
+import { callbackify, resolveCallback } from "./internal/asyncTransforms";
 
 /**
  * The same as [`concat`]{@link module:Collections.concat} but runs a maximum of `limit` async operations at a time.
@@ -21,6 +21,11 @@ export default function concatLimit<T>(
   iteratee: (item: T) => Promise<any>
 ): Promise<any> {
   return new Promise((resolve, reject) => {
-    asyncConcatLimit(coll, limit, callbackify(iteratee), resolveCallback(resolve, reject));
+    asyncConcatLimit(
+      coll,
+      limit,
+      callbackify(iteratee),
+      resolveCallback(resolve, reject)
+    );
   });
 }

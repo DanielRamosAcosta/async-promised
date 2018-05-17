@@ -1,4 +1,4 @@
-import { filterLimit as asyncFilterLimit } from 'async';
+import { filterLimit as asyncFilterLimit } from "async";
 
 /**
  * The same as [`filter`]{@link module:Collections.filter} but runs a maximum of

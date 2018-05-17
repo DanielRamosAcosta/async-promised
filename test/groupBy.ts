@@ -1,8 +1,8 @@
-import * as assert from 'assert';
-import * as async from 'async';
-import { expect } from 'chai';
+import * as assert from "assert";
+import * as async from "async";
+import { expect } from "chai";
 
-describe('groupBy', function() {
+describe("groupBy", function() {
   function groupByIteratee(callOrder, val, next) {
     setTimeout(() => {
       callOrder.push(val);
@@ -10,8 +10,8 @@ describe('groupBy', function() {
     }, val * 25);
   }
 
-  describe('groupBy', () => {
-    it('basics', function(done) {
+  describe("groupBy", () => {
+    it("basics", function(done) {
       const callOrder = [];
       async.groupBy(
         [1, 3, 2],
@@ -25,12 +25,12 @@ describe('groupBy', function() {
       );
     });
 
-    it('error', done => {
+    it("error", done => {
       async.groupBy(
         [1, 3, 2],
         (val, next) => {
           if (val === 3) {
-            return next(new Error('fail'));
+            return next(new Error("fail"));
           }
           next(null, val + 1);
         },
@@ -42,22 +42,22 @@ describe('groupBy', function() {
       );
     });
 
-    it('original untouched', done => {
-      const obj = { a: 'b', b: 'c', c: 'd' };
+    it("original untouched", done => {
+      const obj = { a: "b", b: "c", c: "d" };
       async.groupBy(
         obj,
         (val, next) => {
           next(null, val);
         },
         (err, result) => {
-          expect(obj).to.eql({ a: 'b', b: 'c', c: 'd' });
-          expect(result).to.eql({ b: ['b'], c: ['c'], d: ['d'] });
+          expect(obj).to.eql({ a: "b", b: "c", c: "d" });
+          expect(result).to.eql({ b: ["b"], c: ["c"], d: ["d"] });
           done();
         }
       );
     });
 
-    it('handles multiple matches', function(done) {
+    it("handles multiple matches", function(done) {
       const callOrder = [];
       async.groupBy(
         [1, 3, 2, 2],
@@ -71,8 +71,8 @@ describe('groupBy', function() {
       );
     });
 
-    it('handles objects', done => {
-      const obj = { a: 'b', b: 'c', c: 'd' };
+    it("handles objects", done => {
+      const obj = { a: "b", b: "c", c: "d" };
       const concurrency = { b: 3, c: 2, d: 1 };
       let running = 0;
       async.groupBy(
@@ -88,17 +88,17 @@ describe('groupBy', function() {
         (err, result) => {
           expect(running).to.equal(0);
           expect(err).to.eql(null);
-          expect(result).to.eql({ b: ['b'], c: ['c'], d: ['d'] });
+          expect(result).to.eql({ b: ["b"], c: ["c"], d: ["d"] });
           done();
         }
       );
     });
 
-    it('handles undefined', done => {
+    it("handles undefined", done => {
       async.groupBy(
         undefined,
         (val, next) => {
-          assert(false, 'iteratee should not be called');
+          assert(false, "iteratee should not be called");
           next();
         },
         (err, result) => {
@@ -109,11 +109,11 @@ describe('groupBy', function() {
       );
     });
 
-    it('handles empty object', done => {
+    it("handles empty object", done => {
       async.groupBy(
         {},
         (val, next) => {
-          assert(false, 'iteratee should not be called');
+          assert(false, "iteratee should not be called");
           next();
         },
         (err, result) => {
@@ -124,7 +124,7 @@ describe('groupBy', function() {
       );
     });
 
-    it('main callback optional', done => {
+    it("main callback optional", done => {
       const arr = [1, 2, 3];
       const runs = [];
       async.groupBy(arr, (val, next) => {
@@ -140,7 +140,7 @@ describe('groupBy', function() {
       });
     });
 
-    it('iteratee callback is only called once', done => {
+    it("iteratee callback is only called once", done => {
       async.groupBy(
         [1, 2],
         (item, callback) => {
@@ -159,12 +159,12 @@ describe('groupBy', function() {
       );
     });
 
-    it('handles Map', done => {
-      if (typeof Map !== 'function') {
+    it("handles Map", done => {
+      if (typeof Map !== "function") {
         return done();
       }
 
-      const map = new Map([['a', 'a'], ['b', 'b'], ['c', 'a']]);
+      const map = new Map([["a", "a"], ["b", "b"], ["c", "a"]]);
 
       async.groupBy(
         map,
@@ -174,15 +174,15 @@ describe('groupBy', function() {
         (err, result) => {
           expect(err).to.eql(null);
           expect(result).to.eql({
-            a1: [['a', 'a'], ['c', 'a']],
-            b1: [['b', 'b']]
+            a1: [["a", "a"], ["c", "a"]],
+            b1: [["b", "b"]]
           });
           done();
         }
       );
     });
 
-    it('handles sparse results', done => {
+    it("handles sparse results", done => {
       const arr = [1, 2, 3];
       async.groupBy(
         arr,
@@ -192,7 +192,7 @@ describe('groupBy', function() {
           } else if (val === 2) {
             async.setImmediate(() => next(null, val + 1));
           } else {
-            return next('error');
+            return next("error");
           }
         },
         (err, result) => {
@@ -204,9 +204,9 @@ describe('groupBy', function() {
     });
   });
 
-  describe('groupByLimit', () => {
-    const obj = { a: 'b', b: 'c', c: 'd' };
-    it('basics', done => {
+  describe("groupByLimit", () => {
+    const obj = { a: "b", b: "c", c: "d" };
+    it("basics", done => {
       let running = 0;
       const concurrency = { b: 2, c: 2, d: 1 };
       async.groupByLimit(
@@ -223,36 +223,36 @@ describe('groupBy', function() {
         (err, result) => {
           expect(running).to.equal(0);
           expect(err).to.eql(null);
-          expect(result).to.eql({ b: ['b'], c: ['c'], d: ['d'] });
+          expect(result).to.eql({ b: ["b"], c: ["c"], d: ["d"] });
           done();
         }
       );
     });
 
-    it('error', done => {
+    it("error", done => {
       async.groupByLimit(
         obj,
         1,
         (val, next) => {
-          if (val === 'c') {
-            return next(new Error('fail'));
+          if (val === "c") {
+            return next(new Error("fail"));
           }
           next(null, val);
         },
         (err, result) => {
           expect(err).to.not.eql(null);
-          expect(result).to.eql({ b: ['b'] });
+          expect(result).to.eql({ b: ["b"] });
           done();
         }
       );
     });
 
-    it('handles empty object', done => {
+    it("handles empty object", done => {
       async.groupByLimit(
         {},
         2,
         (val, next) => {
-          assert(false, 'iteratee should not be called');
+          assert(false, "iteratee should not be called");
           next();
         },
         (err, result) => {
@@ -263,12 +263,12 @@ describe('groupBy', function() {
       );
     });
 
-    it('handles undefined', done => {
+    it("handles undefined", done => {
       async.groupByLimit(
         undefined,
         2,
         (val, next) => {
-          assert(false, 'iteratee should not be called');
+          assert(false, "iteratee should not be called");
           next();
         },
         (err, result) => {
@@ -279,7 +279,7 @@ describe('groupBy', function() {
       );
     });
 
-    it('limit exceeds size', function(done) {
+    it("limit exceeds size", function(done) {
       const callOrder = [];
       async.groupByLimit(
         [3, 2, 2, 1],
@@ -294,7 +294,7 @@ describe('groupBy', function() {
       );
     });
 
-    it('limit equal size', function(done) {
+    it("limit equal size", function(done) {
       const callOrder = [];
       async.groupByLimit(
         [3, 2, 2, 1],
@@ -309,12 +309,12 @@ describe('groupBy', function() {
       );
     });
 
-    it('zero limit', done => {
+    it("zero limit", done => {
       async.groupByLimit(
         [3, 2, 2, 1],
         0,
         (val, next) => {
-          assert(false, 'iteratee should not be called');
+          assert(false, "iteratee should not be called");
           next();
         },
         (err, result) => {
@@ -325,7 +325,7 @@ describe('groupBy', function() {
       );
     });
 
-    it('does not continue replenishing after error', done => {
+    it("does not continue replenishing after error", done => {
       let started = 0;
       const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
       const delay = 10;
@@ -338,7 +338,7 @@ describe('groupBy', function() {
         (val, next) => {
           started++;
           if (started === 3) {
-            return next(new Error('fail'));
+            return next(new Error("fail"));
           }
 
           setTimeout(() => {
@@ -358,9 +358,9 @@ describe('groupBy', function() {
     });
   });
 
-  describe('groupBySeries', () => {
-    const obj = { a: 'b', b: 'c', c: 'd' };
-    it('basics', done => {
+  describe("groupBySeries", () => {
+    const obj = { a: "b", b: "c", c: "d" };
+    it("basics", done => {
       let running = 0;
       const concurrency = { b: 1, c: 1, d: 1 };
       async.groupBySeries(
@@ -376,48 +376,48 @@ describe('groupBy', function() {
         (err, result) => {
           expect(running).to.equal(0);
           expect(err).to.eql(null);
-          expect(result).to.eql({ b: ['b'], c: ['c'], d: ['d'] });
+          expect(result).to.eql({ b: ["b"], c: ["c"], d: ["d"] });
           done();
         }
       );
     });
 
-    it('error', done => {
+    it("error", done => {
       async.groupBySeries(
         obj,
         (val, next) => {
-          if (val === 'c') {
-            return next(new Error('fail'));
+          if (val === "c") {
+            return next(new Error("fail"));
           }
           next(null, val);
         },
         (err, result) => {
           expect(err).to.not.eql(null);
-          expect(result).to.eql({ b: ['b'] });
+          expect(result).to.eql({ b: ["b"] });
           done();
         }
       );
     });
 
-    it('handles arrays', done => {
+    it("handles arrays", done => {
       async.groupBySeries(
-        ['a', 'a', 'b'],
+        ["a", "a", "b"],
         (val, next) => {
           next(null, val);
         },
         (err, result) => {
           expect(err).to.eql(null);
-          expect(result).to.eql({ a: ['a', 'a'], b: ['b'] });
+          expect(result).to.eql({ a: ["a", "a"], b: ["b"] });
           done();
         }
       );
     });
 
-    it('handles empty object', done => {
+    it("handles empty object", done => {
       async.groupBySeries(
         {},
         (val, next) => {
-          assert(false, 'iteratee should not be called');
+          assert(false, "iteratee should not be called");
           next();
         },
         (err, result) => {
@@ -428,11 +428,11 @@ describe('groupBy', function() {
       );
     });
 
-    it('handles undefined', done => {
+    it("handles undefined", done => {
       async.groupBySeries(
         undefined,
         (val, next) => {
-          assert(false, 'iteratee should not be called');
+          assert(false, "iteratee should not be called");
           next();
         },
         (err, result) => {

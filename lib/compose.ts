@@ -1,5 +1,10 @@
-import { compose as asyncCompose } from 'async';
-import { AsyncResultCallback, AsyncResultPromise, callbackifyFuncs, resolveCallback } from './internal/asyncTransforms';
+import { compose as asyncCompose } from "async";
+import {
+  AsyncResultCallback,
+  AsyncResultPromise,
+  callbackifyFuncs,
+  resolveCallback
+} from "./internal/asyncTransforms";
 
 /**
  * Creates a function which is a composition of the passed asynchronous

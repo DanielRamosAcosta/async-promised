@@ -1,4 +1,4 @@
-import { each as asyncEach } from 'async';
+import { each as asyncEach } from "async";
 
 /**
  * Applies the function `iteratee` to each item in `coll`, in parallel.

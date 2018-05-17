@@ -1,4 +1,4 @@
-import { setImmediate as asyncSetImmediate } from 'async';
+import { setImmediate as asyncSetImmediate } from "async";
 
 /**
  * Resolves the promise on a later loop around the event loop. In Node.js this

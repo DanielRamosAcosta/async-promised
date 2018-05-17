@@ -1,10 +1,10 @@
-import * as assert from 'assert';
-import * as async from 'async';
-import { expect } from 'chai';
-import getFunctionsObject from './support/get-function-object';
+import * as assert from "assert";
+import * as async from "async";
+import { expect } from "chai";
+import getFunctionsObject from "./support/get-function-object";
 
-describe('series', () => {
-  it('series', done => {
+describe("series", () => {
+  it("series", done => {
     const call_order = [];
     async.series(
       [
@@ -36,7 +36,7 @@ describe('series', () => {
     );
   });
 
-  it('with reflect', done => {
+  it("with reflect", done => {
     const call_order = [];
     async.series(
       [
@@ -68,7 +68,7 @@ describe('series', () => {
     );
   });
 
-  it('empty array', done => {
+  it("empty array", done => {
     async.series([], (err, results) => {
       expect(err).to.equal(null);
       expect(results).to.eql([]);
@@ -76,32 +76,32 @@ describe('series', () => {
     });
   });
 
-  it('error', done => {
+  it("error", done => {
     async.series(
       [
         callback => {
-          callback('error', 1);
+          callback("error", 1);
         },
         callback => {
-          assert(false, 'should not be called');
-          callback('error2', 2);
+          assert(false, "should not be called");
+          callback("error2", 2);
         }
       ],
       err => {
-        expect(err).to.equal('error');
+        expect(err).to.equal("error");
       }
     );
     setTimeout(done, 100);
   });
 
-  it('error with reflect', done => {
+  it("error with reflect", done => {
     async.series(
       [
         async.reflect(callback => {
-          callback('error', 1);
+          callback("error", 1);
         }),
         async.reflect(callback => {
-          callback('error2', 2);
+          callback("error2", 2);
         }),
         async.reflect(callback => {
           callback(null, 1);
@@ -110,8 +110,8 @@ describe('series', () => {
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
         expect(results).to.eql([
-          { error: 'error' },
-          { error: 'error2' },
+          { error: "error" },
+          { error: "error2" },
           { value: 1 }
         ]);
         done();
@@ -119,7 +119,7 @@ describe('series', () => {
     );
   });
 
-  it('no callback', done => {
+  it("no callback", done => {
     async.series([
       callback => {
         callback();
@@ -131,7 +131,7 @@ describe('series', () => {
     ]);
   });
 
-  it('object', done => {
+  it("object", done => {
     const call_order = [];
     async.series(getFunctionsObject(call_order), (err, results) => {
       expect(err).to.equal(null);
@@ -145,29 +145,37 @@ describe('series', () => {
     });
   });
 
-  it('call in another context @nycinvalid @nodeonly', done => {
-    const vm = require('vm');
+  it("call in another context @nycinvalid @nodeonly", done => {
+    const vm = require("vm");
     const sandbox = {
-        async,
-        done
+      async,
+      done
     };
 
-    const fn = '(' + (function() {
-        async.series([function(callback) {
-            callback();
-        }], function(err) {
+    const fn =
+      "(" +
+      function() {
+        async.series(
+          [
+            function(callback) {
+              callback();
+            }
+          ],
+          function(err) {
             if (err) {
-                return done(err);
+              return done(err);
             }
             done();
-        });
-    }).toString() + '())';
+          }
+        );
+      }.toString() +
+      "())";
 
     vm.runInNewContext(fn, sandbox);
   });
 
   // Issue 10 on github: https://github.com/caolan/async/issues#issue/10
-  it('falsy return values', done => {
+  it("falsy return values", done => {
     function taskFalse(callback) {
       async.nextTick(() => {
         callback(null, false);

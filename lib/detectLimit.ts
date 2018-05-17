@@ -1,4 +1,4 @@
-import { detectLimit as asyncDetectLimit } from 'async';
+import { detectLimit as asyncDetectLimit } from "async";
 
 /**
  * The same as [`detect`]{@link module:Collections.detect} but runs a maximum of

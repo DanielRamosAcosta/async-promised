@@ -3,7 +3,7 @@
  */
 export function supportsAsyncAwait() {
   try {
-    eval('async function foo(x) { return x }');
+    eval("async function foo(x) { return x }");
     return true;
   } catch (err) {
     return false;
@@ -15,7 +15,7 @@ export function supportsAsyncAwait() {
  */
 export function supportsArrowFunction() {
   try {
-    eval('x => x');
+    eval("x => x");
     return true;
   } catch (err) {
     return false;

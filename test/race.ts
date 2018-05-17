@@ -1,8 +1,8 @@
-import * as async from '../lib';
-import sleep from './support/sleep';
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
-describe('race', () => {
-  it('should call each function in parallel and callback with first result', () => {
+describe("race", () => {
+  it("should call each function in parallel and callback with first result", () => {
     let finished = 0;
     const tasks = [];
 
@@ -16,17 +16,15 @@ describe('race', () => {
       tasks[i] = eachTest(i);
     }
 
-    return async.race(tasks)
-      .then(result => {
-        expect(result).toEqual(0);
-        expect(finished).toEqual(1);
-        return sleep(120)
-      .then(() => {
-          expect(finished).toEqual(10);
-        });
+    return async.race(tasks).then(result => {
+      expect(result).toEqual(0);
+      expect(finished).toEqual(1);
+      return sleep(120).then(() => {
+        expect(finished).toEqual(10);
       });
+    });
   });
-  it('should callback with the first error', () => {
+  it("should callback with the first error", () => {
     const tasks = [];
 
     const eachTest = i => async next => {
@@ -38,21 +36,21 @@ describe('race', () => {
       tasks[i] = eachTest(i);
     }
 
-    return async.race(tasks)
+    return async
+      .race(tasks)
       .catch(err => err)
       .then(err => {
         expect(err).toBeTruthy();
         expect(err).toBeInstanceOf(Error);
-        expect(err.message).toEqual('ERR5');
+        expect(err.message).toEqual("ERR5");
       });
   });
-  it('should callback when task is empty', () => {
-    return async.race([])
-      .then(result => {
-        expect(typeof result).toEqual('undefined');
-      });
+  it("should callback when task is empty", () => {
+    return async.race([]).then(result => {
+      expect(typeof result).toEqual("undefined");
+    });
   });
-  it('should callback in error the task arg is not an Array', () => {
+  it("should callback in error the task arg is not an Array", () => {
     const errors = [];
 
     const prom1 = async.race(null).catch(err => err);
