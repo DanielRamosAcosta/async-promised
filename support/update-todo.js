@@ -2,7 +2,7 @@ const fs = require('fs-extra')
 const { resolve } = require('path')
 const outdent = require('outdent')
 
-const usesCallbackAsync = string => /from 'async.*/.test(string)
+const usesCallbackAsync = string => /from "async.*/.test(string)
 
 const getImplementedNumber = filesUsingCallbacksAsync =>
 filesUsingCallbacksAsync.reduce((previusValue, currentValue, currentIndex) =>
