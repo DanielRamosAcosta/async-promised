@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 import * as _ from "lodash";
 
 describe("retry", () => {
@@ -51,13 +50,13 @@ describe("retry", () => {
   it("retry fails with invalid arguments", done => {
     expect(() => {
       async.retry("");
-    }).to.throw();
+    }).toThrow();
     expect(() => {
       async.retry();
-    }).to.throw();
+    }).toThrow();
     expect(() => {
       async.retry(() => {}, 2, () => {});
-    }).to.throw();
+    }).toThrow();
     done();
   });
 
@@ -76,7 +75,7 @@ describe("retry", () => {
     const start = Date.now();
     async.retry({ times, interval }, fn, (err, result) => {
       const duration = Date.now() - start;
-      expect(duration).to.be.above(interval * (times - 1) - times);
+      expect(duration).toBeGreaterThan(interval * (times - 1) - times);
       assert.equal(callCount, 3, "did not retry the correct number of times");
       assert.equal(err, error + times, "Incorrect error was returned");
       assert.equal(
@@ -101,7 +100,7 @@ describe("retry", () => {
     const start = Date.now();
     async.retry({ times, interval: intervalFunc }, fn, (err, result) => {
       const duration = Date.now() - start;
-      expect(duration).to.be.above(300 - times);
+      expect(duration).toBeGreaterThan(300 - times);
       assert.equal(callCount, 3, "did not retry the correct number of times");
       assert.equal(err, error + times, "Incorrect error was returned");
       assert.equal(
@@ -132,7 +131,7 @@ describe("retry", () => {
       cb("fail");
     });
     setTimeout(() => {
-      expect(calls).to.equal(5);
+      expect(calls).toEqual(5);
       done();
     }, 50);
   });
@@ -147,8 +146,8 @@ describe("retry", () => {
       callback({}); // respond with indexed values
     }
     async.retry({ times: 4, interval: intervalFunc }, fn, () => {
-      expect(callTimes[1] - callTimes[0]).to.be.above(90);
-      expect(callTimes[2] - callTimes[1]).to.be.above(90);
+      expect(callTimes[1] - callTimes[0]).toBeGreaterThan(90);
+      expect(callTimes[2] - callTimes[1]).toBeGreaterThan(90);
       done();
     });
   });
@@ -161,7 +160,7 @@ describe("retry", () => {
       5,
       fn,
       _.rest(args => {
-        expect(args).to.be.eql([null, 1, 2, 3]);
+        expect(args).toEqual([null, 1, 2, 3]);
         done();
       })
     );
@@ -173,7 +172,7 @@ describe("retry", () => {
       callback(null, { a: 1 });
     }
     async.retry(5, fn, (err, result) => {
-      expect(result).to.be.eql({ a: 1 });
+      expect(result).toEqual({ a: 1 });
     });
   });
 
@@ -250,7 +249,7 @@ describe("retry", () => {
     const start = Date.now();
     async.retry({ interval, errorFilter: errorTest }, fn, (err, result) => {
       const duration = Date.now() - start;
-      expect(duration).to.be.above(
+      expect(duration).toBeGreaterThan(
         interval * (specialCount - 1) - specialCount
       );
       assert.equal(
@@ -289,7 +288,7 @@ describe("retry", () => {
       fn,
       _.rest(args => {
         assert.equal(callCount, 1, "did not retry the correct number of times");
-        expect(args).to.be.eql([null, erroredResult + callCount]);
+        expect(args).toEqual([null, erroredResult + callCount]);
         assert.equal(
           continueTestCalled,
           false,

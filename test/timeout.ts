@@ -1,5 +1,4 @@
 import * as async from "async";
-import { expect } from "chai";
 
 describe("timeout", () => {
   it("timeout with series", done => {
@@ -17,10 +16,10 @@ describe("timeout", () => {
         }, 50)
       ],
       (err, results) => {
-        expect(err.message).to.equal('Callback function "asyncFn" timed out.');
-        expect(err.code).to.equal("ETIMEDOUT");
-        expect(err.info).to.equal(undefined);
-        expect(results[0]).to.equal("I didn't time out");
+        expect(err.message).toEqual('Callback function "asyncFn" timed out.');
+        expect(err.code).toEqual("ETIMEDOUT");
+        expect(err.info).toEqual(undefined);
+        expect(results[0]).toEqual("I didn't time out");
         done();
       }
     );
@@ -46,10 +45,10 @@ describe("timeout", () => {
         )
       ],
       (err, results) => {
-        expect(err.message).to.equal('Callback function "asyncFn" timed out.');
-        expect(err.code).to.equal("ETIMEDOUT");
-        expect(err.info).to.equal(info);
-        expect(results[0]).to.equal("I didn't time out");
+        expect(err.message).toEqual('Callback function "asyncFn" timed out.');
+        expect(err.code).toEqual("ETIMEDOUT");
+        expect(err.info).toEqual(info);
+        expect(results[0]).toEqual("I didn't time out");
         done();
       }
     );
@@ -70,10 +69,10 @@ describe("timeout", () => {
         }, 50)
       ],
       (err, results) => {
-        expect(err.message).to.equal('Callback function "asyncFn" timed out.');
-        expect(err.code).to.equal("ETIMEDOUT");
-        expect(err.info).to.equal(undefined);
-        expect(results[0]).to.equal("I didn't time out");
+        expect(err.message).toEqual('Callback function "asyncFn" timed out.');
+        expect(err.code).toEqual("ETIMEDOUT");
+        expect(err.info).toEqual(undefined);
+        expect(results[0]).toEqual("I didn't time out");
         done();
       }
     );
@@ -96,25 +95,25 @@ describe("timeout", () => {
       [
         cb => {
           timeout(0, (err, result) => {
-            expect(err.message).to.equal(
+            expect(err.message).toEqual(
               'Callback function "asyncFn" timed out.'
             );
-            expect(err.code).to.equal("ETIMEDOUT");
-            expect(err.info).to.equal(undefined);
-            expect(result).to.equal(undefined);
+            expect(err.code).toEqual("ETIMEDOUT");
+            expect(err.info).toEqual(undefined);
+            expect(result).toEqual(undefined);
             cb();
           });
         },
         cb => {
           timeout(1, (err, result) => {
-            expect(err).to.equal(null);
-            expect(result).to.equal("I didn't time out");
+            expect(err).toEqual(null);
+            expect(result).toEqual("I didn't time out");
             cb();
           });
         }
       ],
       err => {
-        expect(err).to.equal(null);
+        expect(err).toEqual(null);
         done();
       }
     );

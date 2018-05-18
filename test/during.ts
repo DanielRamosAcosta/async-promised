@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 
 describe("during", () => {
   it("during", done => {
@@ -19,7 +18,7 @@ describe("during", () => {
       },
       err => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).to.eql([
+        expect(call_order).toEqual([
           ["test", 0],
           ["iteratee", 0],
           ["test", 1],
@@ -32,7 +31,7 @@ describe("during", () => {
           ["iteratee", 4],
           ["test", 5]
         ]);
-        expect(count).to.equal(5);
+        expect(count).toEqual(5);
         done();
       }
     );
@@ -49,13 +48,13 @@ describe("during", () => {
         cb(null, count);
       },
       (c, cb) => {
-        expect(c).to.equal(count);
+        expect(c).toEqual(count);
         call_order.push(["test", count]);
         cb(null, count < 5);
       },
       err => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).to.eql([
+        expect(call_order).toEqual([
           ["iteratee", 0],
           ["test", 1],
           ["iteratee", 1],
@@ -67,7 +66,7 @@ describe("during", () => {
           ["iteratee", 4],
           ["test", 5]
         ]);
-        expect(count).to.equal(5);
+        expect(count).toEqual(5);
         done();
       }
     );
@@ -82,7 +81,7 @@ describe("during", () => {
       },
       () => {},
       err => {
-        expect(err).to.equal(error);
+        expect(err).toEqual(error);
         done();
       }
     );
@@ -99,7 +98,7 @@ describe("during", () => {
         cb(error);
       },
       err => {
-        expect(err).to.equal(error);
+        expect(err).toEqual(error);
         done();
       }
     );

@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 import getFunctionsObject from "./support/get-function-object";
 
 describe("parallel", () => {
@@ -29,8 +28,8 @@ describe("parallel", () => {
       ],
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).to.eql([3, 1, 2]);
-        expect(results).to.eql([1, 2, [3, 3]]);
+        expect(call_order).toEqual([3, 1, 2]);
+        expect(results).toEqual([1, 2, [3, 3]]);
         done();
       }
     );
@@ -39,7 +38,7 @@ describe("parallel", () => {
   it("parallel empty array", done => {
     async.parallel([], (err, results) => {
       assert(err === null, `${err} passed instead of 'null'`);
-      expect(results).to.eql([]);
+      expect(results).toEqual([]);
       done();
     });
   });
@@ -55,7 +54,7 @@ describe("parallel", () => {
         }
       ],
       err => {
-        expect(err).to.equal("error");
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 100);
@@ -76,9 +75,9 @@ describe("parallel", () => {
   it("parallel object", done => {
     const call_order = [];
     async.parallel(getFunctionsObject(call_order), (err, results) => {
-      expect(err).to.equal(null);
-      expect(call_order).to.eql([3, 1, 2]);
-      expect(results).to.eql({
+      expect(err).toEqual(null);
+      expect(call_order).toEqual([3, 1, 2]);
+      expect(results).toEqual({
         one: 1,
         two: 2,
         three: [3, 3]
@@ -112,7 +111,7 @@ describe("parallel", () => {
     async.parallel(
       [taskFalse, taskUndefined, taskEmpty, taskNull],
       (err, results) => {
-        expect(results.length).to.equal(4);
+        expect(results.length).toEqual(4);
         assert.strictEqual(results[0], false);
         assert.strictEqual(results[1], undefined);
         assert.strictEqual(results[2], undefined);
@@ -148,8 +147,8 @@ describe("parallel", () => {
       2,
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).to.eql([1, 3, 2]);
-        expect(results).to.eql([1, 2, [3, 3]]);
+        expect(call_order).toEqual([1, 3, 2]);
+        expect(results).toEqual([1, 2, [3, 3]]);
         done();
       }
     );
@@ -158,7 +157,7 @@ describe("parallel", () => {
   it("parallel limit empty array", done => {
     async.parallelLimit([], 2, (err, results) => {
       assert(err === null, `${err} passed instead of 'null'`);
-      expect(results).to.eql([]);
+      expect(results).toEqual([]);
       done();
     });
   });
@@ -175,7 +174,7 @@ describe("parallel", () => {
       ],
       1,
       err => {
-        expect(err).to.equal("error");
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 100);
@@ -199,9 +198,9 @@ describe("parallel", () => {
   it("parallel limit object", done => {
     const call_order = [];
     async.parallelLimit(getFunctionsObject(call_order), 2, (err, results) => {
-      expect(err).to.equal(null);
-      expect(call_order).to.eql([1, 3, 2]);
-      expect(results).to.eql({
+      expect(err).toEqual(null);
+      expect(call_order).toEqual([1, 3, 2]);
+      expect(results).toEqual({
         one: 1,
         two: 2,
         three: [3, 3]
@@ -254,7 +253,7 @@ describe("parallel", () => {
       ],
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(results).to.eql([
+        expect(results).toEqual([
           { error: "error" },
           { error: "error2" },
           { value: 2 }
@@ -282,7 +281,7 @@ describe("parallel", () => {
     };
 
     async.parallel(async.reflectAll(tasks), (err, results) => {
-      expect(results).to.eql({
+      expect(results).toEqual({
         one: { value: "one" },
         two: { error: "two" },
         three: { value: "three" }
@@ -295,7 +294,7 @@ describe("parallel", () => {
     const tasks = {};
 
     async.parallel(async.reflectAll(tasks), (err, results) => {
-      expect(results).to.eql({});
+      expect(results).toEqual({});
       done();
     });
   });
@@ -314,7 +313,7 @@ describe("parallel", () => {
     };
 
     async.parallel(async.reflectAll(tasks), (err, results) => {
-      expect(results).to.eql({
+      expect(results).toEqual({
         one: { error: "one" },
         two: { error: "two" },
         three: { error: "three" }
@@ -337,7 +336,7 @@ describe("parallel", () => {
     };
 
     async.parallel(async.reflectAll(tasks), (err, results) => {
-      expect(results).to.eql({
+      expect(results).toEqual({
         one: { value: "one" },
         two: { value: "two" },
         three: { value: "three" }
@@ -375,7 +374,7 @@ describe("parallel", () => {
     async.parallelLimit(arr, limit, () => {});
 
     setTimeout(() => {
-      expect(started).to.equal(3);
+      expect(started).toEqual(3);
       done();
     }, maxTime);
   });

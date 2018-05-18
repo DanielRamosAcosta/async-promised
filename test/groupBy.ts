@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 
 describe("groupBy", function() {
   function groupByIteratee(callOrder, val, next) {
@@ -17,9 +16,9 @@ describe("groupBy", function() {
         [1, 3, 2],
         groupByIteratee.bind(this, callOrder),
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(callOrder).to.eql([1, 2, 3]);
-          expect(result).to.eql({ 2: [1], 3: [2], 4: [3] });
+          expect(err).toEqual(null);
+          expect(callOrder).toEqual([1, 2, 3]);
+          expect(result).toEqual({ 2: [1], 3: [2], 4: [3] });
           done();
         }
       );
@@ -35,8 +34,8 @@ describe("groupBy", function() {
           next(null, val + 1);
         },
         (err, result) => {
-          expect(err).to.not.eql(null);
-          expect(result).to.eql({ 2: [1] });
+          expect(err).not.toEqual(null);
+          expect(result).toEqual({ 2: [1] });
           done();
         }
       );
@@ -50,8 +49,8 @@ describe("groupBy", function() {
           next(null, val);
         },
         (err, result) => {
-          expect(obj).to.eql({ a: "b", b: "c", c: "d" });
-          expect(result).to.eql({ b: ["b"], c: ["c"], d: ["d"] });
+          expect(obj).toEqual({ a: "b", b: "c", c: "d" });
+          expect(result).toEqual({ b: ["b"], c: ["c"], d: ["d"] });
           done();
         }
       );
@@ -63,9 +62,9 @@ describe("groupBy", function() {
         [1, 3, 2, 2],
         groupByIteratee.bind(this, callOrder),
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(callOrder).to.eql([1, 2, 2, 3]);
-          expect(result).to.eql({ 2: [1], 3: [2, 2], 4: [3] });
+          expect(err).toEqual(null);
+          expect(callOrder).toEqual([1, 2, 2, 3]);
+          expect(result).toEqual({ 2: [1], 3: [2, 2], 4: [3] });
           done();
         }
       );
@@ -80,15 +79,15 @@ describe("groupBy", function() {
         (val, next) => {
           running++;
           async.setImmediate(() => {
-            expect(running).to.equal(concurrency[val]);
+            expect(running).toEqual(concurrency[val]);
             running--;
             next(null, val);
           });
         },
         (err, result) => {
-          expect(running).to.equal(0);
-          expect(err).to.eql(null);
-          expect(result).to.eql({ b: ["b"], c: ["c"], d: ["d"] });
+          expect(running).toEqual(0);
+          expect(err).toEqual(null);
+          expect(result).toEqual({ b: ["b"], c: ["c"], d: ["d"] });
           done();
         }
       );
@@ -102,8 +101,8 @@ describe("groupBy", function() {
           next();
         },
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({});
+          expect(err).toEqual(null);
+          expect(result).toEqual({});
           done();
         }
       );
@@ -117,8 +116,8 @@ describe("groupBy", function() {
           next();
         },
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({});
+          expect(err).toEqual(null);
+          expect(result).toEqual({});
           done();
         }
       );
@@ -133,7 +132,7 @@ describe("groupBy", function() {
         async.setImmediate(() => {
           next(null);
           if (_done) {
-            expect(runs).to.eql(arr);
+            expect(runs).toEqual(arr);
             done();
           }
         });
@@ -149,7 +148,7 @@ describe("groupBy", function() {
           } catch (exception) {
             expect(() => {
               callback(exception);
-            }).to.throw(/already called/);
+            }).toThrow(/already called/);
             done();
           }
         },
@@ -172,8 +171,8 @@ describe("groupBy", function() {
           next(null, val[1] + 1);
         },
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({
+          expect(err).toEqual(null);
+          expect(result).toEqual({
             a1: [["a", "a"], ["c", "a"]],
             b1: [["b", "b"]]
           });
@@ -196,8 +195,8 @@ describe("groupBy", function() {
           }
         },
         (err, result) => {
-          expect(err).to.not.eql(null);
-          expect(result).to.eql({ 2: [1] });
+          expect(err).not.toEqual(null);
+          expect(result).toEqual({ 2: [1] });
           async.setImmediate(done);
         }
       );
@@ -215,15 +214,15 @@ describe("groupBy", function() {
         (val, next) => {
           running++;
           async.setImmediate(() => {
-            expect(running).to.equal(concurrency[val]);
+            expect(running).toEqual(concurrency[val]);
             running--;
             next(null, val);
           });
         },
         (err, result) => {
-          expect(running).to.equal(0);
-          expect(err).to.eql(null);
-          expect(result).to.eql({ b: ["b"], c: ["c"], d: ["d"] });
+          expect(running).toEqual(0);
+          expect(err).toEqual(null);
+          expect(result).toEqual({ b: ["b"], c: ["c"], d: ["d"] });
           done();
         }
       );
@@ -240,8 +239,8 @@ describe("groupBy", function() {
           next(null, val);
         },
         (err, result) => {
-          expect(err).to.not.eql(null);
-          expect(result).to.eql({ b: ["b"] });
+          expect(err).not.toEqual(null);
+          expect(result).toEqual({ b: ["b"] });
           done();
         }
       );
@@ -256,8 +255,8 @@ describe("groupBy", function() {
           next();
         },
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({});
+          expect(err).toEqual(null);
+          expect(result).toEqual({});
           done();
         }
       );
@@ -272,8 +271,8 @@ describe("groupBy", function() {
           next();
         },
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({});
+          expect(err).toEqual(null);
+          expect(result).toEqual({});
           done();
         }
       );
@@ -286,9 +285,9 @@ describe("groupBy", function() {
         10,
         groupByIteratee.bind(this, callOrder),
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({ 2: [1], 3: [2, 2], 4: [3] });
-          expect(callOrder).to.eql([1, 2, 2, 3]);
+          expect(err).toEqual(null);
+          expect(result).toEqual({ 2: [1], 3: [2, 2], 4: [3] });
+          expect(callOrder).toEqual([1, 2, 2, 3]);
           done();
         }
       );
@@ -301,9 +300,9 @@ describe("groupBy", function() {
         4,
         groupByIteratee.bind(this, callOrder),
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({ 2: [1], 3: [2, 2], 4: [3] });
-          expect(callOrder).to.eql([1, 2, 2, 3]);
+          expect(err).toEqual(null);
+          expect(result).toEqual({ 2: [1], 3: [2, 2], 4: [3] });
+          expect(callOrder).toEqual([1, 2, 2, 3]);
           done();
         }
       );
@@ -318,8 +317,8 @@ describe("groupBy", function() {
           next();
         },
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({});
+          expect(err).toEqual(null);
+          expect(result).toEqual({});
           done();
         }
       );
@@ -346,13 +345,13 @@ describe("groupBy", function() {
           }, delay);
         },
         (err, result) => {
-          expect(err).to.not.eql(null);
-          expect(result).to.eql({});
+          expect(err).not.toEqual(null);
+          expect(result).toEqual({});
         }
       );
 
       setTimeout(() => {
-        expect(started).to.equal(3);
+        expect(started).toEqual(3);
         done();
       }, maxTime);
     });
@@ -368,15 +367,15 @@ describe("groupBy", function() {
         (val, next) => {
           running++;
           async.setImmediate(() => {
-            expect(running).to.equal(concurrency[val]);
+            expect(running).toEqual(concurrency[val]);
             running--;
             next(null, val);
           });
         },
         (err, result) => {
-          expect(running).to.equal(0);
-          expect(err).to.eql(null);
-          expect(result).to.eql({ b: ["b"], c: ["c"], d: ["d"] });
+          expect(running).toEqual(0);
+          expect(err).toEqual(null);
+          expect(result).toEqual({ b: ["b"], c: ["c"], d: ["d"] });
           done();
         }
       );
@@ -392,8 +391,8 @@ describe("groupBy", function() {
           next(null, val);
         },
         (err, result) => {
-          expect(err).to.not.eql(null);
-          expect(result).to.eql({ b: ["b"] });
+          expect(err).not.toEqual(null);
+          expect(result).toEqual({ b: ["b"] });
           done();
         }
       );
@@ -406,8 +405,8 @@ describe("groupBy", function() {
           next(null, val);
         },
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({ a: ["a", "a"], b: ["b"] });
+          expect(err).toEqual(null);
+          expect(result).toEqual({ a: ["a", "a"], b: ["b"] });
           done();
         }
       );
@@ -421,8 +420,8 @@ describe("groupBy", function() {
           next();
         },
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({});
+          expect(err).toEqual(null);
+          expect(result).toEqual({});
           done();
         }
       );
@@ -436,8 +435,8 @@ describe("groupBy", function() {
           next();
         },
         (err, result) => {
-          expect(err).to.eql(null);
-          expect(result).to.eql({});
+          expect(err).toEqual(null);
+          expect(result).toEqual({});
           done();
         }
       );

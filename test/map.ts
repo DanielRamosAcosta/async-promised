@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 
 describe("map", () => {
   function mapIteratee(call_order, x, callback) {
@@ -14,8 +13,8 @@ describe("map", () => {
     const call_order = [];
     async.map([1, 3, 2], mapIteratee.bind(this, call_order), (err, results) => {
       assert(err === null, `${err} passed instead of 'null'`);
-      expect(call_order).to.eql([1, 2, 3]);
-      expect(results).to.eql([2, 6, 4]);
+      expect(call_order).toEqual([1, 2, 3]);
+      expect(results).toEqual([2, 6, 4]);
       done();
     });
   });
@@ -32,8 +31,8 @@ describe("map", () => {
       }),
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).to.eql([1, 2, 3]);
-        expect(results).to.eql([
+        expect(call_order).toEqual([1, 2, 3]);
+        expect(results).toEqual([
           {
             value: 2
           },
@@ -65,8 +64,8 @@ describe("map", () => {
       }),
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).to.eql([-1, 1, 2, 3]);
-        expect(results).to.eql([
+        expect(call_order).toEqual([-1, 1, 2, 3]);
+        expect(results).toEqual([
           {
             error: "number less then zero"
           },
@@ -93,8 +92,8 @@ describe("map", () => {
         callback(null, x * 2);
       },
       (err, results) => {
-        expect(results).to.eql([2, 4, 6]);
-        expect(a).to.eql([1, 2, 3]);
+        expect(results).toEqual([2, 4, 6]);
+        expect(a).toEqual([1, 2, 3]);
         done();
       }
     );
@@ -108,7 +107,7 @@ describe("map", () => {
       const done_ = r.length === a.length;
       callback(null);
       if (done_) {
-        expect(r).to.eql(a);
+        expect(r).toEqual(a);
         done();
       }
     });
@@ -121,7 +120,7 @@ describe("map", () => {
         callback("error");
       },
       err => {
-        expect(err).to.equal("error");
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 50);
@@ -134,8 +133,8 @@ describe("map", () => {
         callback();
       },
       (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.eql([]);
+        expect(err).toEqual(null);
+        expect(result).toEqual([]);
       }
     );
     setTimeout(done, 50);
@@ -153,12 +152,12 @@ describe("map", () => {
       },
       (err, result) => {
         if (err) throw err;
-        expect(Object.prototype.toString.call(result)).to.equal(
+        expect(Object.prototype.toString.call(result)).toEqual(
           "[object Array]"
         );
-        expect(result).to.contain(2);
-        expect(result).to.contain(4);
-        expect(result).to.contain(6);
+        expect(result).toContain(2);
+        expect(result).toContain(4);
+        expect(result).toContain(6);
         done();
       }
     );
@@ -171,8 +170,8 @@ describe("map", () => {
       mapIteratee.bind(this, call_order),
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).to.eql([1, 3, 2]);
-        expect(results).to.eql([2, 6, 4]);
+        expect(call_order).toEqual([1, 3, 2]);
+        expect(results).toEqual([2, 6, 4]);
         done();
       }
     );
@@ -185,7 +184,7 @@ describe("map", () => {
         callback("error");
       },
       err => {
-        expect(err).to.equal("error");
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 50);
@@ -198,8 +197,8 @@ describe("map", () => {
         callback();
       },
       (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.eql([]);
+        expect(err).toEqual(null);
+        expect(result).toEqual([]);
       }
     );
     setTimeout(done, 50);
@@ -217,9 +216,9 @@ describe("map", () => {
       },
       (err, result) => {
         if (err) throw err;
-        expect(result).to.contain(2);
-        expect(result).to.contain(4);
-        expect(result).to.contain(6);
+        expect(result).toContain(2);
+        expect(result).toContain(4);
+        expect(result).toContain(6);
         done();
       }
     );
@@ -233,8 +232,8 @@ describe("map", () => {
       mapIteratee.bind(this, call_order),
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).to.eql([2, 4, 3]);
-        expect(results).to.eql([4, 8, 6]);
+        expect(call_order).toEqual([2, 4, 3]);
+        expect(results).toEqual([4, 8, 6]);
         done();
       }
     );
@@ -264,8 +263,8 @@ describe("map", () => {
         callback();
       },
       (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.eql([]);
+        expect(err).toEqual(null);
+        expect(result).toEqual([]);
       }
     );
     setTimeout(done, 50);
@@ -278,8 +277,8 @@ describe("map", () => {
       20,
       mapIteratee.bind(this, call_order),
       (err, results) => {
-        expect(call_order).to.eql([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-        expect(results).to.eql([0, 2, 4, 6, 8, 10, 12, 14, 16, 18]);
+        expect(call_order).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        expect(results).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16, 18]);
         done();
       }
     );
@@ -292,8 +291,8 @@ describe("map", () => {
       10,
       mapIteratee.bind(this, call_order),
       (err, results) => {
-        expect(call_order).to.eql([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-        expect(results).to.eql([0, 2, 4, 6, 8, 10, 12, 14, 16, 18]);
+        expect(call_order).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        expect(results).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16, 18]);
         done();
       }
     );
@@ -308,7 +307,7 @@ describe("map", () => {
         callback();
       },
       (err, results) => {
-        expect(results).to.eql([]);
+        expect(results).toEqual([]);
         assert(true, "should call callback");
       }
     );
@@ -329,8 +328,8 @@ describe("map", () => {
         }
       },
       err => {
-        expect(call_order).to.eql([0, 1, 2]);
-        expect(err).to.equal("error");
+        expect(call_order).toEqual([0, 1, 2]);
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 25);
@@ -359,7 +358,7 @@ describe("map", () => {
     );
 
     setTimeout(() => {
-      expect(started).to.equal(3);
+      expect(started).toEqual(3);
       done();
     }, maxTime);
   });
@@ -395,7 +394,7 @@ describe("map", () => {
         } catch (exception) {
           expect(() => {
             callback(exception);
-          }).to.throw(/already called/);
+          }).toThrow(/already called/);
           done();
         }
       },

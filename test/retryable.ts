@@ -1,19 +1,18 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 
 describe("retryable", () => {
   it("basics", done => {
     let calls = 0;
     const retryableTask = async.retryable(3, (arg, cb) => {
       calls++;
-      expect(arg).to.equal(42);
+      expect(arg).toEqual(42);
       cb("fail");
     });
 
     retryableTask(42, err => {
-      expect(err).to.equal("fail");
-      expect(calls).to.equal(3);
+      expect(err).toEqual("fail");
+      expect(calls).toEqual(3);
       done();
     });
   });
@@ -28,13 +27,13 @@ describe("retryable", () => {
     };
     const retryableTask = async.retryable(opts, (arg, cb) => {
       calls++;
-      expect(arg).to.equal(42);
+      expect(arg).toEqual(42);
       cb(calls === 3 ? "fail" : special);
     });
 
     retryableTask(42, err => {
-      expect(err).to.equal("fail");
-      expect(calls).to.equal(3);
+      expect(err).toEqual("fail");
+      expect(calls).toEqual(3);
       done();
     });
   });

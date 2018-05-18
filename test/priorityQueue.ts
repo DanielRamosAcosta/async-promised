@@ -1,5 +1,4 @@
 import * as async from "async";
-import { expect } from "chai";
 
 describe("priorityQueue", () => {
   it("priorityQueue", done => {
@@ -13,34 +12,34 @@ describe("priorityQueue", () => {
     }, 1);
 
     q.push(1, 1.4, (err, arg) => {
-      expect(err).to.equal("error");
-      expect(arg).to.equal("arg");
-      expect(q.length()).to.equal(2);
+      expect(err).toEqual("error");
+      expect(arg).toEqual("arg");
+      expect(q.length()).toEqual(2);
       call_order.push(`callback ${1}`);
     });
     q.push(2, 0.2, (err, arg) => {
-      expect(err).to.equal("error");
-      expect(arg).to.equal("arg");
-      expect(q.length()).to.equal(3);
+      expect(err).toEqual("error");
+      expect(arg).toEqual("arg");
+      expect(q.length()).toEqual(3);
       call_order.push(`callback ${2}`);
     });
     q.push(3, 3.8, (err, arg) => {
-      expect(err).to.equal("error");
-      expect(arg).to.equal("arg");
-      expect(q.length()).to.equal(0);
+      expect(err).toEqual("error");
+      expect(arg).toEqual("arg");
+      expect(q.length()).toEqual(0);
       call_order.push(`callback ${3}`);
     });
     q.push(4, 2.9, (err, arg) => {
-      expect(err).to.equal("error");
-      expect(arg).to.equal("arg");
-      expect(q.length()).to.equal(1);
+      expect(err).toEqual("error");
+      expect(arg).toEqual("arg");
+      expect(q.length()).toEqual(1);
       call_order.push(`callback ${4}`);
     });
-    expect(q.length()).to.equal(4);
-    expect(q.concurrency).to.equal(1);
+    expect(q.length()).toEqual(4);
+    expect(q.concurrency).toEqual(1);
 
     q.drain = () => {
-      expect(call_order).to.eql([
+      expect(call_order).toEqual([
         "process 2",
         "callback 2",
         "process 1",
@@ -50,8 +49,8 @@ describe("priorityQueue", () => {
         "process 3",
         "callback 3"
       ]);
-      expect(q.concurrency).to.equal(1);
-      expect(q.length()).to.equal(0);
+      expect(q.concurrency).toEqual(1);
+      expect(q.length()).toEqual(0);
       done();
     };
   });
@@ -72,34 +71,34 @@ describe("priorityQueue", () => {
     }, 2);
 
     q.push(1, 1.4, (err, arg) => {
-      expect(err).to.equal("error");
-      expect(arg).to.equal("arg");
-      expect(q.length()).to.equal(2);
+      expect(err).toEqual("error");
+      expect(arg).toEqual("arg");
+      expect(q.length()).toEqual(2);
       call_order.push(`callback ${1}`);
     });
     q.push(2, 0.2, (err, arg) => {
-      expect(err).to.equal("error");
-      expect(arg).to.equal("arg");
-      expect(q.length()).to.equal(1);
+      expect(err).toEqual("error");
+      expect(arg).toEqual("arg");
+      expect(q.length()).toEqual(1);
       call_order.push(`callback ${2}`);
     });
     q.push(3, 3.8, (err, arg) => {
-      expect(err).to.equal("error");
-      expect(arg).to.equal("arg");
-      expect(q.length()).to.equal(0);
+      expect(err).toEqual("error");
+      expect(arg).toEqual("arg");
+      expect(q.length()).toEqual(0);
       call_order.push(`callback ${3}`);
     });
     q.push(4, 2.9, (err, arg) => {
-      expect(err).to.equal("error");
-      expect(arg).to.equal("arg");
-      expect(q.length()).to.equal(0);
+      expect(err).toEqual("error");
+      expect(arg).toEqual("arg");
+      expect(q.length()).toEqual(0);
       call_order.push(`callback ${4}`);
     });
-    expect(q.length()).to.equal(4);
-    expect(q.concurrency).to.equal(2);
+    expect(q.length()).toEqual(4);
+    expect(q.concurrency).toEqual(2);
 
     q.drain = () => {
-      expect(call_order).to.eql([
+      expect(call_order).toEqual([
         "process 1",
         "callback 1",
         "process 2",
@@ -109,8 +108,8 @@ describe("priorityQueue", () => {
         "process 4",
         "callback 4"
       ]);
-      expect(q.concurrency).to.equal(2);
-      expect(q.length()).to.equal(0);
+      expect(q.concurrency).toEqual(2);
+      expect(q.length()).toEqual(0);
       done();
     };
   });
@@ -138,7 +137,7 @@ describe("priorityQueue", () => {
     q.push({ id: 5 });
 
     q.drain = () => {
-      expect(call_order).to.eql([1, 2, 3, 4, 5]);
+      expect(call_order).toEqual([1, 2, 3, 4, 5]);
       done();
     };
   });
@@ -154,9 +153,9 @@ describe("priorityQueue", () => {
         calls.push("saturated");
       };
       q.empty = () => {
-        expect(calls.indexOf("saturated")).to.be.above(-1);
+        expect(calls.indexOf("saturated")).toBeGreaterThan(-1);
         setTimeout(() => {
-          expect(calls).eql([
+          expect(calls).toEqual([
             "process foo4",
             "process foo3",
             "process foo2",
@@ -199,7 +198,7 @@ describe("priorityQueue", () => {
         calls.push(`process ${task}`);
         async.setImmediate(cb);
       }, 10);
-      expect(q.buffer).to.equal(2.5);
+      expect(q.buffer).toEqual(2.5);
       done();
     });
 
@@ -211,8 +210,8 @@ describe("priorityQueue", () => {
         async.setImmediate(cb);
       }, 10);
       q.buffer = 4;
-      expect(q.buffer).to.not.equal(2.5);
-      expect(q.buffer).to.equal(4);
+      expect(q.buffer).not.toEqual(2.5);
+      expect(q.buffer).toEqual(4);
       done();
     });
 
@@ -226,9 +225,9 @@ describe("priorityQueue", () => {
         calls.push("unsaturated");
       };
       q.empty = () => {
-        expect(calls.indexOf("unsaturated")).to.be.above(-1);
+        expect(calls.indexOf("unsaturated")).toBeGreaterThan(-1);
         setTimeout(() => {
-          expect(calls).eql([
+          expect(calls).toEqual([
             "process foo4",
             "process foo3",
             "process foo2",

@@ -1,5 +1,4 @@
 import * as async from "async";
-import { expect } from "chai";
 import * as _ from "lodash";
 
 describe("some", () => {
@@ -12,8 +11,8 @@ describe("some", () => {
         }, 0);
       },
       (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.equal(true);
+        expect(err).toEqual(null);
+        expect(result).toEqual(true);
         done();
       }
     );
@@ -28,8 +27,8 @@ describe("some", () => {
         }, 0);
       },
       (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.equal(false);
+        expect(err).toEqual(null);
+        expect(result).toEqual(false);
         done();
       }
     );
@@ -50,7 +49,7 @@ describe("some", () => {
       }
     );
     setTimeout(() => {
-      expect(call_order).to.eql([1, "callback", 2, 3]);
+      expect(call_order).toEqual([1, "callback", 2, 3]);
       done();
     }, 25);
   });
@@ -64,8 +63,8 @@ describe("some", () => {
         }, 0);
       },
       (err, result) => {
-        expect(err).to.equal("error");
-        expect(result).to.not.exist;
+        expect(err).toEqual("error");
+        expect(result).toBeFalsy();
         done();
       }
     );
@@ -80,7 +79,7 @@ describe("some", () => {
     });
 
     setTimeout(() => {
-      expect(calls).to.eql([1, 2, 3]);
+      expect(calls).toEqual([1, 2, 3]);
       done();
     }, 10);
   });
@@ -95,8 +94,8 @@ describe("some", () => {
         }, 0);
       },
       (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.equal(true);
+        expect(err).toEqual(null);
+        expect(result).toEqual(true);
         done();
       }
     );
@@ -112,8 +111,8 @@ describe("some", () => {
         }, 0);
       },
       (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.equal(false);
+        expect(err).toEqual(null);
+        expect(result).toEqual(false);
         done();
       }
     );
@@ -129,9 +128,9 @@ describe("some", () => {
         callback(null, x === 1);
       },
       (err, result) => {
-        expect(err).to.equal(null);
-        expect(result).to.equal(true);
-        expect(calls).to.equal(2);
+        expect(err).toEqual(null);
+        expect(result).toEqual(true);
+        expect(calls).toEqual(2);
         done();
       }
     );
@@ -147,8 +146,8 @@ describe("some", () => {
         async.setImmediate(_.partial(cb, null, true));
       },
       err => {
-        expect(err).to.equal(null);
-        expect(calls).to.equal(1);
+        expect(err).toEqual(null);
+        expect(calls).toEqual(1);
         done();
       }
     );
@@ -165,23 +164,23 @@ describe("some", () => {
         async.setImmediate(_.partial(cb, null, true));
       },
       err => {
-        expect(err).to.equal(null);
-        expect(calls).to.equal(100);
+        expect(err).toEqual(null);
+        expect(calls).toEqual(100);
         done();
       }
     );
   });
 
   it("any alias", () => {
-    expect(async.any).to.equal(async.some);
+    expect(async.any).toEqual(async.some);
   });
 
   it("anyLimit alias", () => {
-    expect(async.anyLimit).to.equal(async.someLimit);
+    expect(async.anyLimit).toEqual(async.someLimit);
   });
 
   it("anySeries alias", () => {
-    expect(async.anySeries).to.be.a("function");
-    expect(async.anySeries).to.equal(async.someSeries);
+    expect(async.anySeries).toBeInstanceOf(Function);
+    expect(async.anySeries).toEqual(async.someSeries);
   });
 });

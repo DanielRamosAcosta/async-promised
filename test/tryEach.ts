@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 
 describe("tryEach", () => {
   it("no callback", () => {
@@ -8,8 +7,8 @@ describe("tryEach", () => {
   });
   it("empty", done => {
     async.tryEach([], (err, results) => {
-      expect(err).to.equal(null);
-      expect(results).to.eql(undefined);
+      expect(err).toEqual(null);
+      expect(results).toEqual(undefined);
       done();
     });
   });
@@ -22,8 +21,8 @@ describe("tryEach", () => {
         }
       ],
       (err, results) => {
-        expect(err).to.equal(null);
-        expect(results).to.eql(RESULTS);
+        expect(err).toEqual(null);
+        expect(results).toEqual(RESULTS);
         done();
       }
     );
@@ -37,8 +36,8 @@ describe("tryEach", () => {
         }
       ],
       (err, results) => {
-        expect(err).to.equal(null);
-        expect(results).to.eql(RESULT);
+        expect(err).toEqual(null);
+        expect(results).toEqual(RESULT);
         done();
       }
     );
@@ -55,8 +54,8 @@ describe("tryEach", () => {
         }
       ],
       (err, results) => {
-        expect(err).to.equal(null);
-        expect(results).to.eql(RESULT);
+        expect(err).toEqual(null);
+        expect(results).toEqual(RESULT);
         done();
       }
     );
@@ -73,8 +72,8 @@ describe("tryEach", () => {
         }
       ],
       (err, results) => {
-        expect(err).to.equal(ERROR_RESULT);
-        expect(results).to.eql(undefined);
+        expect(err).toEqual(ERROR_RESULT);
+        expect(results).toEqual(undefined);
         done();
       }
     );
@@ -91,8 +90,8 @@ describe("tryEach", () => {
         }
       ],
       (err, results) => {
-        expect(err).to.equal(null);
-        expect(results).to.eql(RESULT);
+        expect(err).toEqual(null);
+        expect(results).toEqual(RESULT);
         done();
       }
     );

@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 
 describe("whilst", () => {
   it("whilst", done => {
@@ -9,7 +8,7 @@ describe("whilst", () => {
     let count = 0;
     async.whilst(
       c => {
-        expect(c).to.equal(undefined);
+        expect(c).toEqual(undefined);
         call_order.push(["test", count]);
         return count < 5;
       },
@@ -20,8 +19,8 @@ describe("whilst", () => {
       },
       (err, result) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(result).to.equal(5, "last result passed through");
-        expect(call_order).to.eql([
+        expect(result).toEqual(5, "last result passed through");
+        expect(call_order).toEqual([
           ["test", 0],
           ["iteratee", 0],
           ["test", 1],
@@ -34,7 +33,7 @@ describe("whilst", () => {
           ["iteratee", 4],
           ["test", 5]
         ]);
-        expect(count).to.equal(5);
+        expect(count).toEqual(5);
         done();
       }
     );
@@ -49,7 +48,7 @@ describe("whilst", () => {
         cb();
       }
     );
-    expect(counter).to.equal(2);
+    expect(counter).toEqual(2);
     done();
   });
 
@@ -64,14 +63,14 @@ describe("whilst", () => {
         cb(null, count);
       },
       c => {
-        expect(c).to.equal(count);
+        expect(c).toEqual(count);
         call_order.push(["test", count]);
         return count < 5;
       },
       (err, result) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(result).to.equal(5, "last result passed through");
-        expect(call_order).to.eql([
+        expect(result).toEqual(5, "last result passed through");
+        expect(call_order).toEqual([
           ["iteratee", 0],
           ["test", 1],
           ["iteratee", 1],
@@ -83,7 +82,7 @@ describe("whilst", () => {
           ["iteratee", 4],
           ["test", 5]
         ]);
-        expect(count).to.equal(5);
+        expect(count).toEqual(5);
         done();
       }
     );
@@ -104,8 +103,8 @@ describe("whilst", () => {
       },
       (err, result) => {
         if (err) throw err;
-        expect(result).to.equal(5, "last result passed through");
-        expect(call_order).to.eql([
+        expect(result).toEqual(5, "last result passed through");
+        expect(call_order).toEqual([
           ["iteratee", 0],
           ["test", 1],
           ["iteratee", 1],
@@ -117,7 +116,7 @@ describe("whilst", () => {
           ["iteratee", 4],
           ["test", 5]
         ]);
-        expect(count).to.equal(5);
+        expect(count).toEqual(5);
         done();
       }
     );
@@ -132,7 +131,7 @@ describe("whilst", () => {
       },
       () => {},
       err => {
-        expect(err).to.equal(error);
+        expect(err).toEqual(error);
         done();
       }
     );

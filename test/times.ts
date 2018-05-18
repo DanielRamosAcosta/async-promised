@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 
 describe("times", () => {
   it("times", done => {
@@ -11,7 +10,7 @@ describe("times", () => {
       },
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(results).to.eql([0, 1, 2, 3, 4]);
+        expect(results).toEqual([0, 1, 2, 3, 4]);
         done();
       }
     );
@@ -29,7 +28,7 @@ describe("times", () => {
       },
       err => {
         if (err) throw err;
-        expect(args).to.eql([0, 1, 2]);
+        expect(args).toEqual([0, 1, 2]);
         done();
       }
     );
@@ -57,7 +56,7 @@ describe("times", () => {
         callback("error");
       },
       err => {
-        expect(err).to.equal("error");
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 50);
@@ -74,8 +73,8 @@ describe("times", () => {
         }, 100 - n * 10);
       },
       (err, results) => {
-        expect(call_order).to.eql([0, 1, 2, 3, 4]);
-        expect(results).to.eql([0, 1, 2, 3, 4]);
+        expect(call_order).toEqual([0, 1, 2, 3, 4]);
+        expect(results).toEqual([0, 1, 2, 3, 4]);
         done();
       }
     );
@@ -88,7 +87,7 @@ describe("times", () => {
         callback("error");
       },
       err => {
-        expect(err).to.equal("error");
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 50);
@@ -110,7 +109,7 @@ describe("times", () => {
       },
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(results).to.eql([0, 2, 4, 6, 8]);
+        expect(results).toEqual([0, 2, 4, 6, 8]);
         done();
       }
     );

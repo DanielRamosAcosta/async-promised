@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 import getFunctionsObject from "./support/get-function-object";
 
 describe("series", () => {
@@ -29,8 +28,8 @@ describe("series", () => {
       ],
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(results).to.eql([1, 2, [3, 3]]);
-        expect(call_order).to.eql([1, 2, 3]);
+        expect(results).toEqual([1, 2, [3, 3]]);
+        expect(call_order).toEqual([1, 2, 3]);
         done();
       }
     );
@@ -61,8 +60,12 @@ describe("series", () => {
       ],
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(results).to.eql([{ value: 1 }, { value: 2 }, { value: [3, 3] }]);
-        expect(call_order).to.eql([1, 2, 3]);
+        expect(results).toEqual([
+          { value: 1 },
+          { value: 2 },
+          { value: [3, 3] }
+        ]);
+        expect(call_order).toEqual([1, 2, 3]);
         done();
       }
     );
@@ -70,8 +73,8 @@ describe("series", () => {
 
   it("empty array", done => {
     async.series([], (err, results) => {
-      expect(err).to.equal(null);
-      expect(results).to.eql([]);
+      expect(err).toEqual(null);
+      expect(results).toEqual([]);
       done();
     });
   });
@@ -88,7 +91,7 @@ describe("series", () => {
         }
       ],
       err => {
-        expect(err).to.equal("error");
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 100);
@@ -109,7 +112,7 @@ describe("series", () => {
       ],
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(results).to.eql([
+        expect(results).toEqual([
           { error: "error" },
           { error: "error2" },
           { value: 1 }
@@ -134,13 +137,13 @@ describe("series", () => {
   it("object", done => {
     const call_order = [];
     async.series(getFunctionsObject(call_order), (err, results) => {
-      expect(err).to.equal(null);
-      expect(results).to.eql({
+      expect(err).toEqual(null);
+      expect(results).toEqual({
         one: 1,
         two: 2,
         three: [3, 3]
       });
-      expect(call_order).to.eql([1, 2, 3]);
+      expect(call_order).toEqual([1, 2, 3]);
       done();
     });
   });
@@ -199,7 +202,7 @@ describe("series", () => {
     async.series(
       [taskFalse, taskUndefined, taskEmpty, taskNull],
       (err, results) => {
-        expect(results.length).to.equal(4);
+        expect(results.length).toEqual(4);
         assert.strictEqual(results[0], false);
         assert.strictEqual(results[1], undefined);
         assert.strictEqual(results[2], undefined);

@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 
 describe("cargo", () => {
   it("cargo", done => {
@@ -18,47 +17,47 @@ describe("cargo", () => {
     }, 2);
 
     c.push(1, (err, arg) => {
-      expect(err).to.equal("error");
-      expect(arg).to.equal("arg");
-      expect(c.length()).to.equal(3);
+      expect(err).toEqual("error");
+      expect(arg).toEqual("arg");
+      expect(c.length()).toEqual(3);
       call_order.push(`callback ${1}`);
     });
     c.push(2, (err, arg) => {
-      expect(err).to.equal("error");
-      expect(arg).to.equal("arg");
-      expect(c.length()).to.equal(3);
+      expect(err).toEqual("error");
+      expect(arg).toEqual("arg");
+      expect(c.length()).toEqual(3);
       call_order.push(`callback ${2}`);
     });
 
-    expect(c.length()).to.equal(2);
+    expect(c.length()).toEqual(2);
 
     // async push
     setTimeout(() => {
       c.push(3, (err, arg) => {
-        expect(err).to.equal("error");
-        expect(arg).to.equal("arg");
-        expect(c.length()).to.equal(1);
+        expect(err).toEqual("error");
+        expect(arg).toEqual("arg");
+        expect(c.length()).toEqual(1);
         call_order.push(`callback ${3}`);
       });
     }, 15);
     setTimeout(() => {
       c.push(4, (err, arg) => {
-        expect(err).to.equal("error");
-        expect(arg).to.equal("arg");
-        expect(c.length()).to.equal(1);
+        expect(err).toEqual("error");
+        expect(arg).toEqual("arg");
+        expect(c.length()).toEqual(1);
         call_order.push(`callback ${4}`);
       });
-      expect(c.length()).to.equal(2);
+      expect(c.length()).toEqual(2);
       c.push(5, (err, arg) => {
-        expect(err).to.equal("error");
-        expect(arg).to.equal("arg");
-        expect(c.length()).to.equal(0);
+        expect(err).toEqual("error");
+        expect(arg).toEqual("arg");
+        expect(c.length()).toEqual(0);
         call_order.push(`callback ${5}`);
       });
     }, 30);
 
     c.drain = () => {
-      expect(call_order).to.eql([
+      expect(call_order).toEqual([
         "process 1 2",
         "callback 1",
         "callback 2",
@@ -68,7 +67,7 @@ describe("cargo", () => {
         "process 5",
         "callback 5"
       ]);
-      expect(c.length()).to.equal(0);
+      expect(c.length()).toEqual(0);
       done();
     };
   });
@@ -99,7 +98,7 @@ describe("cargo", () => {
     }, 50);
 
     setTimeout(() => {
-      expect(call_order).to.eql([
+      expect(call_order).toEqual([
         "process 1",
         "process 2",
         "process 3 4",
@@ -124,14 +123,14 @@ describe("cargo", () => {
     }, 3);
 
     c.push([1, 2, 3, 4], (err, arg) => {
-      expect(err).to.equal("error");
+      expect(err).toEqual("error");
       call_order.push(`callback ${arg}`);
     });
 
-    expect(c.length()).to.equal(4);
+    expect(c.length()).toEqual(4);
 
     setTimeout(() => {
-      expect(call_order).to.eql([
+      expect(call_order).toEqual([
         "process 1 2 3",
         "callback 1 2 3",
         "callback 1 2 3",
@@ -139,7 +138,7 @@ describe("cargo", () => {
         "process 4",
         "callback 4"
       ]);
-      expect(c.length()).to.equal(0);
+      expect(c.length()).toEqual(0);
       done();
     }, 200);
   });
@@ -159,7 +158,7 @@ describe("cargo", () => {
     }
 
     setTimeout(() => {
-      expect(drainCounter).to.equal(1);
+      expect(drainCounter).toEqual(1);
       done();
     }, 50);
   });
@@ -184,7 +183,7 @@ describe("cargo", () => {
     setTimeout(loadCargo, 50);
 
     setTimeout(() => {
-      expect(drainCounter).to.equal(2);
+      expect(drainCounter).toEqual(2);
       done();
     }, 100);
   });
@@ -212,7 +211,7 @@ describe("cargo", () => {
         "cargo should be empty now and no more workers should be running"
       );
       calls.push("drain");
-      expect(calls).to.eql([
+      expect(calls).toEqual([
         "process foo",
         "process bar",
         "saturated",
@@ -252,10 +251,10 @@ describe("cargo", () => {
     let called_once = false;
     const cargo = async.cargo((tasks, cb) => {
       if (!called_once) {
-        expect(cargo.payload).to.equal(1);
+        expect(cargo.payload).toEqual(1);
         assert(tasks.length === 1, "should start with payload = 1");
       } else {
-        expect(cargo.payload).to.equal(2);
+        expect(cargo.payload).toEqual(2);
         assert(tasks.length === 2, "next call shold have payload = 2");
       }
       called_once = true;
@@ -266,7 +265,7 @@ describe("cargo", () => {
       done();
     };
 
-    expect(cargo.payload).to.equal(1);
+    expect(cargo.payload).toEqual(1);
 
     cargo.push([1, 2, 3]);
 
@@ -284,22 +283,22 @@ describe("cargo", () => {
 
     const cargo = async.cargo((tasks, cb) => {
       if (!called_once) {
-        expect(tasks).to.eql(["foo", "bar"]);
+        expect(tasks).toEqual(["foo", "bar"]);
       } else {
-        expect(tasks).to.eql(["baz"]);
+        expect(tasks).toEqual(["baz"]);
       }
-      expect(getWorkersListData(cargo)).to.eql(tasks);
+      expect(getWorkersListData(cargo)).toEqual(tasks);
       async.setImmediate(() => {
         // ensure nothing has changed
-        expect(getWorkersListData(cargo)).to.eql(tasks);
+        expect(getWorkersListData(cargo)).toEqual(tasks);
         called_once = true;
         cb();
       });
     }, 2);
 
     cargo.drain = () => {
-      expect(cargo.workersList()).to.eql([]);
-      expect(cargo.running()).to.equal(0);
+      expect(cargo.workersList()).toEqual([]);
+      expect(cargo.running()).toEqual(0);
       done();
     };
 
@@ -310,15 +309,15 @@ describe("cargo", () => {
 
   it("running", done => {
     const cargo = async.cargo((tasks, cb) => {
-      expect(cargo.running()).to.equal(1);
+      expect(cargo.running()).toEqual(1);
       async.setImmediate(() => {
-        expect(cargo.running()).to.equal(1);
+        expect(cargo.running()).toEqual(1);
         cb();
       });
     }, 2);
 
     cargo.drain = () => {
-      expect(cargo.running()).to.equal(0);
+      expect(cargo.running()).toEqual(0);
       done();
     };
 

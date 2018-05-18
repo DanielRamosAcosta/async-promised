@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 
 describe("memoize", () => {
   it("memoize", done => {
@@ -16,12 +15,12 @@ describe("memoize", () => {
     const fn2 = async.memoize(fn);
     fn2(1, 2, (err, result) => {
       assert(err === null, `${err} passed instead of 'null'`);
-      expect(result).to.equal(3);
+      expect(result).toEqual(3);
       fn2(1, 2, (err, result) => {
-        expect(result).to.equal(3);
+        expect(result).toEqual(3);
         fn2(2, 2, (err, result) => {
-          expect(result).to.equal(4);
-          expect(call_order).to.eql([["fn", 1, 2], ["fn", 2, 2]]);
+          expect(result).toEqual(4);
+          expect(call_order).toEqual([["fn", 1, 2], ["fn", 2, 2]]);
           done();
         });
       });
@@ -41,9 +40,9 @@ describe("memoize", () => {
 
     const fn2 = async.memoize(fn);
     fn2(1, 2, (err, result) => {
-      expect(result).to.equal(3);
+      expect(result).toEqual(3);
       fn2(1, 2, (err, result) => {
-        expect(result).to.equal(3);
+        expect(result).toEqual(3);
         async.nextTick(memoize_done);
         call_order.push("tick3");
       });
@@ -61,7 +60,7 @@ describe("memoize", () => {
         //  ['cb',1,2], // memoized // memoized async response body
         "tick3" // handler for memoized async call
       ];
-      expect(call_order).to.eql(async_call_order);
+      expect(call_order).toEqual(async_call_order);
       done();
     }
   });
@@ -79,12 +78,16 @@ describe("memoize", () => {
     const fn2 = async.memoize(fn);
     const fn3 = async.unmemoize(fn2);
     fn3(1, 2, (err, result) => {
-      expect(result).to.equal(3);
+      expect(result).toEqual(3);
       fn3(1, 2, (err, result) => {
-        expect(result).to.equal(3);
+        expect(result).toEqual(3);
         fn3(2, 2, (err, result) => {
-          expect(result).to.equal(4);
-          expect(call_order).to.eql([["fn", 1, 2], ["fn", 1, 2], ["fn", 2, 2]]);
+          expect(result).toEqual(4);
+          expect(call_order).toEqual([
+            ["fn", 1, 2],
+            ["fn", 1, 2],
+            ["fn", 2, 2]
+          ]);
           done();
         });
       });
@@ -98,7 +101,7 @@ describe("memoize", () => {
 
     const fn2 = async.unmemoize(fn);
     fn2(1, 2, (err, result) => {
-      expect(result).to.equal(3);
+      expect(result).toEqual(3);
     });
 
     done();
@@ -110,7 +113,7 @@ describe("memoize", () => {
       callback(testerr, arg1 + arg2);
     };
     async.memoize(fn)(1, 2, err => {
-      expect(err).to.equal(testerr);
+      expect(err).toEqual(testerr);
     });
     done();
   });
@@ -124,10 +127,10 @@ describe("memoize", () => {
     };
     const fn2 = async.memoize(fn);
     fn2(1, 2, (err, result) => {
-      expect(result).to.equal(1, 2);
+      expect(result).toEqual(1, 2);
     });
     fn2(1, 2, (err, result) => {
-      expect(result).to.equal(1, 2);
+      expect(result).toEqual(1, 2);
       done();
     });
   });
@@ -140,9 +143,9 @@ describe("memoize", () => {
     };
     const fn2 = async.memoize(fn, () => "custom hash");
     fn2(1, 2, (err, result) => {
-      expect(result).to.equal(3);
+      expect(result).toEqual(3);
       fn2(2, 2, (err, result) => {
-        expect(result).to.equal(3);
+        expect(result).toEqual(3);
         done();
       });
     });
@@ -154,7 +157,7 @@ describe("memoize", () => {
     });
     fn.memo.foo = ["bar"];
     fn("foo", val => {
-      expect(val).to.equal("bar");
+      expect(val).toEqual("bar");
       done();
     });
   });
@@ -166,7 +169,7 @@ describe("memoize", () => {
       }, 100);
     });
     fn("constructor", (error, results) => {
-      expect(results).to.equal("constructor");
+      expect(results).toEqual("constructor");
       done();
     });
   });
@@ -186,7 +189,7 @@ describe("memoize", () => {
       }, 100);
     });
     fn("__proto__", (error, results) => {
-      expect(results).to.equal("__proto__");
+      expect(results).toEqual("__proto__");
       done();
     });
   });
@@ -198,7 +201,7 @@ describe("memoize", () => {
       }, 100);
     });
     fn("hasOwnProperty", (error, results) => {
-      expect(results).to.equal("hasOwnProperty");
+      expect(results).toEqual("hasOwnProperty");
       done();
     });
   });

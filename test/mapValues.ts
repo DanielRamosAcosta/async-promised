@@ -1,5 +1,4 @@
 import * as async from "async";
-import { expect } from "chai";
 
 describe("mapValues", () => {
   const obj = { a: 1, b: 2, c: 3 };
@@ -18,15 +17,15 @@ describe("mapValues", () => {
         (val, key, next) => {
           running++;
           async.setImmediate(() => {
-            expect(running).to.equal(concurrency[key]);
+            expect(running).toEqual(concurrency[key]);
             running--;
             next(null, key + val);
           });
         },
         (err, result) => {
-          expect(running).to.equal(0);
-          expect(err).to.eql(null);
-          expect(result).to.eql({ a: "a1", b: "b2", c: "c3" });
+          expect(running).toEqual(0);
+          expect(err).toEqual(null);
+          expect(result).toEqual({ a: "a1", b: "b2", c: "c3" });
           done();
         }
       );
@@ -43,8 +42,8 @@ describe("mapValues", () => {
           next(null, val);
         },
         (err, result) => {
-          expect(err).to.not.eql(null);
-          expect(result).to.eql({ a: 1 });
+          expect(err).not.toEqual(null);
+          expect(result).toEqual({ a: 1 });
           done();
         }
       );
@@ -64,15 +63,15 @@ describe("mapValues", () => {
         (val, key, next) => {
           running++;
           async.setImmediate(() => {
-            expect(running).to.equal(concurrency[key]);
+            expect(running).toEqual(concurrency[key]);
             running--;
             next(null, key + val);
           });
         },
         (err, result) => {
-          expect(running).to.equal(0);
-          expect(err).to.eql(null);
-          expect(result).to.eql({ a: "a1", b: "b2", c: "c3" });
+          expect(running).toEqual(0);
+          expect(err).toEqual(null);
+          expect(result).toEqual({ a: "a1", b: "b2", c: "c3" });
           done();
         }
       );
@@ -92,15 +91,15 @@ describe("mapValues", () => {
         (val, key, next) => {
           running++;
           async.setImmediate(() => {
-            expect(running).to.equal(concurrency[key]);
+            expect(running).toEqual(concurrency[key]);
             running--;
             next(null, key + val);
           });
         },
         (err, result) => {
-          expect(running).to.equal(0);
-          expect(err).to.eql(null);
-          expect(result).to.eql({ a: "a1", b: "b2", c: "c3" });
+          expect(running).toEqual(0);
+          expect(err).toEqual(null);
+          expect(result).toEqual({ a: "a1", b: "b2", c: "c3" });
           done();
         }
       );

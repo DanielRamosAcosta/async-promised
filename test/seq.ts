@@ -1,23 +1,22 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 
 describe("seq", () => {
   it("seq", done => {
     const add2 = (n, cb) => {
-      expect(n).to.equal(3);
+      expect(n).toEqual(3);
       setTimeout(() => {
         cb(null, n + 2);
       }, 50);
     };
     const mul3 = (n, cb) => {
-      expect(n).to.equal(5);
+      expect(n).toEqual(5);
       setTimeout(() => {
         cb(null, n * 3);
       }, 15);
     };
     const add1 = (n, cb) => {
-      expect(n).to.equal(15);
+      expect(n).toEqual(15);
       setTimeout(() => {
         cb(null, n + 1);
       }, 100);
@@ -28,7 +27,7 @@ describe("seq", () => {
         return done(err);
       }
       assert(err === null, `${err} passed instead of 'null'`);
-      expect(result).to.equal(16);
+      expect(result).toEqual(16);
       done();
     });
   });
@@ -37,13 +36,13 @@ describe("seq", () => {
     const testerr = new Error("test");
 
     const add2 = (n, cb) => {
-      expect(n).to.equal(3);
+      expect(n).toEqual(3);
       setTimeout(() => {
         cb(null, n + 2);
       }, 50);
     };
     const mul3 = (n, cb) => {
-      expect(n).to.equal(5);
+      expect(n).toEqual(5);
       setTimeout(() => {
         cb(testerr);
       }, 15);
@@ -56,7 +55,7 @@ describe("seq", () => {
     };
     const add2mul3add1 = async.seq(add2, mul3, add1);
     add2mul3add1(3, err => {
-      expect(err).to.equal(testerr);
+      expect(err).toEqual(testerr);
       done();
     });
   });
@@ -65,13 +64,13 @@ describe("seq", () => {
     const testcontext = { name: "foo" };
 
     const add2 = function(n, cb) {
-      expect(this).to.equal(testcontext);
+      expect(this).toEqual(testcontext);
       setTimeout(() => {
         cb(null, n + 2);
       }, 50);
     };
     const mul3 = function(n, cb) {
-      expect(this).to.equal(testcontext);
+      expect(this).toEqual(testcontext);
       setTimeout(() => {
         cb(null, n * 3);
       }, 15);
@@ -81,8 +80,8 @@ describe("seq", () => {
       if (err) {
         return done(err);
       }
-      expect(this).to.equal(testcontext);
-      expect(result).to.equal(15);
+      expect(this).toEqual(testcontext);
+      expect(result).toEqual(15);
       done();
     });
   });
@@ -91,13 +90,13 @@ describe("seq", () => {
     const testcontext = { name: "foo" };
 
     const add2 = function(n, cb) {
-      expect(this).to.equal(testcontext);
+      expect(this).toEqual(testcontext);
       setTimeout(() => {
         cb(null, n + 2);
       }, 50);
     };
     const mul3 = function() {
-      expect(this).to.equal(testcontext);
+      expect(this).toEqual(testcontext);
       setTimeout(() => {
         done();
       }, 15);

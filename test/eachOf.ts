@@ -1,12 +1,11 @@
 import * as assert from "assert";
 import * as async from "async";
-import { expect } from "chai";
 import * as _ from "lodash";
 
 describe("eachOf", () => {
   function forEachOfNoCallbackIteratee(done, x, key, callback) {
-    expect(x).to.equal(1);
-    expect(key).to.equal("a");
+    expect(x).toEqual(1);
+    expect(key).toEqual("a");
     callback();
     done();
   }
@@ -19,17 +18,17 @@ describe("eachOf", () => {
   }
 
   it("eachOf alias", done => {
-    expect(async.eachOf).to.equal(async.forEachOf);
+    expect(async.eachOf).toEqual(async.forEachOf);
     done();
   });
 
   it("eachOfLimit alias", done => {
-    expect(async.eachOfLimit).to.equal(async.forEachOfLimit);
+    expect(async.eachOfLimit).toEqual(async.forEachOfLimit);
     done();
   });
 
   it("eachOfSeries alias", done => {
-    expect(async.eachOfSeries).to.equal(async.forEachOfSeries);
+    expect(async.eachOfSeries).toEqual(async.forEachOfSeries);
     done();
   });
 
@@ -37,7 +36,7 @@ describe("eachOf", () => {
     const args = [];
     async.forEachOf({ a: 1, b: 2 }, forEachOfIteratee.bind(this, args), err => {
       assert(err === null, `${err} passed instead of 'null'`);
-      expect(args).to.eql(["a", 1, "b", 2]);
+      expect(args).toEqual(["a", 1, "b", 2]);
       done();
     });
   });
@@ -52,7 +51,7 @@ describe("eachOf", () => {
       },
       () => {
         // ensures done callback isn't called before all items iterated
-        expect(args).to.eql(["a", 1, "b", 2]);
+        expect(args).toEqual(["a", 1, "b", 2]);
         done();
       }
     );
@@ -95,7 +94,7 @@ describe("eachOf", () => {
         callback("error");
       },
       err => {
-        expect(err).to.equal("error");
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 50);
@@ -109,7 +108,7 @@ describe("eachOf", () => {
     const args = [];
     async.forEachOf(["a", "b"], forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql([0, "a", 1, "b"]);
+      expect(args).toEqual([0, "a", 1, "b"]);
       done();
     });
   });
@@ -123,7 +122,7 @@ describe("eachOf", () => {
     set.add("b");
     async.forEachOf(set, forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql([0, "a", 1, "b"]);
+      expect(args).toEqual([0, "a", 1, "b"]);
       done();
     });
   });
@@ -137,7 +136,7 @@ describe("eachOf", () => {
     map.set(2, "b");
     async.forEachOf(map, forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql([0, [1, "a"], 1, [2, "b"]]);
+      expect(args).toEqual([0, [1, "a"], 1, [2, "b"]]);
       done();
     });
   });
@@ -149,7 +148,7 @@ describe("eachOf", () => {
       forEachOfIteratee.bind(this, args),
       err => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(args).to.eql(["a", 1, "b", 2]);
+        expect(args).toEqual(["a", 1, "b", 2]);
         done();
       }
     );
@@ -179,8 +178,8 @@ describe("eachOf", () => {
         callback("error");
       },
       err => {
-        expect(call_order).to.eql([1, "a"]);
-        expect(err).to.equal("error");
+        expect(call_order).toEqual([1, "a"]);
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 50);
@@ -200,7 +199,7 @@ describe("eachOf", () => {
       forEachOfIteratee.bind(this, args),
       err => {
         if (err) throw err;
-        expect(args).to.eql([0, "a", 1, "b"]);
+        expect(args).toEqual([0, "a", 1, "b"]);
         done();
       }
     );
@@ -215,7 +214,7 @@ describe("eachOf", () => {
     set.add("b");
     async.forEachOfSeries(set, forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql([0, "a", 1, "b"]);
+      expect(args).toEqual([0, "a", 1, "b"]);
       done();
     });
   });
@@ -229,7 +228,7 @@ describe("eachOf", () => {
     map.set(2, "b");
     async.forEachOfSeries(map, forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql([0, [1, "a"], 1, [2, "b"]]);
+      expect(args).toEqual([0, [1, "a"], 1, [2, "b"]]);
       done();
     });
   });
@@ -248,7 +247,7 @@ describe("eachOf", () => {
       },
       err => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(args).to.eql([1, "a", 2, "b", 3, "c", 4, "d"]);
+        expect(args).toEqual([1, "a", 2, "b", 3, "c", 4, "d"]);
         done();
       }
     );
@@ -275,7 +274,7 @@ describe("eachOf", () => {
     const obj = { a: 1, b: 2, c: 3, d: 4, e: 5 };
     async.forEachOfLimit(obj, 10, forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql(["a", 1, "b", 2, "c", 3, "d", 4, "e", 5]);
+      expect(args).toEqual(["a", 1, "b", 2, "c", 3, "d", 4, "e", 5]);
       done();
     });
   });
@@ -285,7 +284,7 @@ describe("eachOf", () => {
     const obj = { a: 1, b: 2, c: 3, d: 4, e: 5 };
     async.forEachOfLimit(obj, 5, forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql(["a", 1, "b", 2, "c", 3, "d", 4, "e", 5]);
+      expect(args).toEqual(["a", 1, "b", 2, "c", 3, "d", 4, "e", 5]);
       done();
     });
   });
@@ -317,7 +316,7 @@ describe("eachOf", () => {
       },
       err => {
         if (err) throw err;
-        expect(count).to.equal(100);
+        expect(count).toEqual(100);
       }
     );
     setTimeout(done, 25);
@@ -337,8 +336,8 @@ describe("eachOf", () => {
         }
       },
       err => {
-        expect(call_order).to.eql([1, "a", 2, "b"]);
-        expect(err).to.equal("error");
+        expect(call_order).toEqual([1, "a", 2, "b"]);
+        expect(err).toEqual("error");
       }
     );
     setTimeout(done, 25);
@@ -357,7 +356,7 @@ describe("eachOf", () => {
     const obj = { a: 1, b: 2 };
     async.forEachOfLimit(obj, 5, forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql(["a", 1, "b", 2]);
+      expect(args).toEqual(["a", 1, "b", 2]);
       done();
     });
   });
@@ -367,7 +366,7 @@ describe("eachOf", () => {
     const arr = ["a", "b"];
     async.forEachOfLimit(arr, 1, forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql([0, "a", 1, "b"]);
+      expect(args).toEqual([0, "a", 1, "b"]);
       done();
     });
   });
@@ -381,7 +380,7 @@ describe("eachOf", () => {
     set.add("b");
     async.forEachOfLimit(set, 1, forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql([0, "a", 1, "b"]);
+      expect(args).toEqual([0, "a", 1, "b"]);
       done();
     });
   });
@@ -395,7 +394,7 @@ describe("eachOf", () => {
     map.set(2, "b");
     async.forEachOfLimit(map, 1, forEachOfIteratee.bind(this, args), err => {
       if (err) throw err;
-      expect(args).to.eql([0, [1, "a"], 1, [2, "b"]]);
+      expect(args).toEqual([0, [1, "a"], 1, [2, "b"]]);
       done();
     });
   });
