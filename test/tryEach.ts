@@ -1,99 +1,70 @@
 import * as assert from "assert";
-import * as async from "async";
+import * as async from "../lib";
 
 describe("tryEach", () => {
   it("no callback", () => {
-    async.tryEach([]);
+    return async.tryEach([]);
   });
-  it("empty", done => {
-    async.tryEach([], (err, results) => {
-      expect(err).toEqual(null);
+  it("empty", () => {
+    return async.tryEach([]).then(results => {
       expect(results).toEqual(undefined);
-      done();
     });
   });
-  it("one task, multiple results", done => {
-    const RESULTS = ["something", "something2"];
-    async.tryEach(
-      [
-        callback => {
-          callback(null, RESULTS[0], RESULTS[1]);
-        }
-      ],
-      (err, results) => {
-        expect(err).toEqual(null);
-        expect(results).toEqual(RESULTS);
-        done();
-      }
-    );
-  });
-  it("one task", done => {
+
+  // Removed "one task, multiple results". A promise can't return multiple values
+  // https://github.com/caolan/async/blob/master/mocha_test/tryEach.js#L16
+
+  it("one task", () => {
     const RESULT = "something";
-    async.tryEach(
-      [
-        callback => {
-          callback(null, RESULT);
-        }
-      ],
-      (err, results) => {
-        expect(err).toEqual(null);
-        expect(results).toEqual(RESULT);
-        done();
-      }
-    );
+    return async.tryEach([async () => RESULT]).then(results => {
+      expect(results).toEqual(RESULT);
+    });
   });
-  it("two tasks, one failing", done => {
+  it("two tasks, one failing", () => {
     const RESULT = "something";
-    async.tryEach(
-      [
-        callback => {
-          callback(new Error("Failure"), {});
+    async
+      .tryEach([
+        async () => {
+          throw new Error("Failure");
         },
-        callback => {
-          callback(null, RESULT);
+        async () => {
+          return RESULT;
         }
-      ],
-      (err, results) => {
-        expect(err).toEqual(null);
+      ])
+      .then(results => {
         expect(results).toEqual(RESULT);
-        done();
-      }
-    );
+      });
   });
-  it("two tasks, both failing", done => {
+  it("two tasks, both failing", () => {
     const ERROR_RESULT = new Error("Failure2");
-    async.tryEach(
-      [
-        callback => {
-          callback(new Error("Should not stop here"));
+    return async
+      .tryEach([
+        async () => {
+          throw new Error("Should not stop here");
         },
-        callback => {
-          callback(ERROR_RESULT);
+        async () => {
+          return ERROR_RESULT;
         }
-      ],
-      (err, results) => {
+      ])
+      .catch(err => err)
+      .then(err => {
         expect(err).toEqual(ERROR_RESULT);
-        expect(results).toEqual(undefined);
-        done();
-      }
-    );
+      });
   });
-  it("two tasks, non failing", done => {
+  it("two tasks, non failing", () => {
     const RESULT = "something";
-    async.tryEach(
-      [
-        callback => {
-          callback(null, RESULT);
+    return async
+      .tryEach([
+        async () => {
+          return RESULT;
         },
-        () => {
+        async () => {
           assert.fail("Should not been called");
+          return 1;
         }
-      ],
-      (err, results) => {
-        expect(err).toEqual(null);
+      ])
+      .then(results => {
         expect(results).toEqual(RESULT);
-        done();
-      }
-    );
+      });
   });
 });

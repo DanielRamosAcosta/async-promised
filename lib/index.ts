@@ -106,4 +106,5 @@ export { default as select } from "./filter";
 export { default as selectSeries } from "./filterSeries";
 export { default as setImmediate } from "./setImmediate";
 export { default as sortBy } from "./sortBy";
+export { default as tryEach } from "./tryEach";
 export { default as waterfall } from "./waterfall";
