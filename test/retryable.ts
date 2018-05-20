@@ -1,67 +1,78 @@
 import * as assert from "assert";
-import * as async from "async";
+import auto from "../lib/auto";
+import constant from "../lib/constant";
+// import * as async from "async";
+import retryable from "../lib/retryable";
+
+const async = { retryable, auto, constant };
 
 describe("retryable", () => {
-  it("basics", done => {
+  it("basics", () => {
     let calls = 0;
-    const retryableTask = async.retryable(3, (arg, cb) => {
+    const retryableTask = async.retryable(3, async (arg: number) => {
       calls++;
       expect(arg).toEqual(42);
-      cb("fail");
+      throw new Error("fail");
     });
 
-    retryableTask(42, err => {
-      expect(err).toEqual("fail");
-      expect(calls).toEqual(3);
-      done();
-    });
+    return retryableTask(42)
+      .catch(err => err)
+      .then(err => {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual("fail");
+        expect(calls).toEqual(3);
+      });
   });
 
-  it("basics with error test function", done => {
+  it("basics with error test function", () => {
     let calls = 0;
-    const special = "special";
+    const special = new Error("special");
     const opts = {
       errorFilter(err) {
         return err === special;
       }
     };
-    const retryableTask = async.retryable(opts, (arg, cb) => {
+    const retryableTask = async.retryable(opts, async arg => {
       calls++;
       expect(arg).toEqual(42);
-      cb(calls === 3 ? "fail" : special);
+      if (calls === 3) {
+        throw new Error("fail");
+      }
+      throw special;
     });
 
-    retryableTask(42, err => {
-      expect(err).toEqual("fail");
-      expect(calls).toEqual(3);
-      done();
-    });
+    return retryableTask(42)
+      .catch(err => err)
+      .then(err => {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual("fail");
+      });
   });
 
-  it("should work as an embedded task", done => {
+  it("should work as an embedded task", () => {
     const retryResult = "RETRY";
     let fooResults;
     let retryResults;
 
-    async.auto(
-      {
+    return async
+      .auto({
         dep: async.constant("dep"),
         foo: [
           "dep",
-          (results, callback) => {
+          async results => {
             fooResults = results;
-            callback(null, "FOO");
+            return "FOO";
           }
         ],
         retry: [
           "dep",
-          async.retryable((results, callback) => {
+          async.retryable(async results => {
             retryResults = results;
-            callback(null, retryResult);
+            return retryResult;
           })
         ]
-      },
-      (err, results) => {
+      })
+      .then(results => {
         assert.equal(
           results.retry,
           retryResult,
@@ -72,25 +83,24 @@ describe("retryable", () => {
           retryResults,
           "Incorrect results were passed to retry function"
         );
-        done();
-      }
-    );
+      });
   });
 
   it("should work as an embedded task with interval", done => {
     const start = new Date().getTime();
     const opts = { times: 5, interval: 20 };
 
-    async.auto(
-      {
-        foo(callback) {
-          callback(null, "FOO");
+    return async
+      .auto({
+        async foo() {
+          return "FOO";
         },
-        retry: async.retryable(opts, callback => {
-          callback("err");
+        retry: async.retryable(opts, async () => {
+          throw new Error("err");
         })
-      },
-      () => {
+      })
+      .catch(err => err)
+      .then(() => {
         const duration = new Date().getTime() - start;
         const expectedMinimumDuration = (opts.times - 1) * opts.interval;
         assert(
@@ -98,7 +108,6 @@ describe("retryable", () => {
           `The duration should have been greater than ${expectedMinimumDuration}, but was ${duration}`
         );
         done();
-      }
-    );
+      });
   });
 });
