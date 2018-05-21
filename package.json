@@ -101,7 +101,7 @@
     ]
   },
   "dependencies": {
-    "async": "^2.6.0",
-    "async-es": "^2.6.0"
+    "async": "^2.6.1",
+    "async-es": "^2.6.1"
   }
 }
