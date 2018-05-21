@@ -1,24 +1,24 @@
 import * as assert from "assert";
-import * as async from "async";
+import * as async from "../lib";
 
 describe("during", () => {
-  it("during", done => {
-    const call_order = [];
+  it("during", () => {
+    const callOrder = [];
 
     let count = 0;
-    async.during(
-      cb => {
-        call_order.push(["test", count]);
-        cb(null, count < 5);
-      },
-      cb => {
-        call_order.push(["iteratee", count]);
-        count++;
-        cb(null, count);
-      },
-      err => {
-        assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).toEqual([
+    return async
+      .during(
+        async () => {
+          callOrder.push(["test", count]);
+          return count < 5;
+        },
+        async () => {
+          callOrder.push(["iteratee", count]);
+          count++;
+        }
+      )
+      .then(() => {
+        expect(callOrder).toEqual([
           ["test", 0],
           ["iteratee", 0],
           ["test", 1],
@@ -32,29 +32,28 @@ describe("during", () => {
           ["test", 5]
         ]);
         expect(count).toEqual(5);
-        done();
-      }
-    );
+      });
   });
 
-  it("doDuring", done => {
-    const call_order = [];
+  it("doDuring", () => {
+    const callOrder = [];
 
     let count = 0;
-    async.doDuring(
-      cb => {
-        call_order.push(["iteratee", count]);
-        count++;
-        cb(null, count);
-      },
-      (c, cb) => {
-        expect(c).toEqual(count);
-        call_order.push(["test", count]);
-        cb(null, count < 5);
-      },
-      err => {
-        assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).toEqual([
+    return async
+      .doDuring(
+        async () => {
+          callOrder.push(["iteratee", count]);
+          count++;
+          return count;
+        },
+        async c => {
+          expect(c).toEqual(count);
+          callOrder.push(["test", count]);
+          return count < 5;
+        }
+      )
+      .then(() => {
+        expect(callOrder).toEqual([
           ["iteratee", 0],
           ["test", 1],
           ["iteratee", 1],
@@ -67,40 +66,42 @@ describe("during", () => {
           ["test", 5]
         ]);
         expect(count).toEqual(5);
-        done();
-      }
-    );
+      });
   });
 
-  it("doDuring - error test", done => {
+  it("doDuring - error test", () => {
     const error = new Error("asdas");
 
-    async.doDuring(
-      cb => {
-        cb(error);
-      },
-      () => {},
-      err => {
+    return async
+      .doDuring(
+        async () => {
+          throw error;
+        },
+        async () => {
+          return true;
+        }
+      )
+      .catch(err => err)
+      .then(err => {
         expect(err).toEqual(error);
-        done();
-      }
-    );
+      });
   });
 
-  it("doDuring - error iteratee", done => {
+  it("doDuring - error iteratee", () => {
     const error = new Error("asdas");
 
-    async.doDuring(
-      cb => {
-        cb(null);
-      },
-      cb => {
-        cb(error);
-      },
-      err => {
+    return async
+      .doDuring(
+        async () => {
+          return null;
+        },
+        async () => {
+          throw error;
+        }
+      )
+      .catch(err => err)
+      .then(err => {
         expect(err).toEqual(error);
-        done();
-      }
-    );
+      });
   });
 });

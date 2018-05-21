@@ -77,6 +77,8 @@ export { default as detect } from "./detect";
 export { default as detectLimit } from "./detectLimit";
 export { default as detectSeries } from "./detectSeries";
 export { default as dir } from "./dir";
+export { default as doDuring } from "./doDuring";
+export { default as during } from "./during";
 export { default as each } from "./each";
 export { default as eachLimit } from "./eachLimit";
 export { default as eachSeries } from "./eachSeries";
