@@ -1,107 +1,81 @@
 import * as assert from "assert";
-import * as async from "async";
+import seq from "../lib/seq";
+// import * as async from "async";
+import sleep from "./support/sleep";
+
+const async = { seq };
 
 describe("seq", () => {
-  it("seq", done => {
-    const add2 = (n, cb) => {
+  it("seq", () => {
+    const add2 = async n => {
       expect(n).toEqual(3);
-      setTimeout(() => {
-        cb(null, n + 2);
-      }, 50);
+      await sleep(50);
+      return n + 2;
     };
-    const mul3 = (n, cb) => {
+    const mul3 = async n => {
       expect(n).toEqual(5);
-      setTimeout(() => {
-        cb(null, n * 3);
-      }, 15);
+      await sleep(15);
+      return n * 3;
     };
-    const add1 = (n, cb) => {
+    const add1 = async n => {
       expect(n).toEqual(15);
-      setTimeout(() => {
-        cb(null, n + 1);
-      }, 100);
+      await sleep(100);
+      return n + 1;
     };
+
     const add2mul3add1 = async.seq(add2, mul3, add1);
-    add2mul3add1(3, (err, result) => {
-      if (err) {
-        return done(err);
-      }
-      assert(err === null, `${err} passed instead of 'null'`);
+
+    return add2mul3add1(3).then(result => {
       expect(result).toEqual(16);
-      done();
     });
   });
 
-  it("seq error", done => {
+  it("seq error", () => {
     const testerr = new Error("test");
 
-    const add2 = (n, cb) => {
+    const add2 = async n => {
       expect(n).toEqual(3);
-      setTimeout(() => {
-        cb(null, n + 2);
-      }, 50);
+      await sleep(50);
+      return n + 2;
     };
-    const mul3 = (n, cb) => {
+    const mul3 = async n => {
       expect(n).toEqual(5);
-      setTimeout(() => {
-        cb(testerr);
-      }, 15);
+      await sleep(15);
+      throw testerr;
     };
-    const add1 = (n, cb) => {
+    const add1 = async n => {
       assert(false, "add1 should not get called");
-      setTimeout(() => {
-        cb(null, n + 1);
-      }, 100);
+      await sleep(100);
+      return n + 1;
     };
     const add2mul3add1 = async.seq(add2, mul3, add1);
-    add2mul3add1(3, err => {
-      expect(err).toEqual(testerr);
-      done();
-    });
+    return add2mul3add1(3)
+      .catch(err => err)
+      .then(err => {
+        expect(err).toEqual(testerr);
+      });
   });
 
-  it("seq binding", done => {
+  it("seq binding", () => {
     const testcontext = { name: "foo" };
 
-    const add2 = function(n, cb) {
+    const add2 = async function(n) {
       expect(this).toEqual(testcontext);
-      setTimeout(() => {
-        cb(null, n + 2);
-      }, 50);
+      await sleep(50);
+      return n + 2;
     };
-    const mul3 = function(n, cb) {
+    const mul3 = async function(n) {
       expect(this).toEqual(testcontext);
-      setTimeout(() => {
-        cb(null, n * 3);
-      }, 15);
+      await sleep(15);
+      return n * 3;
     };
+
     const add2mul3 = async.seq(add2, mul3);
-    add2mul3.call(testcontext, 3, function(err, result) {
-      if (err) {
-        return done(err);
-      }
-      expect(this).toEqual(testcontext);
+    return add2mul3.call(testcontext, 3).then(result => {
       expect(result).toEqual(15);
-      done();
     });
   });
 
-  it("seq without callback", done => {
-    const testcontext = { name: "foo" };
-
-    const add2 = function(n, cb) {
-      expect(this).toEqual(testcontext);
-      setTimeout(() => {
-        cb(null, n + 2);
-      }, 50);
-    };
-    const mul3 = function() {
-      expect(this).toEqual(testcontext);
-      setTimeout(() => {
-        done();
-      }, 15);
-    };
-    const add2mul3 = async.seq(add2, mul3);
-    add2mul3.call(testcontext, 3);
-  });
+  // Removed 'seq without callback', doesn't make sense with promises
+  // https://github.com/caolan/async/blob/master/mocha_test/seq.js#L91
 });
