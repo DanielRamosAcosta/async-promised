@@ -43,11 +43,16 @@ describe("detect", () => {
 
     // Promise might be fulfilled before reaching the third "2", depending on
     // hardware speed.
-    try {
-      expect(callOrder).toEqual([1, 2, 2, 2, "callback", 3]);
-    } catch (err) {
-      expect(callOrder).toEqual([1, 2, 2, "callback", 2, 3]);
-    }
+    await Promise.resolve()
+      .then(() => {
+        expect(callOrder).toEqual([1, 2, 2, 2, "callback", 3]);
+      })
+      .catch(() => {
+        expect(callOrder).toEqual([1, 2, 2, "callback", 2, 3]);
+      })
+      .catch(() => {
+        expect(callOrder).toEqual([1, 2, "callback", 2, 2, 3]);
+      });
   });
 
   it("detect error", async () => {
