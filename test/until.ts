@@ -1,25 +1,26 @@
 import * as assert from "assert";
-import * as async from "async";
+import * as async from "../lib";
 
 describe("until", () => {
-  it("until", done => {
-    const call_order = [];
+  it("until", () => {
+    const callOrder = [];
     let count = 0;
-    async.until(
-      c => {
-        expect(c).toEqual(undefined);
-        call_order.push(["test", count]);
-        return count === 5;
-      },
-      cb => {
-        call_order.push(["iteratee", count]);
-        count++;
-        cb(null, count);
-      },
-      (err, result) => {
-        assert(err === null, `${err} passed instead of 'null'`);
-        expect(result).toEqual(5, "last result passed through");
-        expect(call_order).toEqual([
+    return async
+      .until(
+        c => {
+          expect(c).toEqual(undefined);
+          callOrder.push(["test", count]);
+          return count === 5;
+        },
+        async () => {
+          callOrder.push(["iteratee", count]);
+          count++;
+          return count;
+        }
+      )
+      .then(result => {
+        expect(result).toEqual(5);
+        expect(callOrder).toEqual([
           ["test", 0],
           ["iteratee", 0],
           ["test", 1],
@@ -33,29 +34,28 @@ describe("until", () => {
           ["test", 5]
         ]);
         expect(count).toEqual(5);
-        done();
-      }
-    );
+      });
   });
 
-  it("doUntil", done => {
-    const call_order = [];
+  it("doUntil", () => {
+    const callOrder = [];
     let count = 0;
-    async.doUntil(
-      cb => {
-        call_order.push(["iteratee", count]);
-        count++;
-        cb(null, count);
-      },
-      c => {
-        expect(c).toEqual(count);
-        call_order.push(["test", count]);
-        return count === 5;
-      },
-      (err, result) => {
-        assert(err === null, `${err} passed instead of 'null'`);
-        expect(result).toEqual(5, "last result passed through");
-        expect(call_order).toEqual([
+    return async
+      .doUntil(
+        async () => {
+          callOrder.push(["iteratee", count]);
+          count++;
+          return count;
+        },
+        c => {
+          expect(c).toEqual(count);
+          callOrder.push(["test", count]);
+          return count === 5;
+        }
+      )
+      .then(result => {
+        expect(result).toEqual(5);
+        expect(callOrder).toEqual([
           ["iteratee", 0],
           ["test", 1],
           ["iteratee", 1],
@@ -68,28 +68,27 @@ describe("until", () => {
           ["test", 5]
         ]);
         expect(count).toEqual(5);
-        done();
-      }
-    );
+      });
   });
 
-  it("doUntil callback params", done => {
-    const call_order = [];
+  it("doUntil callback params", () => {
+    const callOrder = [];
     let count = 0;
-    async.doUntil(
-      cb => {
-        call_order.push(["iteratee", count]);
-        count++;
-        cb(null, count);
-      },
-      c => {
-        call_order.push(["test", c]);
-        return c === 5;
-      },
-      (err, result) => {
-        if (err) throw err;
-        expect(result).toEqual(5, "last result passed through");
-        expect(call_order).toEqual([
+    return async
+      .doUntil(
+        async () => {
+          callOrder.push(["iteratee", count]);
+          count++;
+          return count;
+        },
+        c => {
+          callOrder.push(["test", c]);
+          return c === 5;
+        }
+      )
+      .then(result => {
+        expect(result).toEqual(5);
+        expect(callOrder).toEqual([
           ["iteratee", 0],
           ["test", 1],
           ["iteratee", 1],
@@ -102,8 +101,6 @@ describe("until", () => {
           ["test", 5]
         ]);
         expect(count).toEqual(5);
-        done();
-      }
-    );
+      });
   });
 });
