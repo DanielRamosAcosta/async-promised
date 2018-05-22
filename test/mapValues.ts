@@ -1,108 +1,92 @@
-import * as async from "async";
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
 describe("mapValues", () => {
   const obj = { a: 1, b: 2, c: 3 };
 
   describe("mapValuesLimit", () => {
-    it("basics", done => {
+    it("basics", () => {
       let running = 0;
       const concurrency = {
         a: 2,
         b: 2,
         c: 1
       };
-      async.mapValuesLimit(
-        obj,
-        2,
-        (val, key, next) => {
+
+      return async
+        .mapValuesLimit(obj, 2, async (val, key) => {
           running++;
-          async.setImmediate(() => {
-            expect(running).toEqual(concurrency[key]);
-            running--;
-            next(null, key + val);
-          });
-        },
-        (err, result) => {
+          await sleep(val * 15);
+          expect(running).toEqual(concurrency[key]);
+          running--;
+          return key + val;
+        })
+        .then(result => {
           expect(running).toEqual(0);
-          expect(err).toEqual(null);
           expect(result).toEqual({ a: "a1", b: "b2", c: "c3" });
-          done();
-        }
-      );
+        });
     });
 
-    it("error", done => {
-      async.mapValuesLimit(
-        obj,
-        1,
-        (val, key, next) => {
+    it("error", () => {
+      return async
+        .mapValuesLimit(obj, 1, async (val, key) => {
           if (key === "b") {
-            return next(new Error("fail"));
+            throw new Error("fail");
           }
-          next(null, val);
-        },
-        (err, result) => {
-          expect(err).not.toEqual(null);
-          expect(result).toEqual({ a: 1 });
-          done();
-        }
-      );
+          return val;
+        })
+        .catch(err => err)
+        .then(err => {
+          expect(err).toBeInstanceOf(Error);
+          expect(err.message).toEqual("fail");
+        });
     });
   });
 
   describe("mapValues", () => {
-    it("basics", done => {
+    it("basics", () => {
       let running = 0;
       const concurrency = {
         a: 3,
         b: 2,
         c: 1
       };
-      async.mapValues(
-        obj,
-        (val, key, next) => {
+
+      return async
+        .mapValues(obj, async (val, key) => {
           running++;
-          async.setImmediate(() => {
-            expect(running).toEqual(concurrency[key]);
-            running--;
-            next(null, key + val);
-          });
-        },
-        (err, result) => {
+          await async.setImmediate("");
+          expect(running).toEqual(concurrency[key]);
+          running--;
+          return key + val;
+        })
+        .then(result => {
           expect(running).toEqual(0);
-          expect(err).toEqual(null);
           expect(result).toEqual({ a: "a1", b: "b2", c: "c3" });
-          done();
-        }
-      );
+        });
     });
   });
 
   describe("mapValuesSeries", () => {
-    it("basics", done => {
+    it("basics", () => {
       let running = 0;
       const concurrency = {
         a: 1,
         b: 1,
         c: 1
       };
-      async.mapValuesSeries(
-        obj,
-        (val, key, next) => {
+      return async
+        .mapValuesSeries(obj, async (val, key) => {
           running++;
-          async.setImmediate(() => {
-            expect(running).toEqual(concurrency[key]);
-            running--;
-            next(null, key + val);
-          });
-        },
-        (err, result) => {
+          await async.setImmediate("");
+          expect(running).toEqual(concurrency[key]);
+          running--;
+          return key + val;
+        })
+        .then(result => {
           expect(running).toEqual(0);
-          expect(err).toEqual(null);
           expect(result).toEqual({ a: "a1", b: "b2", c: "c3" });
-          done();
-        }
-      );
+        });
     });
   });
 });

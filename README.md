@@ -18,3 +18,9 @@ await async.each([1, 3, 2], async x => {
   console.log(`I'm at element ${x}, and I waited ${ms}`)
 });
 ```
+
+## Limitations
+
+* A promise can't be resolved with multiple values
+* A promise can't be rejected with an Error and in the catch scope access the
+  current results.

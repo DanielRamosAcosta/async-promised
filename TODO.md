@@ -2,7 +2,7 @@
 
 > This file is generated, can be updated using `update-todo`
 
-Current implement status: 58%
+Current implement status: 60%
 
 * [x] apply.ts
 * [x] applyEach.ts
@@ -26,7 +26,7 @@ Current implement status: 58%
 * [ ] groupBy.ts
 * [x] linked_list.ts
 * [ ] map.ts
-* [ ] mapValues.ts
+* [x] mapValues.ts
 * [ ] memoize.ts
 * [x] nextTick.ts
 * [ ] parallel.ts
