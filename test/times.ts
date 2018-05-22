@@ -1,117 +1,91 @@
 import * as assert from "assert";
-import * as async from "async";
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
 describe("times", () => {
-  it("times", done => {
-    async.times(
-      5,
-      (n, next) => {
-        next(null, n);
-      },
-      (err, results) => {
-        assert(err === null, `${err} passed instead of 'null'`);
+  it("times", () => {
+    return async
+      .times(5, async n => {
+        return n;
+      })
+      .then(results => {
         expect(results).toEqual([0, 1, 2, 3, 4]);
-        done();
-      }
-    );
+      });
   });
 
-  it("times 3", done => {
+  it("times 3", () => {
     const args = [];
-    async.times(
-      3,
-      (n, callback) => {
-        setTimeout(() => {
-          args.push(n);
-          callback();
-        }, n * 25);
-      },
-      err => {
-        if (err) throw err;
+    return async
+      .times(3, async n => {
+        await sleep(n * 25);
+        args.push(n);
+      })
+      .then(() => {
         expect(args).toEqual([0, 1, 2]);
-        done();
-      }
-    );
+      });
   });
 
-  it("times 0", done => {
-    async.times(
-      0,
-      (n, callback) => {
+  it("times 0", () => {
+    return async
+      .times(0, async n => {
         assert(false, "iteratee should not be called");
-        callback();
-      },
-      err => {
-        if (err) throw err;
+      })
+      .then(() => {
         assert(true, "should call callback");
-      }
-    );
-    setTimeout(done, 25);
+      });
   });
 
-  it("times error", done => {
-    async.times(
-      3,
-      (n, callback) => {
-        callback("error");
-      },
-      err => {
-        expect(err).toEqual("error");
-      }
-    );
-    setTimeout(done, 50);
+  it("times error", () => {
+    return async
+      .times(3, async n => {
+        throw new Error("error");
+      })
+      .catch(err => err)
+      .then(err => {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual("error");
+      });
   });
 
-  it("timesSeries", done => {
-    const call_order = [];
-    async.timesSeries(
-      5,
-      (n, callback) => {
-        setTimeout(() => {
-          call_order.push(n);
-          callback(null, n);
-        }, 100 - n * 10);
-      },
-      (err, results) => {
-        expect(call_order).toEqual([0, 1, 2, 3, 4]);
+  it("timesSeries", () => {
+    const callOrder = [];
+    return async
+      .timesSeries(5, async n => {
+        await sleep(100 - n * 10);
+        callOrder.push(n);
+        return n;
+      })
+      .then(results => {
+        expect(callOrder).toEqual([0, 1, 2, 3, 4]);
         expect(results).toEqual([0, 1, 2, 3, 4]);
-        done();
-      }
-    );
+      });
   });
 
-  it("timesSeries error", done => {
-    async.timesSeries(
-      5,
-      (n, callback) => {
-        callback("error");
-      },
-      err => {
-        expect(err).toEqual("error");
-      }
-    );
-    setTimeout(done, 50);
+  it("timesSeries error", () => {
+    return async
+      .timesSeries(5, async n => {
+        throw new Error("error");
+      })
+      .catch(err => err)
+      .then(err => {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual("error");
+      });
   });
 
-  it("timesLimit", done => {
+  it("timesLimit", () => {
     const limit = 2;
     let running = 0;
-    async.timesLimit(
-      5,
-      limit,
-      (i, next) => {
+    return async
+      .timesLimit(5, limit, async i => {
         running++;
         assert(running <= limit && running > 0, running);
-        setTimeout(() => {
-          running--;
-          next(null, i * 2);
-        }, (3 - i) * 10);
-      },
-      (err, results) => {
-        assert(err === null, `${err} passed instead of 'null'`);
+        await sleep((3 - i) * 10);
+        running--;
+        return i * 2;
+      })
+      .then(results => {
         expect(results).toEqual([0, 2, 4, 6, 8]);
-        done();
-      }
-    );
+      });
   });
 });
