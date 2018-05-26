@@ -6,7 +6,7 @@ describe("queue", function() {
   // TODO: this.retries(3);
 
   it("basics", done => {
-    const call_order = [];
+    const callOrder = [];
     const delays = [40, 10, 60, 10];
 
     // worker1: --1-4
@@ -15,7 +15,7 @@ describe("queue", function() {
 
     const q = async.queue((task, callback) => {
       setTimeout(() => {
-        call_order.push(`process ${task}`);
+        callOrder.push(`process ${task}`);
         callback("error", "arg");
       }, delays.shift());
     }, 2);
@@ -24,31 +24,31 @@ describe("queue", function() {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(1);
-      call_order.push(`callback ${1}`);
+      callOrder.push(`callback ${1}`);
     });
     q.push(2, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(2);
-      call_order.push(`callback ${2}`);
+      callOrder.push(`callback ${2}`);
     });
     q.push(3, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(0);
-      call_order.push(`callback ${3}`);
+      callOrder.push(`callback ${3}`);
     });
     q.push(4, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(0);
-      call_order.push(`callback ${4}`);
+      callOrder.push(`callback ${4}`);
     });
     expect(q.length()).toEqual(4);
     expect(q.concurrency).toEqual(2);
 
     q.drain = () => {
-      expect(call_order).toEqual([
+      expect(callOrder).toEqual([
         "process 2",
         "callback 2",
         "process 1",
@@ -65,14 +65,14 @@ describe("queue", function() {
   });
 
   it("default concurrency", done => {
-    const call_order = [];
+    const callOrder = [];
     const delays = [40, 10, 60, 10];
 
     // order of completion: 1,2,3,4
 
     const q = async.queue((task, callback) => {
       setTimeout(() => {
-        call_order.push(`process ${task}`);
+        callOrder.push(`process ${task}`);
         callback("error", "arg");
       }, delays.shift());
     });
@@ -81,31 +81,31 @@ describe("queue", function() {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(3);
-      call_order.push(`callback ${1}`);
+      callOrder.push(`callback ${1}`);
     });
     q.push(2, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(2);
-      call_order.push(`callback ${2}`);
+      callOrder.push(`callback ${2}`);
     });
     q.push(3, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(1);
-      call_order.push(`callback ${3}`);
+      callOrder.push(`callback ${3}`);
     });
     q.push(4, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(0);
-      call_order.push(`callback ${4}`);
+      callOrder.push(`callback ${4}`);
     });
     expect(q.length()).toEqual(4);
     expect(q.concurrency).toEqual(1);
 
     q.drain = () => {
-      expect(call_order).toEqual([
+      expect(callOrder).toEqual([
         "process 1",
         "callback 1",
         "process 2",
@@ -225,7 +225,7 @@ describe("queue", function() {
   it("push without callback", function(done) {
     // TODO: this.retries(3); // test can be flakey
 
-    const call_order = [];
+    const callOrder = [];
     const delays = [40, 10, 60, 10];
     const concurrencyList = [];
     let running = 0;
@@ -238,7 +238,7 @@ describe("queue", function() {
       running++;
       concurrencyList.push(running);
       setTimeout(() => {
-        call_order.push(`process ${task}`);
+        callOrder.push(`process ${task}`);
         running--;
         callback("error", "arg");
       }, delays.shift());
@@ -252,7 +252,7 @@ describe("queue", function() {
     q.drain = () => {
       expect(running).toEqual(0);
       expect(concurrencyList).toEqual([1, 2, 2, 2]);
-      expect(call_order).toEqual([
+      expect(callOrder).toEqual([
         "process 2",
         "process 1",
         "process 4",
@@ -302,7 +302,7 @@ describe("queue", function() {
   });
 
   it("bulk task", done => {
-    const call_order = [];
+    const callOrder = [];
     const delays = [40, 10, 60, 10];
 
     // worker1: --1-4
@@ -311,21 +311,21 @@ describe("queue", function() {
 
     const q = async.queue((task, callback) => {
       setTimeout(() => {
-        call_order.push(`process ${task}`);
+        callOrder.push(`process ${task}`);
         callback("error", task);
       }, delays.splice(0, 1)[0]);
     }, 2);
 
     q.push([1, 2, 3, 4], (err, arg) => {
       expect(err).toEqual("error");
-      call_order.push(`callback ${arg}`);
+      callOrder.push(`callback ${arg}`);
     });
 
     expect(q.length()).toEqual(4);
     expect(q.concurrency).toEqual(2);
 
     q.drain = () => {
-      expect(call_order).toEqual([
+      expect(callOrder).toEqual([
         "process 2",
         "callback 2",
         "process 1",
@@ -367,14 +367,14 @@ describe("queue", function() {
   });
 
   it("pause", done => {
-    const call_order = [];
+    const callOrder = [];
     let running = 0;
     const concurrencyList = [];
     const pauseCalls = ["process 1", "process 2", "process 3"];
 
     const q = async.queue((task, callback) => {
       running++;
-      call_order.push(`process ${task}`);
+      callOrder.push(`process ${task}`);
       concurrencyList.push(running);
       setTimeout(() => {
         running--;
@@ -389,7 +389,7 @@ describe("queue", function() {
     function after2() {
       q.pause();
       expect(concurrencyList).toEqual([1, 2, 2]);
-      expect(call_order).toEqual(pauseCalls);
+      expect(callOrder).toEqual(pauseCalls);
 
       setTimeout(whilePaused, 5);
       setTimeout(afterPause, 10);
@@ -401,7 +401,7 @@ describe("queue", function() {
 
     function afterPause() {
       expect(concurrencyList).toEqual([1, 2, 2]);
-      expect(call_order).toEqual(pauseCalls);
+      expect(callOrder).toEqual(pauseCalls);
       q.resume();
       q.push(5);
       q.push(6);
@@ -409,7 +409,7 @@ describe("queue", function() {
     }
     function drain() {
       expect(concurrencyList).toEqual([1, 2, 2, 1, 2, 2]);
-      expect(call_order).toEqual([
+      expect(callOrder).toEqual([
         "process 1",
         "process 2",
         "process 3",
@@ -422,17 +422,17 @@ describe("queue", function() {
   });
 
   it("pause in worker with concurrency", done => {
-    const call_order = [];
+    const callOrder = [];
     const q = async.queue((task, callback) => {
       if (task.isLongRunning) {
         q.pause();
         setTimeout(() => {
-          call_order.push(task.id);
+          callOrder.push(task.id);
           q.resume();
           callback();
         }, 50);
       } else {
-        call_order.push(task.id);
+        callOrder.push(task.id);
         setTimeout(callback, 10);
       }
     }, 10);
@@ -444,7 +444,7 @@ describe("queue", function() {
     q.push({ id: 5 });
 
     q.drain = () => {
-      expect(call_order).toEqual([1, 2, 3, 4, 5]);
+      expect(callOrder).toEqual([1, 2, 3, 4, 5]);
       done();
     };
   });

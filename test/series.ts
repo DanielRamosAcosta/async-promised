@@ -4,24 +4,24 @@ import getFunctionsObject from "./support/get-function-object";
 
 describe("series", () => {
   it("series", done => {
-    const call_order = [];
+    const callOrder = [];
     async.series(
       [
         callback => {
           setTimeout(() => {
-            call_order.push(1);
+            callOrder.push(1);
             callback(null, 1);
           }, 25);
         },
         callback => {
           setTimeout(() => {
-            call_order.push(2);
+            callOrder.push(2);
             callback(null, 2);
           }, 50);
         },
         callback => {
           setTimeout(() => {
-            call_order.push(3);
+            callOrder.push(3);
             callback(null, 3, 3);
           }, 15);
         }
@@ -29,31 +29,31 @@ describe("series", () => {
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
         expect(results).toEqual([1, 2, [3, 3]]);
-        expect(call_order).toEqual([1, 2, 3]);
+        expect(callOrder).toEqual([1, 2, 3]);
         done();
       }
     );
   });
 
   it("with reflect", done => {
-    const call_order = [];
+    const callOrder = [];
     async.series(
       [
         async.reflect(callback => {
           setTimeout(() => {
-            call_order.push(1);
+            callOrder.push(1);
             callback(null, 1);
           }, 25);
         }),
         async.reflect(callback => {
           setTimeout(() => {
-            call_order.push(2);
+            callOrder.push(2);
             callback(null, 2);
           }, 50);
         }),
         async.reflect(callback => {
           setTimeout(() => {
-            call_order.push(3);
+            callOrder.push(3);
             callback(null, 3, 3);
           }, 15);
         })
@@ -65,7 +65,7 @@ describe("series", () => {
           { value: 2 },
           { value: [3, 3] }
         ]);
-        expect(call_order).toEqual([1, 2, 3]);
+        expect(callOrder).toEqual([1, 2, 3]);
         done();
       }
     );
@@ -135,15 +135,15 @@ describe("series", () => {
   });
 
   it("object", done => {
-    const call_order = [];
-    async.series(getFunctionsObject(call_order), (err, results) => {
+    const callOrder = [];
+    async.series(getFunctionsObject(callOrder), (err, results) => {
       expect(err).toEqual(null);
       expect(results).toEqual({
         one: 1,
         two: 2,
         three: [3, 3]
       });
-      expect(call_order).toEqual([1, 2, 3]);
+      expect(callOrder).toEqual([1, 2, 3]);
       done();
     });
   });

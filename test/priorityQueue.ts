@@ -2,12 +2,12 @@ import * as async from "async";
 
 describe("priorityQueue", () => {
   it("priorityQueue", done => {
-    const call_order = [];
+    const callOrder = [];
 
     // order of completion: 2,1,4,3
 
     const q = async.priorityQueue((task, callback) => {
-      call_order.push(`process ${task}`);
+      callOrder.push(`process ${task}`);
       callback("error", "arg");
     }, 1);
 
@@ -15,31 +15,31 @@ describe("priorityQueue", () => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(2);
-      call_order.push(`callback ${1}`);
+      callOrder.push(`callback ${1}`);
     });
     q.push(2, 0.2, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(3);
-      call_order.push(`callback ${2}`);
+      callOrder.push(`callback ${2}`);
     });
     q.push(3, 3.8, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(0);
-      call_order.push(`callback ${3}`);
+      callOrder.push(`callback ${3}`);
     });
     q.push(4, 2.9, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(1);
-      call_order.push(`callback ${4}`);
+      callOrder.push(`callback ${4}`);
     });
     expect(q.length()).toEqual(4);
     expect(q.concurrency).toEqual(1);
 
     q.drain = () => {
-      expect(call_order).toEqual([
+      expect(callOrder).toEqual([
         "process 2",
         "callback 2",
         "process 1",
@@ -56,7 +56,7 @@ describe("priorityQueue", () => {
   });
 
   it("concurrency", done => {
-    const call_order = [];
+    const callOrder = [];
     const delays = [160, 80, 240, 80];
 
     // worker1: --2-3
@@ -65,7 +65,7 @@ describe("priorityQueue", () => {
 
     const q = async.priorityQueue((task, callback) => {
       setTimeout(() => {
-        call_order.push(`process ${task}`);
+        callOrder.push(`process ${task}`);
         callback("error", "arg");
       }, delays.splice(0, 1)[0]);
     }, 2);
@@ -74,31 +74,31 @@ describe("priorityQueue", () => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(2);
-      call_order.push(`callback ${1}`);
+      callOrder.push(`callback ${1}`);
     });
     q.push(2, 0.2, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(1);
-      call_order.push(`callback ${2}`);
+      callOrder.push(`callback ${2}`);
     });
     q.push(3, 3.8, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(0);
-      call_order.push(`callback ${3}`);
+      callOrder.push(`callback ${3}`);
     });
     q.push(4, 2.9, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(q.length()).toEqual(0);
-      call_order.push(`callback ${4}`);
+      callOrder.push(`callback ${4}`);
     });
     expect(q.length()).toEqual(4);
     expect(q.concurrency).toEqual(2);
 
     q.drain = () => {
-      expect(call_order).toEqual([
+      expect(callOrder).toEqual([
         "process 1",
         "callback 1",
         "process 2",
@@ -115,17 +115,17 @@ describe("priorityQueue", () => {
   });
 
   it("pause in worker with concurrency", done => {
-    const call_order = [];
+    const callOrder = [];
     const q = async.priorityQueue((task, callback) => {
       if (task.isLongRunning) {
         q.pause();
         setTimeout(() => {
-          call_order.push(task.id);
+          callOrder.push(task.id);
           q.resume();
           callback();
         }, 50);
       } else {
-        call_order.push(task.id);
+        callOrder.push(task.id);
         setTimeout(callback, 10);
       }
     }, 10);
@@ -137,7 +137,7 @@ describe("priorityQueue", () => {
     q.push({ id: 5 });
 
     q.drain = () => {
-      expect(call_order).toEqual([1, 2, 3, 4, 5]);
+      expect(callOrder).toEqual([1, 2, 3, 4, 5]);
       done();
     };
   });

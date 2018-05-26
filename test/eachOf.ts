@@ -169,15 +169,15 @@ describe("eachOf", () => {
   });
 
   it("forEachOfSeries error", done => {
-    const call_order = [];
+    const callOrder = [];
     async.forEachOfSeries(
       { a: 1, b: 2 },
       (value, key, callback) => {
-        call_order.push(value, key);
+        callOrder.push(value, key);
         callback("error");
       },
       err => {
-        expect(call_order).toEqual([1, "a"]);
+        expect(callOrder).toEqual([1, "a"]);
         expect(err).toEqual("error");
       }
     );
@@ -323,19 +323,19 @@ describe("eachOf", () => {
 
   it("forEachOfLimit error", done => {
     const obj = { a: 1, b: 2, c: 3, d: 4, e: 5 };
-    const call_order = [];
+    const callOrder = [];
 
     async.forEachOfLimit(
       obj,
       3,
       (value, key, callback) => {
-        call_order.push(value, key);
+        callOrder.push(value, key);
         if (value === 2) {
           callback("error");
         }
       },
       err => {
-        expect(call_order).toEqual([1, "a", 2, "b"]);
+        expect(callOrder).toEqual([1, "a", 2, "b"]);
         expect(err).toEqual("error");
       }
     );

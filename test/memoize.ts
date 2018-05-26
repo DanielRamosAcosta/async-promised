@@ -3,11 +3,11 @@ import * as async from "async";
 
 describe("memoize", () => {
   it("memoize", done => {
-    const call_order = [];
+    const callOrder = [];
 
     const fn = (arg1, arg2, callback) => {
       async.setImmediate(() => {
-        call_order.push(["fn", arg1, arg2]);
+        callOrder.push(["fn", arg1, arg2]);
         callback(null, arg1 + arg2);
       });
     };
@@ -20,7 +20,7 @@ describe("memoize", () => {
         expect(result).toEqual(3);
         fn2(2, 2, (err, result) => {
           expect(result).toEqual(4);
-          expect(call_order).toEqual([["fn", 1, 2], ["fn", 2, 2]]);
+          expect(callOrder).toEqual([["fn", 1, 2], ["fn", 2, 2]]);
           done();
         });
       });
@@ -28,12 +28,12 @@ describe("memoize", () => {
   });
 
   it("maintains asynchrony", done => {
-    const call_order = [];
+    const callOrder = [];
 
     const fn = (arg1, arg2, callback) => {
-      call_order.push(["fn", arg1, arg2]);
+      callOrder.push(["fn", arg1, arg2]);
       async.setImmediate(() => {
-        call_order.push(["cb", arg1, arg2]);
+        callOrder.push(["cb", arg1, arg2]);
         callback(null, arg1 + arg2);
       });
     };
@@ -44,14 +44,14 @@ describe("memoize", () => {
       fn2(1, 2, (err, result) => {
         expect(result).toEqual(3);
         async.nextTick(memoize_done);
-        call_order.push("tick3");
+        callOrder.push("tick3");
       });
-      call_order.push("tick2");
+      callOrder.push("tick2");
     });
-    call_order.push("tick1");
+    callOrder.push("tick1");
 
     function memoize_done() {
-      const async_call_order = [
+      const asyncCallOrder = [
         ["fn", 1, 2], // initial async call
         "tick1", // async caller
         ["cb", 1, 2], // async callback
@@ -60,16 +60,16 @@ describe("memoize", () => {
         //  ['cb',1,2], // memoized // memoized async response body
         "tick3" // handler for memoized async call
       ];
-      expect(call_order).toEqual(async_call_order);
+      expect(callOrder).toEqual(asyncCallOrder);
       done();
     }
   });
 
   it("unmemoize", done => {
-    const call_order = [];
+    const callOrder = [];
 
     const fn = (arg1, arg2, callback) => {
-      call_order.push(["fn", arg1, arg2]);
+      callOrder.push(["fn", arg1, arg2]);
       async.setImmediate(() => {
         callback(null, arg1 + arg2);
       });
@@ -83,11 +83,7 @@ describe("memoize", () => {
         expect(result).toEqual(3);
         fn3(2, 2, (err, result) => {
           expect(result).toEqual(4);
-          expect(call_order).toEqual([
-            ["fn", 1, 2],
-            ["fn", 1, 2],
-            ["fn", 2, 2]
-          ]);
+          expect(callOrder).toEqual([["fn", 1, 2], ["fn", 1, 2], ["fn", 2, 2]]);
           done();
         });
       });

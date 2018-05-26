@@ -4,31 +4,31 @@ import getFunctionsObject from "./support/get-function-object";
 
 describe("parallel", () => {
   it("parallel", done => {
-    const call_order = [];
+    const callOrder = [];
     async.parallel(
       [
         callback => {
           setTimeout(() => {
-            call_order.push(1);
+            callOrder.push(1);
             callback(null, 1);
           }, 50);
         },
         callback => {
           setTimeout(() => {
-            call_order.push(2);
+            callOrder.push(2);
             callback(null, 2);
           }, 100);
         },
         callback => {
           setTimeout(() => {
-            call_order.push(3);
+            callOrder.push(3);
             callback(null, 3, 3);
           }, 25);
         }
       ],
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).toEqual([3, 1, 2]);
+        expect(callOrder).toEqual([3, 1, 2]);
         expect(results).toEqual([1, 2, [3, 3]]);
         done();
       }
@@ -73,10 +73,10 @@ describe("parallel", () => {
   });
 
   it("parallel object", done => {
-    const call_order = [];
-    async.parallel(getFunctionsObject(call_order), (err, results) => {
+    const callOrder = [];
+    async.parallel(getFunctionsObject(callOrder), (err, results) => {
       expect(err).toEqual(null);
-      expect(call_order).toEqual([3, 1, 2]);
+      expect(callOrder).toEqual([3, 1, 2]);
       expect(results).toEqual({
         one: 1,
         two: 2,
@@ -122,24 +122,24 @@ describe("parallel", () => {
   });
 
   it("parallel limit", done => {
-    const call_order = [];
+    const callOrder = [];
     async.parallelLimit(
       [
         callback => {
           setTimeout(() => {
-            call_order.push(1);
+            callOrder.push(1);
             callback(null, 1);
           }, 50);
         },
         callback => {
           setTimeout(() => {
-            call_order.push(2);
+            callOrder.push(2);
             callback(null, 2);
           }, 100);
         },
         callback => {
           setTimeout(() => {
-            call_order.push(3);
+            callOrder.push(3);
             callback(null, 3, 3);
           }, 25);
         }
@@ -147,7 +147,7 @@ describe("parallel", () => {
       2,
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).toEqual([1, 3, 2]);
+        expect(callOrder).toEqual([1, 3, 2]);
         expect(results).toEqual([1, 2, [3, 3]]);
         done();
       }
@@ -196,10 +196,10 @@ describe("parallel", () => {
   });
 
   it("parallel limit object", done => {
-    const call_order = [];
-    async.parallelLimit(getFunctionsObject(call_order), 2, (err, results) => {
+    const callOrder = [];
+    async.parallelLimit(getFunctionsObject(callOrder), 2, (err, results) => {
       expect(err).toEqual(null);
-      expect(call_order).toEqual([1, 3, 2]);
+      expect(callOrder).toEqual([1, 3, 2]);
       expect(results).toEqual({
         one: 1,
         two: 2,

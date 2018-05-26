@@ -1,20 +1,20 @@
-export default function getFunctionsObject(call_order) {
+export default function getFunctionsObject(callOrder) {
   return {
     one(callback) {
       setTimeout(function() {
-        call_order.push(1);
+        callOrder.push(1);
         callback(null, 1);
       }, 125);
     },
     two(callback) {
       setTimeout(function() {
-        call_order.push(2);
+        callOrder.push(2);
         callback(null, 2);
       }, 200);
     },
     three(callback) {
       setTimeout(function() {
-        call_order.push(3);
+        callOrder.push(3);
         callback(null, 3, 3);
       }, 50);
     }

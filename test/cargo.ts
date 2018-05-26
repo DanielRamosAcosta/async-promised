@@ -3,7 +3,7 @@ import * as async from "async";
 
 describe("cargo", () => {
   it("cargo", done => {
-    const call_order = [];
+    const callOrder = [];
     const delays = [40, 40, 20];
 
     // worker: --12--34--5-
@@ -11,7 +11,7 @@ describe("cargo", () => {
 
     const c = async.cargo((tasks, callback) => {
       setTimeout(() => {
-        call_order.push(`process ${tasks.join(" ")}`);
+        callOrder.push(`process ${tasks.join(" ")}`);
         callback("error", "arg");
       }, delays.shift());
     }, 2);
@@ -20,13 +20,13 @@ describe("cargo", () => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(c.length()).toEqual(3);
-      call_order.push(`callback ${1}`);
+      callOrder.push(`callback ${1}`);
     });
     c.push(2, (err, arg) => {
       expect(err).toEqual("error");
       expect(arg).toEqual("arg");
       expect(c.length()).toEqual(3);
-      call_order.push(`callback ${2}`);
+      callOrder.push(`callback ${2}`);
     });
 
     expect(c.length()).toEqual(2);
@@ -37,7 +37,7 @@ describe("cargo", () => {
         expect(err).toEqual("error");
         expect(arg).toEqual("arg");
         expect(c.length()).toEqual(1);
-        call_order.push(`callback ${3}`);
+        callOrder.push(`callback ${3}`);
       });
     }, 15);
     setTimeout(() => {
@@ -45,19 +45,19 @@ describe("cargo", () => {
         expect(err).toEqual("error");
         expect(arg).toEqual("arg");
         expect(c.length()).toEqual(1);
-        call_order.push(`callback ${4}`);
+        callOrder.push(`callback ${4}`);
       });
       expect(c.length()).toEqual(2);
       c.push(5, (err, arg) => {
         expect(err).toEqual("error");
         expect(arg).toEqual("arg");
         expect(c.length()).toEqual(0);
-        call_order.push(`callback ${5}`);
+        callOrder.push(`callback ${5}`);
       });
     }, 30);
 
     c.drain = () => {
-      expect(call_order).toEqual([
+      expect(callOrder).toEqual([
         "process 1 2",
         "callback 1",
         "callback 2",
@@ -73,7 +73,7 @@ describe("cargo", () => {
   });
 
   it("without callback", done => {
-    const call_order = [];
+    const callOrder = [];
     const delays = [40, 20, 60, 20];
 
     // worker: --1-2---34-5-
@@ -81,7 +81,7 @@ describe("cargo", () => {
 
     const c = async.cargo((tasks, callback) => {
       setTimeout(() => {
-        call_order.push(`process ${tasks.join(" ")}`);
+        callOrder.push(`process ${tasks.join(" ")}`);
         callback("error", "arg");
       }, delays.shift());
     }, 2);
@@ -98,7 +98,7 @@ describe("cargo", () => {
     }, 50);
 
     setTimeout(() => {
-      expect(call_order).toEqual([
+      expect(callOrder).toEqual([
         "process 1",
         "process 2",
         "process 3 4",
@@ -109,7 +109,7 @@ describe("cargo", () => {
   });
 
   it("bulk task", done => {
-    const call_order = [];
+    const callOrder = [];
     const delays = [30, 20];
 
     // worker: -123-4-
@@ -117,20 +117,20 @@ describe("cargo", () => {
 
     const c = async.cargo((tasks, callback) => {
       setTimeout(() => {
-        call_order.push(`process ${tasks.join(" ")}`);
+        callOrder.push(`process ${tasks.join(" ")}`);
         callback("error", tasks.join(" "));
       }, delays.shift());
     }, 3);
 
     c.push([1, 2, 3, 4], (err, arg) => {
       expect(err).toEqual("error");
-      call_order.push(`callback ${arg}`);
+      callOrder.push(`callback ${arg}`);
     });
 
     expect(c.length()).toEqual(4);
 
     setTimeout(() => {
-      expect(call_order).toEqual([
+      expect(callOrder).toEqual([
         "process 1 2 3",
         "callback 1 2 3",
         "callback 1 2 3",

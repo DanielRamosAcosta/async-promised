@@ -2,36 +2,36 @@ import * as assert from "assert";
 import * as async from "async";
 
 describe("map", () => {
-  function mapIteratee(call_order, x, callback) {
+  function mapIteratee(callOrder, x, callback) {
     setTimeout(() => {
-      call_order.push(x);
+      callOrder.push(x);
       callback(null, x * 2);
     }, x * 25);
   }
 
   it("basic", function(done) {
-    const call_order = [];
-    async.map([1, 3, 2], mapIteratee.bind(this, call_order), (err, results) => {
+    const callOrder = [];
+    async.map([1, 3, 2], mapIteratee.bind(this, callOrder), (err, results) => {
       assert(err === null, `${err} passed instead of 'null'`);
-      expect(call_order).toEqual([1, 2, 3]);
+      expect(callOrder).toEqual([1, 2, 3]);
       expect(results).toEqual([2, 6, 4]);
       done();
     });
   });
 
   it("with reflect", done => {
-    const call_order = [];
+    const callOrder = [];
     async.map(
       [1, 3, 2],
       async.reflect((item, cb) => {
         setTimeout(() => {
-          call_order.push(item);
+          callOrder.push(item);
           cb(null, item * 2);
         }, item * 25);
       }),
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).toEqual([1, 2, 3]);
+        expect(callOrder).toEqual([1, 2, 3]);
         expect(results).toEqual([
           {
             value: 2
@@ -49,12 +49,12 @@ describe("map", () => {
   });
 
   it("error with reflect", done => {
-    const call_order = [];
+    const callOrder = [];
     async.map(
       [-1, 1, 3, 2],
       async.reflect((item, cb) => {
         setTimeout(() => {
-          call_order.push(item);
+          callOrder.push(item);
           if (item < 0) {
             cb("number less then zero");
           } else {
@@ -64,7 +64,7 @@ describe("map", () => {
       }),
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).toEqual([-1, 1, 2, 3]);
+        expect(callOrder).toEqual([-1, 1, 2, 3]);
         expect(results).toEqual([
           {
             error: "number less then zero"
@@ -164,13 +164,13 @@ describe("map", () => {
   });
 
   it("mapSeries", function(done) {
-    const call_order = [];
+    const callOrder = [];
     async.mapSeries(
       [1, 3, 2],
-      mapIteratee.bind(this, call_order),
+      mapIteratee.bind(this, callOrder),
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).toEqual([1, 3, 2]);
+        expect(callOrder).toEqual([1, 3, 2]);
         expect(results).toEqual([2, 6, 4]);
         done();
       }
@@ -225,14 +225,14 @@ describe("map", () => {
   });
 
   it("mapLimit", function(done) {
-    const call_order = [];
+    const callOrder = [];
     async.mapLimit(
       [2, 4, 3],
       2,
-      mapIteratee.bind(this, call_order),
+      mapIteratee.bind(this, callOrder),
       (err, results) => {
         assert(err === null, `${err} passed instead of 'null'`);
-        expect(call_order).toEqual([2, 4, 3]);
+        expect(callOrder).toEqual([2, 4, 3]);
         expect(results).toEqual([4, 8, 6]);
         done();
       }
@@ -271,13 +271,13 @@ describe("map", () => {
   });
 
   it("mapLimit limit exceeds size", function(done) {
-    const call_order = [];
+    const callOrder = [];
     async.mapLimit(
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       20,
-      mapIteratee.bind(this, call_order),
+      mapIteratee.bind(this, callOrder),
       (err, results) => {
-        expect(call_order).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        expect(callOrder).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
         expect(results).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16, 18]);
         done();
       }
@@ -285,13 +285,13 @@ describe("map", () => {
   });
 
   it("mapLimit limit equal size", function(done) {
-    const call_order = [];
+    const callOrder = [];
     async.mapLimit(
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       10,
-      mapIteratee.bind(this, call_order),
+      mapIteratee.bind(this, callOrder),
       (err, results) => {
-        expect(call_order).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        expect(callOrder).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
         expect(results).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16, 18]);
         done();
       }
@@ -316,19 +316,19 @@ describe("map", () => {
 
   it("mapLimit error", done => {
     const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-    const call_order = [];
+    const callOrder = [];
 
     async.mapLimit(
       arr,
       3,
       (x, callback) => {
-        call_order.push(x);
+        callOrder.push(x);
         if (x === 2) {
           callback("error");
         }
       },
       err => {
-        expect(call_order).toEqual([0, 1, 2]);
+        expect(callOrder).toEqual([0, 1, 2]);
         expect(err).toEqual("error");
       }
     );
