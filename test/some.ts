@@ -1,173 +1,121 @@
-import * as async from "async";
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
 describe("some", () => {
-  it("some true", done => {
-    async.some(
-      [3, 1, 2],
-      (x, callback) => {
-        setTimeout(() => {
-          callback(null, x === 1);
-        }, 0);
-      },
-      (err, result) => {
-        expect(err).toEqual(null);
+  it("some true", () => {
+    return async
+      .some([3, 1, 2], async x => {
+        await sleep(0);
+        return x === 1;
+      })
+      .then(result => {
         expect(result).toEqual(true);
-        done();
-      }
-    );
+      });
   });
 
-  it("some false", done => {
-    async.some(
-      [3, 1, 2],
-      (x, callback) => {
-        setTimeout(() => {
-          callback(null, x === 10);
-        }, 0);
-      },
-      (err, result) => {
-        expect(err).toEqual(null);
+  it("some false", () => {
+    return async
+      .some([3, 1, 2], async x => {
+        await sleep(0);
+        return x === 10;
+      })
+      .then(result => {
         expect(result).toEqual(false);
-        done();
-      }
-    );
+      });
   });
 
-  it("some early return", done => {
+  it("some early return", async () => {
     const callOrder = [];
-    async.some(
-      [1, 2, 3],
-      (x, callback) => {
-        setTimeout(() => {
-          callOrder.push(x);
-          callback(null, x === 1);
-        }, x * 5);
-      },
-      () => {
+    async
+      .some([1, 2, 3], async x => {
+        await sleep(x * 5);
+        callOrder.push(x);
+        return x === 1;
+      })
+      .then(() => {
         callOrder.push("callback");
-      }
-    );
-    setTimeout(() => {
-      expect(callOrder).toEqual([1, "callback", 2, 3]);
-      done();
-    }, 25);
+      });
+    await sleep(25);
+    expect(callOrder).toEqual([1, "callback", 2, 3]);
   });
 
-  it("some error", done => {
-    async.some(
-      [3, 1, 2],
-      (x, callback) => {
-        setTimeout(() => {
-          callback("error");
-        }, 0);
-      },
-      (err, result) => {
-        expect(err).toEqual("error");
-        expect(result).toBeFalsy();
-        done();
-      }
-    );
+  it("some error", () => {
+    return async
+      .some([3, 1, 2], async x => {
+        await sleep(0);
+        throw new Error("error");
+      })
+      .catch(err => err)
+      .then(err => {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual("error");
+      });
   });
 
-  it("some no callback", done => {
-    const calls = [];
+  // Removed 'some no callback', doesn't make sense with promises
+  // https://github.com/caolan/async/blob/master/mocha_test/some.js#L53
 
-    async.some([1, 2, 3], (val, cb) => {
-      calls.push(val);
-      cb();
-    });
-
-    setTimeout(() => {
-      expect(calls).toEqual([1, 2, 3]);
-      done();
-    }, 10);
-  });
-
-  it("someLimit true", done => {
-    async.someLimit(
-      [3, 1, 2],
-      2,
-      (x, callback) => {
-        setTimeout(() => {
-          callback(null, x === 2);
-        }, 0);
-      },
-      (err, result) => {
-        expect(err).toEqual(null);
+  it("someLimit true", () => {
+    return async
+      .someLimit([3, 1, 2], 2, async x => {
+        await sleep(0);
+        return x === 2;
+      })
+      .then(result => {
         expect(result).toEqual(true);
-        done();
-      }
-    );
+      });
   });
 
-  it("someLimit false", done => {
-    async.someLimit(
-      [3, 1, 2],
-      2,
-      (x, callback) => {
-        setTimeout(() => {
-          callback(null, x === 10);
-        }, 0);
-      },
-      (err, result) => {
-        expect(err).toEqual(null);
+  it("someLimit false", () => {
+    return async
+      .someLimit([3, 1, 2], 2, async x => {
+        await sleep(0);
+        return x === 10;
+      })
+      .then(result => {
         expect(result).toEqual(false);
-        done();
-      }
-    );
+      });
   });
 
-  it("someLimit short-circuit", done => {
+  it("someLimit short-circuit", () => {
     let calls = 0;
-    async.someLimit(
-      [3, 1, 2],
-      1,
-      (x, callback) => {
+    return async
+      .someLimit([3, 1, 2], 1, async x => {
         calls++;
-        callback(null, x === 1);
-      },
-      (err, result) => {
-        expect(err).toEqual(null);
+        return x === 1;
+      })
+      .then(result => {
         expect(result).toEqual(true);
         expect(calls).toEqual(2);
-        done();
-      }
-    );
+      });
   });
 
-  it("someSeries doesn't cause stack overflow (#1293)", done => {
+  it("someSeries doesn't cause stack overflow (#1293)", () => {
     const arr = Array.from({ length: 10000 });
     let calls = 0;
-    async.someSeries(
-      arr,
-      (data, cb) => {
+    return async
+      .someSeries(arr, async data => {
         calls += 1;
-        async.setImmediate(() => cb(null, true));
-      },
-      err => {
-        expect(err).toEqual(null);
+        await sleep(0);
+        return true;
+      })
+      .then(() => {
         expect(calls).toEqual(1);
-        done();
-      }
-    );
+      });
   });
 
-  it("someLimit doesn't cause stack overflow (#1293)", done => {
+  it("someLimit doesn't cause stack overflow (#1293)", () => {
     const arr = Array.from({ length: 10000 });
     let calls = 0;
-    async.someLimit(
-      arr,
-      100,
-      (data, cb) => {
+    return async
+      .someLimit(arr, 100, async data => {
         calls += 1;
-        async.setImmediate(() => cb(null, true));
-      },
-      err => {
-        expect(err).toEqual(null);
+        await sleep(0);
+        return true;
+      })
+      .then(() => {
         expect(calls).toEqual(100);
-        done();
-      }
-    );
+      });
   });
 
   it("any alias", () => {

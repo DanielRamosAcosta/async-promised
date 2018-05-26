@@ -62,6 +62,12 @@
  * @module Utils
  */
 
+export { default as all } from "./every";
+export { default as allLimit } from "./everyLimit";
+export { default as allSeries } from "./everySeries";
+export { default as any } from "./some";
+export { default as anyLimit } from "./someLimit";
+export { default as anySeries } from "./someSeries";
 export { default as apply } from "./apply";
 export { default as applyEach } from "./applyEach";
 export { default as applyEachSeries } from "./applyEachSeries";
@@ -85,15 +91,12 @@ export { default as each } from "./each";
 export { default as eachLimit } from "./eachLimit";
 export { default as eachSeries } from "./eachSeries";
 export { default as ensureAsync } from "./ensureAsync";
-export { default as filter } from "./filter";
-export { default as filterLimit } from "./filterLimit";
-export { default as filterSeries } from "./filterSeries";
 export { default as every } from "./every";
 export { default as everyLimit } from "./everyLimit";
 export { default as everySeries } from "./everySeries";
-export { default as all } from "./every";
-export { default as allLimit } from "./everyLimit";
-export { default as allSeries } from "./everySeries";
+export { default as filter } from "./filter";
+export { default as filterLimit } from "./filterLimit";
+export { default as filterSeries } from "./filterSeries";
 export { default as find } from "./detect";
 export { default as findLimit } from "./detectLimit";
 export { default as findSeries } from "./detectSeries";
@@ -118,6 +121,9 @@ export { default as rejectSeries } from "./rejectSeries";
 export { default as select } from "./filter";
 export { default as selectSeries } from "./filterSeries";
 export { default as setImmediate } from "./setImmediate";
+export { default as some } from "./some";
+export { default as someLimit } from "./someLimit";
+export { default as someSeries } from "./someSeries";
 export { default as sortBy } from "./sortBy";
 export { default as times } from "./times";
 export { default as timesLimit } from "./timesLimit";
