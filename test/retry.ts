@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import * as _ from "lodash";
 
 describe("retry", () => {
   // Issue 306 on github: https://github.com/caolan/async/issues/306
@@ -156,14 +155,10 @@ describe("retry", () => {
     function fn(callback) {
       callback(null, 1, 2, 3); // respond with indexed values
     }
-    async.retry(
-      5,
-      fn,
-      _.rest(args => {
-        expect(args).toEqual([null, 1, 2, 3]);
-        done();
-      })
-    );
+    async.retry(5, fn, (...args) => {
+      expect(args).toEqual([null, 1, 2, 3]);
+      done();
+    });
   });
 
   // note this is a synchronous test ensuring retry is synchrnous in the fastest (most straightforward) case
@@ -283,19 +278,11 @@ describe("retry", () => {
     const options = {
       errorFilter: errorTest
     };
-    async.retry(
-      options,
-      fn,
-      _.rest(args => {
-        assert.equal(callCount, 1, "did not retry the correct number of times");
-        expect(args).toEqual([null, erroredResult + callCount]);
-        assert.equal(
-          continueTestCalled,
-          false,
-          "error test function was called"
-        );
-        done();
-      })
-    );
+    async.retry(options, fn, (...args) => {
+      assert.equal(callCount, 1, "did not retry the correct number of times");
+      expect(args).toEqual([null, erroredResult + callCount]);
+      assert.equal(continueTestCalled, false, "error test function was called");
+      done();
+    });
   });
 });

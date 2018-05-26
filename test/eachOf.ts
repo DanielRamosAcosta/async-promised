@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as async from "async";
-import * as _ from "lodash";
 
 describe("eachOf", () => {
   function forEachOfNoCallbackIteratee(done, x, key, callback) {
@@ -308,7 +307,7 @@ describe("eachOf", () => {
   it("forEachOfLimit no limit", done => {
     let count = 0;
     async.forEachOfLimit(
-      _.range(100),
+      Array.from({ length: 100 }),
       Infinity,
       (x, i, callback) => {
         count++;

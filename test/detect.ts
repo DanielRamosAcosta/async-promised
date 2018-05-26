@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import * as async from "../lib";
 
 import sleep from "./support/sleep";
@@ -171,7 +170,7 @@ describe("detect", () => {
   });
 
   it("detectSeries doesn't cause stack overflow (#1293)", async () => {
-    const arr = _.range(10000);
+    const arr = Array.from({ length: 10000 });
     let calls = 0;
 
     return async
@@ -189,7 +188,7 @@ describe("detect", () => {
   });
 
   it("detectLimit doesn't cause stack overflow (#1293)", async () => {
-    const arr = _.range(10000);
+    const arr = Array.from({ length: 10000 });
     let calls = 0;
 
     return async

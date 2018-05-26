@@ -1,5 +1,4 @@
 import * as async from "async";
-import * as _ from "lodash";
 
 describe("some", () => {
   it("some true", done => {
@@ -35,21 +34,21 @@ describe("some", () => {
   });
 
   it("some early return", done => {
-    const call_order = [];
+    const callOrder = [];
     async.some(
       [1, 2, 3],
       (x, callback) => {
         setTimeout(() => {
-          call_order.push(x);
+          callOrder.push(x);
           callback(null, x === 1);
         }, x * 5);
       },
       () => {
-        call_order.push("callback");
+        callOrder.push("callback");
       }
     );
     setTimeout(() => {
-      expect(call_order).toEqual([1, "callback", 2, 3]);
+      expect(callOrder).toEqual([1, "callback", 2, 3]);
       done();
     }, 25);
   });
@@ -137,13 +136,13 @@ describe("some", () => {
   });
 
   it("someSeries doesn't cause stack overflow (#1293)", done => {
-    const arr = _.range(10000);
+    const arr = Array.from({ length: 10000 });
     let calls = 0;
     async.someSeries(
       arr,
       (data, cb) => {
         calls += 1;
-        async.setImmediate(_.partial(cb, null, true));
+        async.setImmediate(() => cb(null, true));
       },
       err => {
         expect(err).toEqual(null);
@@ -154,14 +153,14 @@ describe("some", () => {
   });
 
   it("someLimit doesn't cause stack overflow (#1293)", done => {
-    const arr = _.range(10000);
+    const arr = Array.from({ length: 10000 });
     let calls = 0;
     async.someLimit(
       arr,
       100,
       (data, cb) => {
         calls += 1;
-        async.setImmediate(_.partial(cb, null, true));
+        async.setImmediate(() => cb(null, true));
       },
       err => {
         expect(err).toEqual(null);
