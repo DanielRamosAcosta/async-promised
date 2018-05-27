@@ -1,33 +1,42 @@
 import * as assert from "assert";
-import * as async from "async";
+import * as async from "../lib";
 
 /**
  * This tests doesn't exist in caloan/async
  */
 
 describe("reflect", () => {
-  it("without error", done => {
-    const reflectedFn = async.reflect(cb => {
-      cb(null, "ok");
+  it("without error", () => {
+    const reflectedFn = async.reflect(async () => {
+      return "ok";
     });
 
-    reflectedFn((err, result) => {
-      expect(err).toBeNull();
+    return reflectedFn().then(result => {
       expect(result).toEqual({ value: "ok" });
-      done();
     });
   });
 
-  it("with error", done => {
-    const reflectedFn = async.reflect(cb => {
-      cb(new Error("fail"));
+  it("with error", () => {
+    const reflectedFn = async.reflect(async () => {
+      throw new Error("fail");
     });
 
-    reflectedFn((err, result) => {
-      expect(err).toBeNull();
-      expect(result.error).toBeInstanceOf(Error);
-      expect(result.error.message).toEqual("fail");
-      done();
+    return reflectedFn().then(result => {
+      if ("error" in result) {
+        expect(result.error).toEqual(new Error("fail"));
+      } else {
+        assert(false, "Expected result to have key 'error'");
+      }
+    });
+  });
+
+  it("multiple args", () => {
+    const reflectedFn = async.reflect(async (arg1: string, arg2: number) => {
+      return `${arg1} = ${arg2}`;
+    });
+
+    return reflectedFn("1 + 1", 2).then(result => {
+      expect(result).toEqual({ value: "1 + 1 = 2" });
     });
   });
 });
