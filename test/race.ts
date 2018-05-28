@@ -28,7 +28,7 @@ describe("race", () => {
     const tasks = [];
 
     const eachTest = i => async next => {
-      await sleep(50 - i * 2);
+      await sleep(100 - i * 15);
       throw new Error(`ERR${i}`);
     };
 
