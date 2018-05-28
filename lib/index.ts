@@ -121,6 +121,7 @@ export { default as rejectLimit } from "./rejectLimit";
 export { default as rejectSeries } from "./rejectSeries";
 export { default as select } from "./filter";
 export { default as selectSeries } from "./filterSeries";
+export { default as series } from "./series";
 export { default as setImmediate } from "./setImmediate";
 export { default as some } from "./some";
 export { default as someLimit } from "./someLimit";

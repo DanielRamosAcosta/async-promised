@@ -1,3 +1,5 @@
+import sleep from "./sleep";
+
 export default function getFunctionsObject(callOrder) {
   return {
     one(callback) {
@@ -17,6 +19,26 @@ export default function getFunctionsObject(callOrder) {
         callOrder.push(3);
         callback(null, 3, 3);
       }, 50);
+    }
+  };
+}
+
+export function getFunctionsObjectPromised(callOrder) {
+  return {
+    async one() {
+      await sleep(125);
+      callOrder.push(1);
+      return 1;
+    },
+    async two() {
+      await sleep(200);
+      callOrder.push(2);
+      return 2;
+    },
+    async three() {
+      await sleep(50);
+      callOrder.push(3);
+      return 3;
     }
   };
 }

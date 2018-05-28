@@ -1,150 +1,116 @@
 import * as assert from "assert";
-import * as async from "async";
-import getFunctionsObject from "./support/get-function-object";
+import * as async from "../lib";
+import { getFunctionsObjectPromised } from "./support/get-function-object";
+import sleep from "./support/sleep";
 
 describe("series", () => {
-  it("series", done => {
+  it("series", () => {
     const callOrder = [];
-    async.series(
-      [
-        callback => {
-          setTimeout(() => {
-            callOrder.push(1);
-            callback(null, 1);
-          }, 25);
+    return async
+      .series([
+        async () => {
+          await sleep(25);
+          callOrder.push(1);
+          return 1;
         },
-        callback => {
-          setTimeout(() => {
-            callOrder.push(2);
-            callback(null, 2);
-          }, 50);
+        async () => {
+          await sleep(50);
+          callOrder.push(2);
+          return 2;
         },
-        callback => {
-          setTimeout(() => {
-            callOrder.push(3);
-            callback(null, 3, 3);
-          }, 15);
+        async () => {
+          await sleep(15);
+          callOrder.push(3);
+          return 3;
         }
-      ],
-      (err, results) => {
-        assert(err === null, `${err} passed instead of 'null'`);
-        expect(results).toEqual([1, 2, [3, 3]]);
+      ])
+      .then(results => {
+        expect(results).toEqual([1, 2, 3]);
         expect(callOrder).toEqual([1, 2, 3]);
-        done();
-      }
-    );
+      });
   });
 
-  it("with reflect", done => {
+  it("with reflect", () => {
     const callOrder = [];
-    async.series(
-      [
-        async.reflect(callback => {
-          setTimeout(() => {
-            callOrder.push(1);
-            callback(null, 1);
-          }, 25);
+    async
+      .series([
+        async.reflect(async () => {
+          await sleep(25);
+          callOrder.push(1);
+          return 1;
         }),
-        async.reflect(callback => {
-          setTimeout(() => {
-            callOrder.push(2);
-            callback(null, 2);
-          }, 50);
+        async.reflect(async () => {
+          await sleep(50);
+          callOrder.push(2);
+          return 2;
         }),
-        async.reflect(callback => {
-          setTimeout(() => {
-            callOrder.push(3);
-            callback(null, 3, 3);
-          }, 15);
+        async.reflect(async () => {
+          await sleep(15);
+          callOrder.push(3);
+          return 3;
         })
-      ],
-      (err, results) => {
-        assert(err === null, `${err} passed instead of 'null'`);
-        expect(results).toEqual([
-          { value: 1 },
-          { value: 2 },
-          { value: [3, 3] }
-        ]);
+      ])
+      .then(results => {
+        expect(results).toEqual([{ value: 1 }, { value: 2 }, { value: 3 }]);
         expect(callOrder).toEqual([1, 2, 3]);
-        done();
-      }
-    );
+      });
   });
 
-  it("empty array", done => {
-    async.series([], (err, results) => {
-      expect(err).toEqual(null);
+  it("empty array", () => {
+    async.series([]).then(results => {
       expect(results).toEqual([]);
-      done();
     });
   });
 
-  it("error", done => {
-    async.series(
-      [
-        callback => {
-          callback("error", 1);
+  it("error", () => {
+    return async
+      .series([
+        async () => {
+          throw new Error("fail");
         },
-        callback => {
+        async () => {
           assert(false, "should not be called");
-          callback("error2", 2);
         }
-      ],
-      err => {
-        expect(err).toEqual("error");
-      }
-    );
-    setTimeout(done, 100);
+      ])
+      .catch(err => err)
+      .then(err => {
+        expect(err).toEqual(new Error("fail"));
+      });
   });
 
-  it("error with reflect", done => {
-    async.series(
-      [
-        async.reflect(callback => {
-          callback("error", 1);
+  it("error with reflect", () => {
+    return async
+      .series([
+        async.reflect(async () => {
+          throw new Error("fail1");
         }),
-        async.reflect(callback => {
-          callback("error2", 2);
+        async.reflect(async () => {
+          throw new Error("fail2");
         }),
-        async.reflect(callback => {
-          callback(null, 1);
+        async.reflect(async () => {
+          return 1;
         })
-      ],
-      (err, results) => {
-        assert(err === null, `${err} passed instead of 'null'`);
+      ])
+      .then(results => {
         expect(results).toEqual([
-          { error: "error" },
-          { error: "error2" },
+          { error: new Error("fail1") },
+          { error: new Error("fail2") },
           { value: 1 }
         ]);
-        done();
-      }
-    );
+      });
   });
 
-  it("no callback", done => {
-    async.series([
-      callback => {
-        callback();
-      },
-      callback => {
-        callback();
-        done();
-      }
-    ]);
-  });
-
-  it("object", done => {
+  // Removed 'no callback', doesn't make sense with promises
+  // https://github.com/caolan/async/blob/master/mocha_test/series.js#L118
+  it("object", () => {
     const callOrder = [];
-    async.series(getFunctionsObject(callOrder), (err, results) => {
-      expect(err).toEqual(null);
+    return async.series(getFunctionsObjectPromised(callOrder)).then(results => {
       expect(results).toEqual({
         one: 1,
-        two: 2,
-        three: [3, 3]
+        three: 3,
+        two: 2
       });
       expect(callOrder).toEqual([1, 2, 3]);
-      done();
     });
   });
 
@@ -155,60 +121,42 @@ describe("series", () => {
       done
     };
 
-    const fn =
-      "(" +
-      function() {
-        async.series(
-          [
-            function(callback) {
-              callback();
-            }
-          ],
-          function(err) {
-            if (err) {
-              return done(err);
-            }
-            done();
+    const testFunc = () => {
+      async
+        .series([
+          () => {
+            return Promise.resolve(0);
           }
-        );
-      }.toString() +
-      "())";
+        ])
+        .then(() => {
+          done();
+        });
+    };
 
-    vm.runInNewContext(fn, sandbox);
+    vm.runInNewContext(`(${testFunc})()`, sandbox);
   });
 
   // Issue 10 on github: https://github.com/caolan/async/issues#issue/10
-  it("falsy return values", done => {
-    function taskFalse(callback) {
-      async.nextTick(() => {
-        callback(null, false);
-      });
+  xit("falsy return values", () => {
+    async function taskFalse() {
+      return false;
     }
-    function taskUndefined(callback) {
-      async.nextTick(() => {
-        callback(null, undefined);
-      });
+    async function taskUndefined() {
+      return undefined;
     }
-    function taskEmpty(callback) {
-      async.nextTick(() => {
-        callback(null);
-      });
+    async function taskEmpty() {}
+    async function taskNull() {
+      return null;
     }
-    function taskNull(callback) {
-      async.nextTick(() => {
-        callback(null, null);
+
+    return async
+      .series([taskFalse, taskUndefined, taskEmpty, taskNull])
+      .then(results => {
+        expect(results).toHaveLength(4);
+        expect(results[0]).toEqual(false);
+        expect(results[1]).toEqual(undefined);
+        expect(results[2]).toEqual(undefined);
+        expect(results[3]).toEqual(null);
       });
-    }
-    async.series(
-      [taskFalse, taskUndefined, taskEmpty, taskNull],
-      (err, results) => {
-        expect(results.length).toEqual(4);
-        assert.strictEqual(results[0], false);
-        assert.strictEqual(results[1], undefined);
-        assert.strictEqual(results[2], undefined);
-        assert.strictEqual(results[3], null);
-        done();
-      }
-    );
   });
 });

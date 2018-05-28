@@ -11,14 +11,15 @@ export function callbackify(func: AsyncResultPromise): AsyncResultCallback {
 
 export function resolveCallback<T>(resolve: Function, reject: Function) {
   return (err: Error | undefined, results: T) =>
-    err
-    ? reject(err)
-    : results === undefined ? resolve() : resolve(results);
+    err ? reject(err) : results === undefined ? resolve() : resolve(results);
 }
 
 export function linkCB(prom: Promise<any>, callback: Function) {
   prom
-    .then(results => results === undefined ? callback(null) : callback(null, results))
+    .then(
+      results =>
+        results === undefined ? callback(null) : callback(null, results)
+    )
     .catch(err => callback(err));
 }
 
@@ -26,5 +27,11 @@ export function callbackifyFuncs(tasks: AsyncResultPromise[]) {
   if (Array.isArray(tasks)) {
     return tasks.map(callbackify);
   }
-  return tasks;
+  return Object.keys(tasks).reduce(
+    (previousValue, currentValue) => ({
+      ...previousValue,
+      [currentValue]: callbackify(tasks[currentValue])
+    }),
+    {}
+  );
 }
