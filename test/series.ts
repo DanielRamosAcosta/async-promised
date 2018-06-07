@@ -102,6 +102,7 @@ describe("series", () => {
 
   // Removed 'no callback', doesn't make sense with promises
   // https://github.com/caolan/async/blob/master/mocha_test/series.js#L118
+
   it("object", () => {
     const callOrder = [];
     return async.series(getFunctionsObjectPromised(callOrder)).then(results => {

@@ -1,204 +1,215 @@
 import * as assert from "assert";
-import * as async from "async";
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
 describe("memoize", () => {
-  it("memoize", done => {
+  it("memoize", () => {
     const callOrder = [];
 
-    const fn = (arg1, arg2, callback) => {
-      async.setImmediate(() => {
-        callOrder.push(["fn", arg1, arg2]);
-        callback(null, arg1 + arg2);
-      });
+    const fn = async (arg1: number, arg2: number): Promise<number> => {
+      await async.setImmediate();
+      callOrder.push(["fn", arg1, arg2]);
+      return arg1 + arg2;
     };
 
     const fn2 = async.memoize(fn);
-    fn2(1, 2, (err, result) => {
-      assert(err === null, `${err} passed instead of 'null'`);
-      expect(result).toEqual(3);
-      fn2(1, 2, (err, result) => {
+
+    return Promise.resolve()
+      .then(() => fn2(1, 2))
+      .then(result => {
         expect(result).toEqual(3);
-        fn2(2, 2, (err, result) => {
-          expect(result).toEqual(4);
-          expect(callOrder).toEqual([["fn", 1, 2], ["fn", 2, 2]]);
-          done();
-        });
+      })
+      .then(() => fn2(1, 2))
+      .then(result => {
+        expect(result).toEqual(3);
+      })
+      .then(() => fn2(2, 2))
+      .then(result => {
+        expect(result).toEqual(4);
       });
-    });
   });
 
-  it("maintains asynchrony", done => {
+  it("maintains asynchrony", () => {
     const callOrder = [];
 
-    const fn = (arg1, arg2, callback) => {
+    const fn = async (arg1: number, arg2: number): Promise<number> => {
       callOrder.push(["fn", arg1, arg2]);
-      async.setImmediate(() => {
-        callOrder.push(["cb", arg1, arg2]);
-        callback(null, arg1 + arg2);
-      });
+      await async.setImmediate();
+      callOrder.push(["cb", arg1, arg2]);
+      return arg1 + arg2;
     };
 
     const fn2 = async.memoize(fn);
-    fn2(1, 2, (err, result) => {
-      expect(result).toEqual(3);
-      fn2(1, 2, (err, result) => {
-        expect(result).toEqual(3);
-        async.nextTick(memoize_done);
+
+    const p1 = fn2(1, 2).then(resultP1 => {
+      expect(resultP1).toEqual(3);
+
+      const p2 = fn2(1, 2).then(resultP2 => {
+        expect(resultP2).toEqual(3);
+        const p3 = async.nextTick().then(() => {
+          const asyncCallOrder = [
+            ["fn", 1, 2], // initial async call
+            "tick1", // async caller
+            ["cb", 1, 2], // async callback
+            //  ['fn',1,2], // memoized // memoized async body
+            "tick2", // handler for first async call
+            //  ['cb',1,2], // memoized // memoized async response body
+            "tick3" // handler for memoized async call
+          ];
+          expect(callOrder).toEqual(asyncCallOrder);
+        });
         callOrder.push("tick3");
+        return p3;
       });
       callOrder.push("tick2");
+      return p2;
     });
     callOrder.push("tick1");
-
-    function memoize_done() {
-      const asyncCallOrder = [
-        ["fn", 1, 2], // initial async call
-        "tick1", // async caller
-        ["cb", 1, 2], // async callback
-        //  ['fn',1,2], // memoized // memoized async body
-        "tick2", // handler for first async call
-        //  ['cb',1,2], // memoized // memoized async response body
-        "tick3" // handler for memoized async call
-      ];
-      expect(callOrder).toEqual(asyncCallOrder);
-      done();
-    }
+    return p1;
   });
 
-  it("unmemoize", done => {
+  it("unmemoize", () => {
     const callOrder = [];
 
-    const fn = (arg1, arg2, callback) => {
+    const fn = async (arg1: number, arg2: number): Promise<number> => {
+      await async.setImmediate();
       callOrder.push(["fn", arg1, arg2]);
-      async.setImmediate(() => {
-        callback(null, arg1 + arg2);
-      });
+      return arg1 + arg2;
     };
 
     const fn2 = async.memoize(fn);
     const fn3 = async.unmemoize(fn2);
-    fn3(1, 2, (err, result) => {
-      expect(result).toEqual(3);
-      fn3(1, 2, (err, result) => {
+
+    return Promise.resolve()
+      .then(() => fn3(1, 2))
+      .then(result => {
         expect(result).toEqual(3);
-        fn3(2, 2, (err, result) => {
-          expect(result).toEqual(4);
-          expect(callOrder).toEqual([["fn", 1, 2], ["fn", 1, 2], ["fn", 2, 2]]);
-          done();
-        });
+      })
+      .then(() => fn3(1, 2))
+      .then(result => {
+        expect(result).toEqual(3);
+      })
+      .then(() => fn3(2, 2))
+      .then(result => {
+        expect(result).toEqual(4);
+        expect(callOrder).toEqual([["fn", 1, 2], ["fn", 1, 2], ["fn", 2, 2]]);
       });
-    });
   });
 
-  it("unmemoize a not memoized function", done => {
-    const fn = (arg1, arg2, callback) => {
-      callback(null, arg1 + arg2);
+  it("unmemoize a not memoized function", () => {
+    const fn = async (arg1, arg2) => {
+      return arg1 + arg2;
     };
 
     const fn2 = async.unmemoize(fn);
-    fn2(1, 2, (err, result) => {
+
+    return fn2(1, 2).then(result => {
       expect(result).toEqual(3);
     });
-
-    done();
   });
 
-  it("error", done => {
-    const testerr = new Error("test");
-    const fn = (arg1, arg2, callback) => {
-      callback(testerr, arg1 + arg2);
+  it("error", () => {
+    const fn = async (arg1: number, arg2: number): Promise<number> => {
+      throw new Error("fail");
     };
-    async.memoize(fn)(1, 2, err => {
-      expect(err).toEqual(testerr);
-    });
-    done();
+    const mfn = async.memoize(fn);
+
+    return mfn(1, 2)
+      .catch(err => err)
+      .then(err => {
+        expect(err).toEqual(new Error("fail"));
+      });
   });
 
-  it("multiple calls", done => {
-    const fn = (arg1, arg2, callback) => {
+  it("multiple calls", async () => {
+    const fn = async (arg1: number, arg2: number): Promise<number> => {
       assert(true);
-      setTimeout(() => {
-        callback(null, arg1, arg2);
-      }, 10);
+      await sleep(10);
+      return arg1;
     };
     const fn2 = async.memoize(fn);
-    fn2(1, 2, (err, result) => {
-      expect(result).toEqual(1, 2);
+
+    await fn2(1, 2).then(result => {
+      expect(result).toEqual(1);
     });
-    fn2(1, 2, (err, result) => {
-      expect(result).toEqual(1, 2);
-      done();
+
+    await fn2(1, 2).then(result => {
+      expect(result).toEqual(1);
     });
   });
 
-  it("custom hash function", done => {
+  it("custom hash function", () => {
     const testerr = new Error("test");
 
-    const fn = (arg1, arg2, callback) => {
-      callback(testerr, arg1 + arg2);
+    const fn = async (arg1: number, arg2: number) => {
+      return arg1 + arg2;
     };
+
     const fn2 = async.memoize(fn, () => "custom hash");
-    fn2(1, 2, (err, result) => {
-      expect(result).toEqual(3);
-      fn2(2, 2, (err, result) => {
+
+    return Promise.resolve()
+      .then(() => fn2(1, 2))
+      .then(result => {
         expect(result).toEqual(3);
-        done();
+      })
+      .then(() => fn2(2, 2))
+      .then(result => {
+        expect(result).toEqual(3);
       });
-    });
   });
 
-  it("manually added memo value", done => {
-    const fn = async.memoize(() => {
+  it("manually added memo value", () => {
+    const fn = async.memoize(async (s: string) => {
       throw new Error("Function should never be called");
     });
     fn.memo.foo = ["bar"];
-    fn("foo", val => {
-      expect(val).toEqual("bar");
-      done();
-    });
+    return fn("foo")
+      .catch(err => err)
+      .then(err => {
+        expect(err).toEqual("bar");
+      });
   });
 
-  it("avoid constructor key return undefined", done => {
-    const fn = async.memoize((name, callback) => {
-      setTimeout(() => {
-        callback(null, name);
-      }, 100);
-    });
-    fn("constructor", (error, results) => {
+  it("avoid constructor key return undefined", () => {
+    const fn = async.memoize(
+      async (name: string): Promise<string> => {
+        await sleep(100);
+        return name;
+      }
+    );
+
+    return fn("constructor").then(results => {
       expect(results).toEqual("constructor");
-      done();
     });
   });
 
-  it("avoid __proto__ key return undefined", done => {
+  it("avoid __proto__ key return undefined", () => {
     // Skip test if there is a Object.create bug (node 0.10 and some Chrome 30x versions)
     const x = Object.create(null);
     /* jshint proto: true */
     x.__proto__ = "foo";
     if (x.__proto__ !== "foo") {
-      return done();
+      return;
     }
 
-    const fn = async.memoize((name, callback) => {
-      setTimeout(() => {
-        callback(null, name);
-      }, 100);
+    const fn = async.memoize(async (name: string) => {
+      await sleep(100);
+      return name;
     });
-    fn("__proto__", (error, results) => {
+
+    return fn("__proto__").then(results => {
       expect(results).toEqual("__proto__");
-      done();
     });
   });
 
-  it("allow hasOwnProperty as key", done => {
-    const fn = async.memoize((name, callback) => {
-      setTimeout(() => {
-        callback(null, name);
-      }, 100);
+  it("allow hasOwnProperty as key", () => {
+    const fn = async.memoize(async (name: string) => {
+      await sleep(100);
+      return name;
     });
-    fn("hasOwnProperty", (error, results) => {
+
+    return fn("hasOwnProperty").then(results => {
       expect(results).toEqual("hasOwnProperty");
-      done();
     });
   });
 });
