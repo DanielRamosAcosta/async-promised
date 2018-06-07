@@ -4,7 +4,7 @@ import sleep from "./support/sleep";
 
 describe("memoize", () => {
   it("memoize", () => {
-    const callOrder = [];
+    const callOrder: Array<[string, number, number]> = [];
 
     const fn = async (arg1: number, arg2: number): Promise<number> => {
       await async.setImmediate();
@@ -30,7 +30,7 @@ describe("memoize", () => {
   });
 
   it("maintains asynchrony", () => {
-    const callOrder = [];
+    const callOrder: Array<[string, number, number] | string> = [];
 
     const fn = async (arg1: number, arg2: number): Promise<number> => {
       callOrder.push(["fn", arg1, arg2]);
@@ -69,7 +69,7 @@ describe("memoize", () => {
   });
 
   it("unmemoize", () => {
-    const callOrder = [];
+    const callOrder: Array<[string, number, number]> = [];
 
     const fn = async (arg1: number, arg2: number): Promise<number> => {
       await async.setImmediate();
@@ -97,7 +97,7 @@ describe("memoize", () => {
   });
 
   it("unmemoize a not memoized function", () => {
-    const fn = async (arg1, arg2) => {
+    const fn = async (arg1: number, arg2: number) => {
       return arg1 + arg2;
     };
 

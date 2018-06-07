@@ -14,7 +14,7 @@ import { AsyncResultPromise } from "./internal/asyncTransforms";
  * @param {AsyncFunction} fn - the memoized function
  * @returns {AsyncFunction} a function that calls the original unmemoized function
  */
-export default function unmemoize<T extends AsyncResultPromise>(fn: T) {
+export default function unmemoize<T extends AsyncResultPromise>(fn: T): T {
   return (...args: any[]) => {
     return (fn.unmemoized || fn)(...args);
   };
