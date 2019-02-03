@@ -120,6 +120,7 @@ export { default as race } from "./race";
 export { default as reduce } from "./reduce";
 export { default as reduceRight } from "./reduceRight";
 export { default as reflect } from "./reflect";
+export { default as reflectAll } from "./reflectAll";
 export { default as reject } from "./reject";
 export { default as rejectLimit } from "./rejectLimit";
 export { default as rejectSeries } from "./rejectSeries";

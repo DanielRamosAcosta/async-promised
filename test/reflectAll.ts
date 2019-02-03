@@ -1,67 +1,56 @@
-import assert from "assert";
-import * as async from "async";
-
-/**
- * This tests doesn't exist in caloan/async
- */
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
 describe("reflectAll", () => {
-  it("with an object", done => {
+  it("with an object", () => {
     const tasks = {
-      one: cb => {
-        setTimeout(() => {
-          cb(null, "one");
-        }, 200);
+      one: async () => {
+        await sleep(200);
+        return "one";
       },
-      two: cb => {
-        cb("two");
+      two: async () => {
+        throw new Error("error");
       },
-      three: cb => {
-        setTimeout(() => {
-          cb(null, "three");
-        }, 100);
+      three: async () => {
+        await sleep(100);
+        return "three";
       }
     };
 
     const reflectedFns = async.reflectAll(tasks);
 
-    async.auto(reflectedFns, (err, results) => {
-      expect(err).toBeNull();
+    return async.auto(reflectedFns).then(results => {
       expect(results).toEqual({
         one: { value: "one" },
-        two: { error: "two" },
+        two: { error: new Error("error") },
         three: { value: "three" }
       });
-      done();
     });
   });
-  it("with an array", done => {
+
+  it("with an array", () => {
     const tasks = [
-      cb => {
-        setTimeout(() => {
-          cb(null, "one");
-        }, 200);
+      async () => {
+        await sleep(200);
+        return "one";
       },
-      cb => {
-        cb("two");
+      async () => {
+        throw new Error("two");
       },
-      cb => {
-        setTimeout(() => {
-          cb(null, "three");
-        }, 100);
+      async () => {
+        await sleep(100);
+        return "three";
       }
     ];
 
     const reflectedFns = async.reflectAll(tasks);
 
-    async.auto(reflectedFns, (err, results) => {
-      expect(err).toBeNull();
+    return async.auto(reflectedFns).then(results => {
       expect(results).toEqual({
         0: { value: "one" },
-        1: { error: "two" },
+        1: { error: new Error("two") },
         2: { value: "three" }
       });
-      done();
     });
   });
 });
