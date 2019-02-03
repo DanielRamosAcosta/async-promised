@@ -116,6 +116,8 @@ export { default as mapValuesLimit } from "./mapValuesLimit";
 export { default as mapValuesSeries } from "./mapValuesSeries";
 export { default as memoize } from "./memoize";
 export { default as nextTick } from "./nextTick";
+export { default as parallel } from "./parallel";
+export { default as parallelLimit } from "./parallelLimit";
 export { default as race } from "./race";
 export { default as reduce } from "./reduce";
 export { default as reduceRight } from "./reduceRight";
