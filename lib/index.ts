@@ -135,6 +135,7 @@ export { default as some } from "./some";
 export { default as someLimit } from "./someLimit";
 export { default as someSeries } from "./someSeries";
 export { default as sortBy } from "./sortBy";
+export { default as timeout } from "./timeout";
 export { default as times } from "./times";
 export { default as timesLimit } from "./timesLimit";
 export { default as timesSeries } from "./timesSeries";
