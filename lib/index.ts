@@ -136,3 +136,4 @@ export { default as unmemoize } from "./unmemoize";
 export { default as until } from "./until";
 export { default as waterfall } from "./waterfall";
 export { default as whilst } from "./whilst";
+export { default as retry } from "./retry";

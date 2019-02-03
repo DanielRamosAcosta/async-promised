@@ -15,10 +15,9 @@ export function resolveCallback<T>(resolve: Function, reject: Function) {
 }
 
 export function linkCB(prom: Promise<any>, callback: Function) {
-  prom
-    .then(
-      results =>
-        results === undefined ? callback(null) : callback(null, results)
+  Promise.resolve(prom)
+    .then(results =>
+      results === undefined ? callback(null) : callback(null, results)
     )
     .catch(err => callback(err));
 }
