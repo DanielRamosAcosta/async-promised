@@ -1,4 +1,4 @@
-import * as AsyncDLL from 'async/internal/DoublyLinkedList';
+import AsyncDLL from "async/internal/DoublyLinkedList";
 
 /**
  * [Simple doubly linked list](https://en.wikipedia.org/wiki/Doubly_linked_list)

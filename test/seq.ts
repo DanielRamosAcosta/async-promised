@@ -1,4 +1,4 @@
-import * as assert from "assert";
+import assert from "assert";
 import seq from "../lib/seq";
 // import * as async from "async";
 import sleep from "./support/sleep";

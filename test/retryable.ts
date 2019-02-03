@@ -1,4 +1,4 @@
-import * as assert from "assert";
+import assert from "assert";
 import auto from "../lib/auto";
 import constant from "../lib/constant";
 // import * as async from "async";

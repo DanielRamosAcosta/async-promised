@@ -1,4 +1,4 @@
-import * as assert from "assert";
+import assert from "assert";
 import * as async from "async";
 import getFunctionsObject from "./support/get-function-object";
 

@@ -1,4 +1,4 @@
-import * as assert from "assert";
+import assert from "assert";
 import * as async from "../lib";
 
 describe("asyncify", () => {
@@ -81,7 +81,7 @@ describe("asyncify", () => {
       // https://github.com/caolan/async/blob/master/mocha_test/asyncify.js#L95
     }
 
-    describe("native-promise-only", () => {
+    /* describe("native-promise-only", () => {
       const NativePromise = require("native-promise-only");
       promisifiedTests(NativePromise);
     });
@@ -99,6 +99,6 @@ describe("asyncify", () => {
     describe("rsvp", () => {
       const RsvpPromise = require("rsvp").Promise;
       promisifiedTests(RsvpPromise);
-    });
+    }); */
   });
 });

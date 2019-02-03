@@ -1,4 +1,4 @@
-import * as assert from "assert";
+import assert from "assert";
 import * as async from "../lib";
 import { getFunctionsObjectPromised } from "./support/get-function-object";
 import sleep from "./support/sleep";
