@@ -1,6 +1,8 @@
-const fs = require('fs-extra')
+const fs = require('fs')
 const { resolve } = require('path')
 const outdent = require('outdent')
+
+const fsp = fs.promises
 
 const usesCallbackAsync = string => /from "async.*/.test(string)
 
@@ -15,7 +17,7 @@ const getImplementedPercentage = filesUsingCallbacksAsync =>
   Math.round(getImplementedNumber(filesUsingCallbacksAsync) * 100)
 
 async function main() {
-  const elements = await fs.readdir(resolve(__dirname, '../test'))
+  const elements = await fsp.readdir(resolve(__dirname, '../test'))
   const scripts = elements.filter(filename => /.*.ts/.test(filename))
   const filesUsingCallbacksAsync = scripts
     .map(filename => ({
@@ -28,7 +30,7 @@ async function main() {
     }))
 
   const todoContent = renderTodo(filesUsingCallbacksAsync)
-  await fs.writeFile(resolve(__dirname, '../TODO.md'), todoContent)
+  await fsp.writeFile(resolve(__dirname, '../TODO.md'), todoContent)
 }
 
 function renderTodo(filesUsingCallbacksAsync) {

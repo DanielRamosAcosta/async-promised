@@ -1,36 +1,29 @@
 import assert from "assert";
-import * as async from "async";
+import * as async from "../lib";
+import sleep from "./support/sleep";
 
 describe("map", () => {
-  function mapIteratee(callOrder, x, callback) {
-    setTimeout(() => {
-      callOrder.push(x);
-      callback(null, x * 2);
-    }, x * 25);
-  }
+  const mapIteratee = (callOrder: number[]) => async (x: number) => {
+    await sleep(x * 25);
+    callOrder.push(x);
+    return x * 2;
+  };
 
-  it("basic", function(done) {
-    const callOrder = [];
-    async.map([1, 3, 2], mapIteratee.bind(this, callOrder), (err, results) => {
-      assert(err === null, `${err} passed instead of 'null'`);
+  it("basic", () => {
+    const callOrder: number[] = [];
+
+    return async.map([1, 3, 2], mapIteratee(callOrder)).then(results => {
       expect(callOrder).toEqual([1, 2, 3]);
       expect(results).toEqual([2, 6, 4]);
-      done();
     });
   });
 
-  it("with reflect", done => {
-    const callOrder = [];
-    async.map(
-      [1, 3, 2],
-      async.reflect((item, cb) => {
-        setTimeout(() => {
-          callOrder.push(item);
-          cb(null, item * 2);
-        }, item * 25);
-      }),
-      (err, results) => {
-        assert(err === null, `${err} passed instead of 'null'`);
+  it("with reflect", () => {
+    const callOrder: number[] = [];
+
+    return async
+      .map([1, 3, 2], async.reflect(mapIteratee(callOrder)))
+      .then(results => {
         expect(callOrder).toEqual([1, 2, 3]);
         expect(results).toEqual([
           {
@@ -43,31 +36,28 @@ describe("map", () => {
             value: 4
           }
         ]);
-        done();
-      }
-    );
+      });
   });
 
-  it("error with reflect", done => {
-    const callOrder = [];
-    async.map(
-      [-1, 1, 3, 2],
-      async.reflect((item, cb) => {
-        setTimeout(() => {
+  it("error with reflect", () => {
+    const callOrder: number[] = [];
+    return async
+      .map(
+        [-1, 1, 3, 2],
+        async.reflect(async (item: number) => {
+          await sleep(item * 25);
           callOrder.push(item);
           if (item < 0) {
-            cb("number less then zero");
-          } else {
-            cb(null, item * 2);
+            throw new Error("number less then zero");
           }
-        }, item * 25);
-      }),
-      (err, results) => {
-        assert(err === null, `${err} passed instead of 'null'`);
+          return item * 2;
+        })
+      )
+      .then(results => {
         expect(callOrder).toEqual([-1, 1, 2, 3]);
         expect(results).toEqual([
           {
-            error: "number less then zero"
+            error: new Error("number less then zero")
           },
           {
             value: 2
@@ -79,260 +69,173 @@ describe("map", () => {
             value: 4
           }
         ]);
-        done();
-      }
-    );
+      });
   });
 
-  it("map original untouched", done => {
+  it("map original untouched", () => {
     const a = [1, 2, 3];
-    async.map(
-      a,
-      (x, callback) => {
-        callback(null, x * 2);
-      },
-      (err, results) => {
+    async
+      .map(a, async x => {
+        return x * 2;
+      })
+      .then(results => {
         expect(results).toEqual([2, 4, 6]);
         expect(a).toEqual([1, 2, 3]);
-        done();
-      }
-    );
+      });
   });
 
-  it("map without main callback", done => {
-    const a = [1, 2, 3];
-    const r = [];
-    async.map(a, (x, callback) => {
-      r.push(x);
-      const done_ = r.length === a.length;
-      callback(null);
-      if (done_) {
-        expect(r).toEqual(a);
-        done();
-      }
-    });
+  // Removed 'dont catch errors in the callback', doesn't make sense with promises
+  // https://github.com/caolan/async/blob/master/test/map.js#L83
+
+  it("map error", () => {
+    return async
+      .map([1, 2, 3], async () => {
+        throw new Error("error");
+      })
+      .catch(err => err)
+      .then(err => {
+        expect(err).toEqual(new Error("error"));
+      });
   });
 
-  it("map error", done => {
-    async.map(
-      [1, 2, 3],
-      (x, callback) => {
-        callback("error");
-      },
-      err => {
-        expect(err).toEqual("error");
-      }
-    );
-    setTimeout(done, 50);
-  });
-
-  it("map undefined array", done => {
-    async.map(
-      undefined,
-      (x, callback) => {
-        callback();
-      },
-      (err, result) => {
-        expect(err).toEqual(null);
+  it("map undefined array", () => {
+    return async
+      .map(undefined, async () => {})
+      .then(result => {
         expect(result).toEqual([]);
-      }
-    );
-    setTimeout(done, 50);
+      });
   });
 
-  it("map object", done => {
-    async.map(
-      {
-        a: 1,
-        b: 2,
-        c: 3
-      },
-      (val, callback) => {
-        callback(null, val * 2);
-      },
-      (err, result) => {
-        if (err) throw err;
+  it("map object", () => {
+    return async
+      .map({ a: 1, b: 2, c: 3 }, async (val: number) => {
+        return val * 2;
+      })
+      .then(result => {
         expect(Object.prototype.toString.call(result)).toEqual(
           "[object Array]"
         );
         expect(result).toContain(2);
         expect(result).toContain(4);
         expect(result).toContain(6);
-        done();
-      }
-    );
+      });
   });
 
-  it("mapSeries", function(done) {
-    const callOrder = [];
-    async.mapSeries(
-      [1, 3, 2],
-      mapIteratee.bind(this, callOrder),
-      (err, results) => {
-        assert(err === null, `${err} passed instead of 'null'`);
-        expect(callOrder).toEqual([1, 3, 2]);
-        expect(results).toEqual([2, 6, 4]);
-        done();
-      }
-    );
+  it("mapSeries", () => {
+    const callOrder: number[] = [];
+    async.mapSeries([1, 3, 2], mapIteratee(callOrder)).then(results => {
+      expect(callOrder).toEqual([1, 3, 2]);
+      expect(results).toEqual([2, 6, 4]);
+    });
   });
 
-  it("mapSeries error", done => {
-    async.mapSeries(
-      [1, 2, 3],
-      (x, callback) => {
-        callback("error");
-      },
-      err => {
-        expect(err).toEqual("error");
-      }
-    );
-    setTimeout(done, 50);
+  it("mapSeries error", () => {
+    return async
+      .mapSeries([1, 2, 3], async () => {
+        throw new Error("error");
+      })
+      .catch(err => err)
+      .then(err => {
+        expect(err).toEqual(new Error("error"));
+      });
   });
 
-  it("mapSeries undefined array", done => {
-    async.mapSeries(
-      undefined,
-      (x, callback) => {
-        callback();
-      },
-      (err, result) => {
-        expect(err).toEqual(null);
+  it("mapSeries undefined array", () => {
+    return async
+      .mapSeries(undefined, async () => {})
+      .then(result => {
         expect(result).toEqual([]);
-      }
-    );
-    setTimeout(done, 50);
+      });
   });
 
-  it("mapSeries object", done => {
-    async.mapSeries(
-      {
-        a: 1,
-        b: 2,
-        c: 3
-      },
-      (val, callback) => {
-        callback(null, val * 2);
-      },
-      (err, result) => {
-        if (err) throw err;
+  it("mapSeries object", () => {
+    return async
+      .mapSeries({ a: 1, b: 2, c: 3 }, async val => {
+        return val * 2;
+      })
+      .then(result => {
         expect(result).toContain(2);
         expect(result).toContain(4);
         expect(result).toContain(6);
-        done();
-      }
-    );
+      });
   });
 
-  it("mapLimit", function(done) {
-    const callOrder = [];
-    async.mapLimit(
-      [2, 4, 3],
-      2,
-      mapIteratee.bind(this, callOrder),
-      (err, results) => {
-        assert(err === null, `${err} passed instead of 'null'`);
-        expect(callOrder).toEqual([2, 4, 3]);
-        expect(results).toEqual([4, 8, 6]);
-        done();
-      }
-    );
+  it("mapLimit", () => {
+    const callOrder: number[] = [];
+    async.mapLimit([2, 4, 3], 2, mapIteratee(callOrder)).then(results => {
+      expect(callOrder).toEqual([2, 4, 3]);
+      expect(results).toEqual([4, 8, 6]);
+    });
   });
 
   it("mapLimit empty array", done => {
-    async.mapLimit(
-      [],
-      2,
-      (x, callback) => {
-        assert(false, "iteratee should not be called");
-        callback();
-      },
-      err => {
-        if (err) throw err;
+    async
+      .mapLimit([], 2, async () => {
+        done(new Error("iteratee should not be called"));
+      })
+      .then(() => {
         assert(true, "should call callback");
-      }
-    );
-    setTimeout(done, 25);
+        done();
+      });
   });
 
-  it("mapLimit undefined array", done => {
-    async.mapLimit(
-      undefined,
-      2,
-      (x, callback) => {
-        callback();
-      },
-      (err, result) => {
-        expect(err).toEqual(null);
+  it("mapLimit undefined array", () => {
+    return async
+      .mapLimit(undefined, 2, async () => {})
+      .then(result => {
         expect(result).toEqual([]);
-      }
-    );
-    setTimeout(done, 50);
+      });
   });
 
-  it("mapLimit limit exceeds size", function(done) {
-    const callOrder = [];
-    async.mapLimit(
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-      20,
-      mapIteratee.bind(this, callOrder),
-      (err, results) => {
+  it("mapLimit limit exceeds size", () => {
+    const callOrder: number[] = [];
+    return async
+      .mapLimit([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 20, mapIteratee(callOrder))
+      .then(results => {
         expect(callOrder).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
         expect(results).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16, 18]);
-        done();
-      }
-    );
+      });
   });
 
-  it("mapLimit limit equal size", function(done) {
-    const callOrder = [];
-    async.mapLimit(
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-      10,
-      mapIteratee.bind(this, callOrder),
-      (err, results) => {
+  it("mapLimit limit equal size", () => {
+    const callOrder: number[] = [];
+    return async
+      .mapLimit([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, mapIteratee(callOrder))
+      .then(results => {
         expect(callOrder).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
         expect(results).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16, 18]);
-        done();
-      }
-    );
+      });
   });
 
   it("mapLimit zero limit", done => {
-    async.mapLimit(
-      [0, 1, 2, 3, 4, 5],
-      0,
-      (x, callback) => {
-        assert(false, "iteratee should not be called");
-        callback();
-      },
-      (err, results) => {
+    return async
+      .mapLimit([0, 1, 2, 3, 4, 5], 0, async () => {
+        done(new Error("iteratee should not be called"));
+      })
+      .then(results => {
         expect(results).toEqual([]);
         assert(true, "should call callback");
-      }
-    );
-    setTimeout(done, 25);
+        done();
+      });
   });
 
-  it("mapLimit error", done => {
+  it("mapLimit error", () => {
     const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-    const callOrder = [];
+    const callOrder: number[] = [];
 
-    async.mapLimit(
-      arr,
-      3,
-      (x, callback) => {
+    return async
+      .mapLimit(arr, 3, async x => {
+        await sleep(45);
         callOrder.push(x);
         if (x === 2) {
-          callback("error");
+          throw new Error("error");
         }
-      },
-      err => {
+      })
+      .catch(err => err)
+      .then(err => {
         expect(callOrder).toEqual([0, 1, 2]);
-        expect(err).toEqual("error");
-      }
-    );
-    setTimeout(done, 25);
+        expect(err).toEqual(new Error("error"));
+      });
   });
 
   it("mapLimit does not continue replenishing after error", done => {
@@ -342,20 +245,15 @@ describe("map", () => {
     const limit = 3;
     const maxTime = 10 * arr.length;
 
-    async.mapLimit(
-      arr,
-      limit,
-      (x, callback) => {
+    async
+      .mapLimit(arr, limit, async x => {
         started++;
         if (started === 3) {
-          return callback(new Error("Test Error"));
+          throw new Error("Test Error");
         }
-        setTimeout(() => {
-          callback();
-        }, delay);
-      },
-      () => {}
-    );
+        await sleep(delay);
+      })
+      .catch(err => {});
 
     setTimeout(() => {
       expect(started).toEqual(3);
@@ -363,44 +261,21 @@ describe("map", () => {
     }, maxTime);
   });
 
-  it("map with Map", done => {
-    if (typeof Map !== "function") return done();
+  it("map with Map", () => {
+    const mapp = new Map();
+    mapp.set(1, "a");
+    mapp.set(2, "b");
 
-    const map = new Map();
-    map.set(1, "a");
-    map.set(2, "b");
-    async.map(
-      map,
-      (val, cb) => {
-        cb(null, val);
-      },
-      (err, result) => {
+    return async
+      .map(mapp, async val => val)
+      .then(result => {
         assert(
           Array.isArray(result),
           "map should return an array for an iterable"
         );
-        done();
-      }
-    );
+      });
   });
 
-  // Issue 1106 on github: https://github.com/caolan/async/issues/1106
-  it("map main callback is called only once", done => {
-    async.map(
-      [1, 2],
-      (item, callback) => {
-        try {
-          callback(item);
-        } catch (exception) {
-          expect(() => {
-            callback(exception);
-          }).toThrow(/already called/);
-          done();
-        }
-      },
-      () => {
-        throw new Error();
-      }
-    );
-  });
+  // Removed 'map main callback is called only once', doesn't make sense with promises
+  // https://github.com/caolan/async/blob/master/test/map.js#L348
 });
