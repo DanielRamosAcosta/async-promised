@@ -2,7 +2,7 @@
 
 > This file is generated, can be updated using `update-todo`
 
-Current implement status: 87%
+Current implement status: 91%
 
 * [x] apply.ts
 * [x] applyEach.ts
@@ -37,8 +37,8 @@ Current implement status: 87%
 * [x] reflect.ts
 * [x] reflectAll.ts
 * [x] retry.ts
-* [ ] retryable.ts
-* [ ] seq.ts
+* [x] retryable.ts
+* [x] seq.ts
 * [x] series.ts
 * [x] setImmediate.ts
 * [x] slice.ts

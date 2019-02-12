@@ -1,10 +1,5 @@
 import assert from "assert";
-import auto from "../lib/auto";
-import constant from "../lib/constant";
-// import * as async from "async";
-import retryable from "../lib/retryable";
-
-const async = { retryable, auto, constant };
+import * as async from "../lib";
 
 describe("retryable", () => {
   it("basics", () => {
