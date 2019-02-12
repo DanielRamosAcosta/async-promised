@@ -1,445 +1,339 @@
 import assert from "assert";
-import * as async from "async";
+import * as pasync from "../lib";
+import sleep from "./support/sleep";
 
-describe("groupBy", function() {
-  function groupByIteratee(callOrder, val, next) {
-    setTimeout(() => {
-      callOrder.push(val);
-      next(null, val + 1);
-    }, val * 25);
-  }
+describe("groupBy", () => {
+  const groupByIterateeAsync = (callOrder: number[]) => async (val: number) => {
+    await sleep(val * 25);
+    callOrder.push(val);
+    return val + 1;
+  };
 
   describe("groupBy", () => {
-    it("basics", function(done) {
-      const callOrder = [];
-      async.groupBy(
-        [1, 3, 2],
-        groupByIteratee.bind(this, callOrder),
-        (err, result) => {
-          expect(err).toEqual(null);
+    it("basics", () => {
+      const callOrder: number[] = [];
+      return pasync
+        .groupBy([1, 3, 2], groupByIterateeAsync(callOrder))
+        .then(result => {
           expect(callOrder).toEqual([1, 2, 3]);
           expect(result).toEqual({ 2: [1], 3: [2], 4: [3] });
-          done();
-        }
-      );
+        });
     });
 
-    it("error", done => {
-      async.groupBy(
-        [1, 3, 2],
-        (val, next) => {
+    it("error", () => {
+      return pasync
+        .groupBy([1, 3, 2], async val => {
           if (val === 3) {
-            return next(new Error("fail"));
+            throw new Error("fail");
           }
-          next(null, val + 1);
-        },
-        (err, result) => {
-          expect(err).not.toEqual(null);
-          expect(result).toEqual({ 2: [1] });
-          done();
-        }
-      );
+          return val + 1;
+        })
+        .catch(err => err)
+        .then(err => {
+          expect(err).toEqual(new Error("fail"));
+        });
     });
 
-    it("original untouched", done => {
+    it("original untouched", () => {
       const obj = { a: "b", b: "c", c: "d" };
-      async.groupBy(
-        obj,
-        (val, next) => {
-          next(null, val);
-        },
-        (err, result) => {
+      return pasync
+        .groupBy(obj, async val => {
+          return val;
+        })
+        .then(result => {
           expect(obj).toEqual({ a: "b", b: "c", c: "d" });
           expect(result).toEqual({ b: ["b"], c: ["c"], d: ["d"] });
-          done();
-        }
-      );
+        });
     });
 
-    it("handles multiple matches", function(done) {
-      const callOrder = [];
-      async.groupBy(
-        [1, 3, 2, 2],
-        groupByIteratee.bind(this, callOrder),
-        (err, result) => {
-          expect(err).toEqual(null);
+    it("handles multiple matches", () => {
+      const callOrder: number[] = [];
+      return pasync
+        .groupBy([1, 3, 2, 2], groupByIterateeAsync(callOrder))
+        .then(result => {
           expect(callOrder).toEqual([1, 2, 2, 3]);
           expect(result).toEqual({ 2: [1], 3: [2, 2], 4: [3] });
-          done();
-        }
-      );
+        });
     });
 
-    it("handles objects", done => {
+    it("handles objects", () => {
       const obj = { a: "b", b: "c", c: "d" };
       const concurrency = { b: 3, c: 2, d: 1 };
       let running = 0;
-      async.groupBy(
-        obj,
-        (val, next) => {
+      return pasync
+        .groupBy(obj, async val => {
           running++;
-          async.setImmediate(() => {
-            expect(running).toEqual(concurrency[val]);
-            running--;
-            next(null, val);
-          });
-        },
-        (err, result) => {
+          await sleep(5);
+          expect(running).toEqual(concurrency[val]);
+          running--;
+          return val;
+        })
+        .then(result => {
           expect(running).toEqual(0);
-          expect(err).toEqual(null);
           expect(result).toEqual({ b: ["b"], c: ["c"], d: ["d"] });
-          done();
-        }
-      );
-    });
-
-    it("handles undefined", done => {
-      async.groupBy(
-        undefined,
-        (val, next) => {
-          assert(false, "iteratee should not be called");
-          next();
-        },
-        (err, result) => {
-          expect(err).toEqual(null);
-          expect(result).toEqual({});
-          done();
-        }
-      );
-    });
-
-    it("handles empty object", done => {
-      async.groupBy(
-        {},
-        (val, next) => {
-          assert(false, "iteratee should not be called");
-          next();
-        },
-        (err, result) => {
-          expect(err).toEqual(null);
-          expect(result).toEqual({});
-          done();
-        }
-      );
-    });
-
-    it("main callback optional", done => {
-      const arr = [1, 2, 3];
-      const runs = [];
-      async.groupBy(arr, (val, next) => {
-        runs.push(val);
-        const _done = runs.length === arr.length;
-        async.setImmediate(() => {
-          next(null);
-          if (_done) {
-            expect(runs).toEqual(arr);
-            done();
-          }
         });
-      });
     });
 
-    it("iteratee callback is only called once", done => {
-      async.groupBy(
-        [1, 2],
-        (item, callback) => {
-          try {
-            callback(item);
-          } catch (exception) {
-            expect(() => {
-              callback(exception);
-            }).toThrow(/already called/);
-            done();
-          }
-        },
-        () => {
-          throw new Error();
-        }
-      );
+    it("handles undefined", () => {
+      return pasync
+        .groupBy(undefined, async () => {
+          assert(false, "iteratee should not be called");
+        })
+        .then(result => {
+          expect(result).toEqual({});
+        });
     });
 
-    it("handles Map", done => {
+    it("handles empty object", () => {
+      return pasync
+        .groupBy({}, async () => {
+          assert(false, "iteratee should not be called");
+          return "foo";
+        })
+        .then(result => {
+          expect(result).toEqual({});
+        });
+    });
+
+    // Removed 'main callback optional', doesn't make sense with promises
+    // https://github.com/caolan/async/blob/master/test/groupBy.js#L119
+
+    // Removed 'iteratee callback is only called once', doesn't make sense with promises
+    // https://github.com/caolan/async/blob/master/test/groupBy.js#L135
+
+    it("handles Map", () => {
       if (typeof Map !== "function") {
-        return done();
+        return;
       }
 
       const map = new Map([["a", "a"], ["b", "b"], ["c", "a"]]);
 
-      async.groupBy(
-        map,
-        (val, next) => {
-          next(null, val[1] + 1);
-        },
-        (err, result) => {
-          expect(err).toEqual(null);
+      return pasync
+        .groupBy(map, async val => {
+          return val[1] + 1;
+        })
+        .then(result => {
           expect(result).toEqual({
             a1: [["a", "a"], ["c", "a"]],
             b1: [["b", "b"]]
           });
-          done();
-        }
-      );
+        });
     });
 
-    it("handles sparse results", done => {
+    it("handles sparse results", () => {
       const arr = [1, 2, 3];
-      async.groupBy(
-        arr,
-        (val, next) => {
+      return pasync
+        .groupBy(arr, async val => {
           if (val === 1) {
-            return next(null, val + 1);
+            return val + 1;
           } else if (val === 2) {
-            async.setImmediate(() => next(null, val + 1));
+            await sleep(0);
+            return val + 1;
           } else {
-            return next("error");
+            await sleep(10);
+            return val + 1;
           }
-        },
-        (err, result) => {
-          expect(err).not.toEqual(null);
-          expect(result).toEqual({ 2: [1] });
-          async.setImmediate(done);
-        }
-      );
+        })
+        .then(err => {
+          expect(err).toEqual({ 2: [1], 3: [2], 4: [3] });
+        });
+    });
+
+    it("handles sparse results", () => {
+      const arr = [1, 2, 3];
+      return pasync
+        .groupBy(arr, async val => {
+          if (val === 1) {
+            return val + 1;
+          } else if (val === 2) {
+            await sleep(0);
+            return val + 1;
+          } else {
+            throw new Error("error");
+          }
+        })
+        .catch(err => err)
+        .then(err => {
+          expect(err).toEqual(new Error("error"));
+        });
     });
   });
 
   describe("groupByLimit", () => {
     const obj = { a: "b", b: "c", c: "d" };
-    it("basics", done => {
+
+    it("basics", () => {
       let running = 0;
-      const concurrency = { b: 2, c: 2, d: 1 };
-      async.groupByLimit(
-        obj,
-        2,
-        (val, next) => {
+      const concurrency = { b: 2, c: 1, d: 1 };
+
+      return pasync
+        .groupByLimit(obj, 2, async val => {
           running++;
-          async.setImmediate(() => {
-            expect(running).toEqual(concurrency[val]);
-            running--;
-            next(null, val);
-          });
-        },
-        (err, result) => {
+          await sleep(500);
+          expect(running).toEqual(concurrency[val]);
+          running--;
+          return val;
+        })
+        .then(result => {
           expect(running).toEqual(0);
-          expect(err).toEqual(null);
           expect(result).toEqual({ b: ["b"], c: ["c"], d: ["d"] });
-          done();
-        }
-      );
+        });
     });
 
-    it("error", done => {
-      async.groupByLimit(
-        obj,
-        1,
-        (val, next) => {
+    it("error", () => {
+      return pasync
+        .groupByLimit(obj, 1, async val => {
           if (val === "c") {
-            return next(new Error("fail"));
+            throw new Error("fail");
           }
-          next(null, val);
-        },
-        (err, result) => {
-          expect(err).not.toEqual(null);
-          expect(result).toEqual({ b: ["b"] });
-          done();
-        }
-      );
+          return val;
+        })
+        .catch(err => err)
+        .then(err => {
+          expect(err).toEqual(new Error("fail"));
+        });
     });
 
-    it("handles empty object", done => {
-      async.groupByLimit(
-        {},
-        2,
-        (val, next) => {
+    it("handles empty object", () => {
+      return pasync
+        .groupByLimit({}, 2, async () => {
           assert(false, "iteratee should not be called");
-          next();
-        },
-        (err, result) => {
-          expect(err).toEqual(null);
+          return 0;
+        })
+        .then(result => {
           expect(result).toEqual({});
-          done();
-        }
-      );
+        });
     });
 
-    it("handles undefined", done => {
-      async.groupByLimit(
-        undefined,
-        2,
-        (val, next) => {
+    it("handles undefined", () => {
+      return pasync
+        .groupByLimit(undefined, 2, async () => {
           assert(false, "iteratee should not be called");
-          next();
-        },
-        (err, result) => {
-          expect(err).toEqual(null);
+        })
+        .then(result => {
           expect(result).toEqual({});
-          done();
-        }
-      );
+        });
     });
 
-    it("limit exceeds size", function(done) {
-      const callOrder = [];
-      async.groupByLimit(
-        [3, 2, 2, 1],
-        10,
-        groupByIteratee.bind(this, callOrder),
-        (err, result) => {
-          expect(err).toEqual(null);
+    it("limit exceeds size", () => {
+      const callOrder: number[] = [];
+
+      return pasync
+        .groupByLimit([3, 2, 2, 1], 10, groupByIterateeAsync(callOrder))
+        .then(result => {
           expect(result).toEqual({ 2: [1], 3: [2, 2], 4: [3] });
           expect(callOrder).toEqual([1, 2, 2, 3]);
-          done();
-        }
-      );
+        });
     });
 
-    it("limit equal size", function(done) {
-      const callOrder = [];
-      async.groupByLimit(
-        [3, 2, 2, 1],
-        4,
-        groupByIteratee.bind(this, callOrder),
-        (err, result) => {
-          expect(err).toEqual(null);
+    it("limit equal size", () => {
+      const callOrder: number[] = [];
+
+      return pasync
+        .groupByLimit([3, 2, 2, 1], 4, groupByIterateeAsync(callOrder))
+        .then(result => {
           expect(result).toEqual({ 2: [1], 3: [2, 2], 4: [3] });
           expect(callOrder).toEqual([1, 2, 2, 3]);
-          done();
-        }
-      );
+        });
     });
 
-    it("zero limit", done => {
-      async.groupByLimit(
-        [3, 2, 2, 1],
-        0,
-        (val, next) => {
+    it("zero limit", () => {
+      return pasync
+        .groupByLimit([3, 2, 2, 1], 0, async val => {
           assert(false, "iteratee should not be called");
-          next();
-        },
-        (err, result) => {
-          expect(err).toEqual(null);
+          return 0;
+        })
+        .then(result => {
           expect(result).toEqual({});
-          done();
-        }
-      );
+        });
     });
 
-    it("does not continue replenishing after error", done => {
+    it("does not continue replenishing after error", () => {
       let started = 0;
       const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
       const delay = 10;
       const limit = 3;
       const maxTime = 10 * arr.length;
 
-      async.groupByLimit(
-        arr,
-        limit,
-        (val, next) => {
+      return pasync
+        .groupByLimit(arr, limit, async () => {
           started++;
           if (started === 3) {
-            return next(new Error("fail"));
+            throw new Error("fail");
           }
 
-          setTimeout(() => {
-            next();
-          }, delay);
-        },
-        (err, result) => {
-          expect(err).not.toEqual(null);
-          expect(result).toEqual({});
-        }
-      );
-
-      setTimeout(() => {
-        expect(started).toEqual(3);
-        done();
-      }, maxTime);
+          await sleep(delay);
+        })
+        .catch(err => err)
+        .then(async err => {
+          await sleep(100);
+          expect(err).toEqual(new Error("fail"));
+          expect(started).toEqual(3);
+        });
     });
   });
 
   describe("groupBySeries", () => {
     const obj = { a: "b", b: "c", c: "d" };
-    it("basics", done => {
+    it("basics", () => {
       let running = 0;
       const concurrency = { b: 1, c: 1, d: 1 };
-      async.groupBySeries(
-        obj,
-        (val, next) => {
+      return pasync
+        .groupBySeries(obj, async val => {
           running++;
-          async.setImmediate(() => {
-            expect(running).toEqual(concurrency[val]);
-            running--;
-            next(null, val);
-          });
-        },
-        (err, result) => {
+          await sleep(0);
+          expect(running).toEqual(concurrency[val]);
+          running--;
+          return val;
+        })
+        .then(result => {
           expect(running).toEqual(0);
-          expect(err).toEqual(null);
           expect(result).toEqual({ b: ["b"], c: ["c"], d: ["d"] });
-          done();
-        }
-      );
+        });
     });
 
-    it("error", done => {
-      async.groupBySeries(
-        obj,
-        (val, next) => {
+    it("error", () => {
+      return pasync
+        .groupBySeries(obj, async val => {
           if (val === "c") {
-            return next(new Error("fail"));
+            throw new Error("fail");
           }
-          next(null, val);
-        },
-        (err, result) => {
-          expect(err).not.toEqual(null);
-          expect(result).toEqual({ b: ["b"] });
-          done();
-        }
-      );
+          return val;
+        })
+        .catch(err => err)
+        .then(err => {
+          expect(err).toEqual(new Error("fail"));
+        });
     });
 
-    it("handles arrays", done => {
-      async.groupBySeries(
-        ["a", "a", "b"],
-        (val, next) => {
-          next(null, val);
-        },
-        (err, result) => {
-          expect(err).toEqual(null);
+    it("handles arrays", () => {
+      return pasync
+        .groupBySeries(["a", "a", "b"], async val => {
+          return val;
+        })
+        .then(result => {
           expect(result).toEqual({ a: ["a", "a"], b: ["b"] });
-          done();
-        }
-      );
+        });
     });
 
-    it("handles empty object", done => {
-      async.groupBySeries(
-        {},
-        (val, next) => {
+    it("handles empty object", () => {
+      return pasync
+        .groupBySeries({}, async () => {
           assert(false, "iteratee should not be called");
-          next();
-        },
-        (err, result) => {
-          expect(err).toEqual(null);
+        })
+        .then(result => {
           expect(result).toEqual({});
-          done();
-        }
-      );
+        });
     });
 
-    it("handles undefined", done => {
-      async.groupBySeries(
-        undefined,
-        (val, next) => {
+    it("handles undefined", () => {
+      return pasync
+        .groupBySeries(undefined, async () => {
           assert(false, "iteratee should not be called");
-          next();
-        },
-        (err, result) => {
-          expect(err).toEqual(null);
+        })
+        .then(result => {
           expect(result).toEqual({});
-          done();
-        }
-      );
+        });
     });
   });
 });
