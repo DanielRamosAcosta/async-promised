@@ -4,7 +4,7 @@
 
 Native promise wrapper around [`caolan/async`](https://github.com/caolan/async)
 
-It needs an ES6 environment to work (Promises, Block-scoped binding constructs, etc) like modern browsers and node 4.
+It needs an ES6 environment to work (Promises, Block-scoped binding constructs, etc) like modern browsers and node 6.
 
 Example:
 
@@ -25,3 +25,16 @@ await async.each([1, 3, 2], async x => {
 * A promise can't be rejected with an Error and in the catch scope access the
   current results.
 * A promise can only resolve one time.
+
+## Missing utilities
+
+* `cargo`
+* `queue`
+* `priorityQueue`
+
+## Roadmap
+
+* [x] Wrap the original `async` library with promise interface
+* [ ] Implement all the utilities and drop `async` dependency
+* [ ] Fix TypeScript typings
+* [ ] Fix docs
