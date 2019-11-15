@@ -2,49 +2,80 @@
 
 > This file is generated, can be updated using `update-todo`
 
-Current implement status: 100%
+Current implement status: 9%
 
-* [x] apply.ts
-* [x] applyEach.ts
-* [x] asyncFunctions.ts
+* [ ] apply.ts
+* [ ] applyEach.ts
+* [ ] applyEachSeries.ts
 * [x] asyncify.ts
-* [x] auto.ts
+* [ ] auto.ts
 * [x] autoInject.ts
-* [x] compose.ts
-* [x] concat.ts
-* [x] consoleFunctions.ts
-* [x] constant.ts
-* [x] detect.ts
-* [x] during.ts
-* [x] each.ts
-* [x] eachOf.ts
+* [ ] compose.ts
+* [ ] concat.ts
+* [ ] concatLimit.ts
+* [ ] concatSeries.ts
+* [ ] constant.ts
+* [ ] detect.ts
+* [ ] detectLimit.ts
+* [ ] detectSeries.ts
+* [ ] dir.ts
+* [ ] doDuring.ts
+* [ ] doUntil.ts
+* [ ] doWhilst.ts
+* [ ] during.ts
+* [ ] each.ts
+* [ ] eachLimit.ts
+* [ ] eachOf.ts
+* [ ] eachOfLimit.ts
+* [ ] eachOfSeries.ts
+* [ ] eachSeries.ts
 * [x] ensureAsync.ts
-* [x] every.ts
-* [x] filter.ts
+* [ ] every.ts
+* [ ] everyLimit.ts
+* [ ] everySeries.ts
+* [ ] filter.ts
+* [ ] filterLimit.ts
+* [ ] filterSeries.ts
 * [x] forever.ts
-* [x] groupBy.ts
-* [x] linked_list.ts
-* [x] map.ts
-* [x] mapValues.ts
-* [x] memoize.ts
+* [ ] groupBy.ts
+* [ ] groupByLimit.ts
+* [ ] groupBySeries.ts
+* [x] index.ts
+* [ ] log.ts
+* [ ] map.ts
+* [ ] mapLimit.ts
+* [ ] mapSeries.ts
+* [ ] mapValues.ts
+* [ ] mapValuesLimit.ts
+* [ ] mapValuesSeries.ts
+* [ ] memoize.ts
 * [x] nextTick.ts
-* [x] parallel.ts
-* [x] race.ts
-* [x] reduce.ts
-* [x] reflect.ts
+* [ ] parallel.ts
+* [ ] parallelLimit.ts
+* [ ] race.ts
+* [ ] reduce.ts
+* [ ] reduceRight.ts
+* [ ] reflect.ts
 * [x] reflectAll.ts
-* [x] retry.ts
-* [x] retryable.ts
-* [x] seq.ts
-* [x] series.ts
-* [x] setImmediate.ts
-* [x] slice.ts
-* [x] some.ts
-* [x] sortBy.ts
-* [x] timeout.ts
-* [x] times.ts
-* [x] transform.ts
-* [x] tryEach.ts
-* [x] until.ts
-* [x] waterfall.ts
-* [x] whilst.ts
+* [ ] reject.ts
+* [ ] rejectLimit.ts
+* [ ] rejectSeries.ts
+* [ ] retry.ts
+* [ ] retryable.ts
+* [ ] seq.ts
+* [ ] series.ts
+* [ ] setImmediate.ts
+* [ ] some.ts
+* [ ] someLimit.ts
+* [ ] someSeries.ts
+* [ ] sortBy.ts
+* [ ] timeout.ts
+* [ ] times.ts
+* [ ] timesLimit.ts
+* [ ] timesSeries.ts
+* [ ] transform.ts
+* [ ] tryEach.ts
+* [ ] unmemoize.ts
+* [ ] until.ts
+* [ ] waterfall.ts
+* [ ] whilst.ts

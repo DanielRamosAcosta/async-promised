@@ -17,12 +17,12 @@ const getImplementedPercentage = filesUsingCallbacksAsync =>
   Math.round(getImplementedNumber(filesUsingCallbacksAsync) * 100)
 
 async function main() {
-  const elements = await fsp.readdir(resolve(__dirname, '../test'))
+  const elements = await fsp.readdir(resolve(__dirname, '../lib'))
   const scripts = elements.filter(filename => /.*.ts/.test(filename))
   const filesUsingCallbacksAsync = scripts
     .map(filename => ({
       filename,
-      content: fs.readFileSync(resolve(__dirname, '../test', filename))
+      content: fs.readFileSync(resolve(__dirname, '../lib', filename))
     }))
     .map(({ filename, content }) => ({
       filename,
