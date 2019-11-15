@@ -99,11 +99,14 @@ describe("map", () => {
   });
 
   it("map undefined array", () => {
-    return async
-      .map(undefined, async () => {})
-      .then(result => {
-        expect(result).toEqual([]);
-      });
+    return (
+      async
+        // @ts-ignore
+        .map(undefined, async () => {})
+        .then((result: any[]) => {
+          expect(result).toEqual([]);
+        })
+    );
   });
 
   it("map object", () => {
@@ -141,11 +144,14 @@ describe("map", () => {
   });
 
   it("mapSeries undefined array", () => {
-    return async
-      .mapSeries(undefined, async () => {})
-      .then(result => {
-        expect(result).toEqual([]);
-      });
+    return (
+      async
+        // @ts-ignore
+        .mapSeries(undefined, async () => {})
+        .then((result: any[]) => {
+          expect(result).toEqual([]);
+        })
+    );
   });
 
   it("mapSeries object", () => {
@@ -180,11 +186,14 @@ describe("map", () => {
   });
 
   it("mapLimit undefined array", () => {
-    return async
-      .mapLimit(undefined, 2, async () => {})
-      .then(result => {
-        expect(result).toEqual([]);
-      });
+    return (
+      async
+        // @ts-ignore
+        .mapLimit(undefined, 2, async () => {})
+        .then((result: any[]) => {
+          expect(result).toEqual([]);
+        })
+    );
   });
 
   it("mapLimit limit exceeds size", () => {
@@ -262,12 +271,12 @@ describe("map", () => {
   });
 
   it("map with Map", () => {
-    const mapp = new Map();
-    mapp.set(1, "a");
-    mapp.set(2, "b");
+    const map = new Map<number, string>();
+    map.set(1, "a");
+    map.set(2, "b");
 
     return async
-      .map(mapp, async val => val)
+      .map<string, string>(map, async val => val)
       .then(result => {
         assert(
           Array.isArray(result),
