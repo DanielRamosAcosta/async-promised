@@ -62,10 +62,7 @@
     ],
     "transform": {
       "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
-    },
-    "testMatch": [
-      "<rootDir>/test/*.ts"
-    ]
+    }
   },
   "dependencies": {
     "async": "^2.6.1",
