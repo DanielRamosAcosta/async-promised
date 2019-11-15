@@ -1,5 +1,5 @@
 import assert from "assert";
-import * as pasync from "../lib";
+import * as async from "../lib";
 import sleep from "./support/sleep";
 
 describe("groupBy", () => {
@@ -12,7 +12,7 @@ describe("groupBy", () => {
   describe("groupBy", () => {
     it("basics", () => {
       const callOrder: number[] = [];
-      return pasync
+      return async
         .groupBy([1, 3, 2], groupByIterateeAsync(callOrder))
         .then(result => {
           expect(callOrder).toEqual([1, 2, 3]);
@@ -21,7 +21,7 @@ describe("groupBy", () => {
     });
 
     it("error", () => {
-      return pasync
+      return async
         .groupBy([1, 3, 2], async val => {
           if (val === 3) {
             throw new Error("fail");
@@ -36,7 +36,7 @@ describe("groupBy", () => {
 
     it("original untouched", () => {
       const obj = { a: "b", b: "c", c: "d" };
-      return pasync
+      return async
         .groupBy(obj, async val => {
           return val;
         })
@@ -48,7 +48,7 @@ describe("groupBy", () => {
 
     it("handles multiple matches", () => {
       const callOrder: number[] = [];
-      return pasync
+      return async
         .groupBy([1, 3, 2, 2], groupByIterateeAsync(callOrder))
         .then(result => {
           expect(callOrder).toEqual([1, 2, 2, 3]);
@@ -60,7 +60,7 @@ describe("groupBy", () => {
       const obj = { a: "b", b: "c", c: "d" };
       const concurrency = { b: 3, c: 2, d: 1 };
       let running = 0;
-      return pasync
+      return async
         .groupBy(obj, async val => {
           running++;
           await sleep(5);
@@ -75,7 +75,7 @@ describe("groupBy", () => {
     });
 
     it("handles undefined", () => {
-      return pasync
+      return async
         .groupBy(undefined, async () => {
           assert(false, "iteratee should not be called");
         })
@@ -85,7 +85,7 @@ describe("groupBy", () => {
     });
 
     it("handles empty object", () => {
-      return pasync
+      return async
         .groupBy({}, async () => {
           assert(false, "iteratee should not be called");
           return "foo";
@@ -112,7 +112,7 @@ describe("groupBy", () => {
         ["c", "a"]
       ]);
 
-      return pasync
+      return async
         .groupBy(map, async val => {
           return val[1] + 1;
         })
@@ -129,7 +129,7 @@ describe("groupBy", () => {
 
     it("handles sparse results", () => {
       const arr = [1, 2, 3];
-      return pasync
+      return async
         .groupBy(arr, async val => {
           if (val === 1) {
             return val + 1;
@@ -148,7 +148,7 @@ describe("groupBy", () => {
 
     it("handles sparse results", () => {
       const arr = [1, 2, 3];
-      return pasync
+      return async
         .groupBy(arr, async val => {
           if (val === 1) {
             return val + 1;
@@ -173,7 +173,7 @@ describe("groupBy", () => {
       let running = 0;
       const concurrency = { b: 2, c: 2, d: 1 };
 
-      return pasync
+      return async
         .groupByLimit(obj, 2, async val => {
           running++;
           await sleep(500);
@@ -188,7 +188,7 @@ describe("groupBy", () => {
     });
 
     it("error", () => {
-      return pasync
+      return async
         .groupByLimit(obj, 1, async val => {
           if (val === "c") {
             throw new Error("fail");
@@ -202,7 +202,7 @@ describe("groupBy", () => {
     });
 
     it("handles empty object", () => {
-      return pasync
+      return async
         .groupByLimit({}, 2, async () => {
           assert(false, "iteratee should not be called");
           return 0;
@@ -213,7 +213,7 @@ describe("groupBy", () => {
     });
 
     it("handles undefined", () => {
-      return pasync
+      return async
         .groupByLimit(undefined, 2, async () => {
           assert(false, "iteratee should not be called");
         })
@@ -225,7 +225,7 @@ describe("groupBy", () => {
     it("limit exceeds size", () => {
       const callOrder: number[] = [];
 
-      return pasync
+      return async
         .groupByLimit([3, 2, 2, 1], 10, groupByIterateeAsync(callOrder))
         .then(result => {
           expect(result).toEqual({ 2: [1], 3: [2, 2], 4: [3] });
@@ -236,7 +236,7 @@ describe("groupBy", () => {
     it("limit equal size", () => {
       const callOrder: number[] = [];
 
-      return pasync
+      return async
         .groupByLimit([3, 2, 2, 1], 4, groupByIterateeAsync(callOrder))
         .then(result => {
           expect(result).toEqual({ 2: [1], 3: [2, 2], 4: [3] });
@@ -245,7 +245,7 @@ describe("groupBy", () => {
     });
 
     it("zero limit", () => {
-      return pasync
+      return async
         .groupByLimit([3, 2, 2, 1], 0, async val => {
           assert(false, "iteratee should not be called");
           return 0;
@@ -262,7 +262,7 @@ describe("groupBy", () => {
       const limit = 3;
       const maxTime = 10 * arr.length;
 
-      return pasync
+      return async
         .groupByLimit(arr, limit, async () => {
           started++;
           if (started === 3) {
@@ -285,7 +285,7 @@ describe("groupBy", () => {
     it("basics", () => {
       let running = 0;
       const concurrency = { b: 1, c: 1, d: 1 };
-      return pasync
+      return async
         .groupBySeries(obj, async val => {
           running++;
           await sleep(0);
@@ -300,7 +300,7 @@ describe("groupBy", () => {
     });
 
     it("error", () => {
-      return pasync
+      return async
         .groupBySeries(obj, async val => {
           if (val === "c") {
             throw new Error("fail");
@@ -314,7 +314,7 @@ describe("groupBy", () => {
     });
 
     it("handles arrays", () => {
-      return pasync
+      return async
         .groupBySeries(["a", "a", "b"], async val => {
           return val;
         })
@@ -324,7 +324,7 @@ describe("groupBy", () => {
     });
 
     it("handles empty object", () => {
-      return pasync
+      return async
         .groupBySeries({}, async () => {
           assert(false, "iteratee should not be called");
         })
@@ -334,7 +334,7 @@ describe("groupBy", () => {
     });
 
     it("handles undefined", () => {
-      return pasync
+      return async
         .groupBySeries(undefined, async () => {
           assert(false, "iteratee should not be called");
         })

@@ -1,5 +1,5 @@
 import assert from "assert";
-import * as pasync from "../lib";
+import * as async from "../lib";
 import sleep from "./support/sleep";
 
 describe("eachOf", () => {
@@ -12,20 +12,20 @@ describe("eachOf", () => {
   };
 
   it("eachOf alias", () => {
-    expect(pasync.eachOf).toEqual(pasync.forEachOf);
+    expect(async.eachOf).toEqual(async.forEachOf);
   });
 
   it("eachOfLimit alias", () => {
-    expect(pasync.eachOfLimit).toEqual(pasync.forEachOfLimit);
+    expect(async.eachOfLimit).toEqual(async.forEachOfLimit);
   });
 
   it("eachOfSeries alias", () => {
-    expect(pasync.eachOfSeries).toEqual(pasync.forEachOfSeries);
+    expect(async.eachOfSeries).toEqual(async.forEachOfSeries);
   });
 
   it("forEachOf", () => {
     const args: Array<number | string> = [];
-    return pasync
+    return async
       .forEachOf({ a: 1, b: 2 }, forEachOfIterateeAsync(args))
       .then(() => {
         expect(args).toEqual(["a", 1, "b", 2]);
@@ -35,7 +35,7 @@ describe("eachOf", () => {
   it("forEachOf - instant resolver", () => {
     const args: Array<number | string> = [];
 
-    return pasync
+    return async
       .forEachOf({ a: 1, b: 2 }, async (value, key) => {
         args.push(key, value);
       })
@@ -46,7 +46,7 @@ describe("eachOf", () => {
   });
 
   it("forEachOf empty object", () => {
-    return pasync
+    return async
       .forEachOf({}, async () => {
         assert(false, "iteratee should not be called");
       })
@@ -56,7 +56,7 @@ describe("eachOf", () => {
   });
 
   it("forEachOf empty array", () => {
-    return pasync
+    return async
       .forEachOf([], async () => {
         assert(false, "iteratee should not be called");
       })
@@ -66,7 +66,7 @@ describe("eachOf", () => {
   });
 
   it("forEachOf error", () => {
-    return pasync
+    return async
       .forEachOf({ a: 1, b: 2 }, async () => {
         throw new Error("error");
       })
@@ -81,7 +81,7 @@ describe("eachOf", () => {
 
   it("forEachOf with array", () => {
     const args: Array<number | string> = [];
-    return pasync
+    return async
       .forEachOf<string>(["a", "b"], forEachOfIterateeAsync(args))
       .then(() => {
         expect(args).toEqual([0, "a", 1, "b"]);
@@ -98,7 +98,7 @@ describe("eachOf", () => {
     set.add("a");
     set.add("b");
 
-    return pasync.forEachOf(set, forEachOfIterateeAsync(args)).then(() => {
+    return async.forEachOf(set, forEachOfIterateeAsync(args)).then(() => {
       expect(args).toEqual([0, "a", 1, "b"]);
     });
   });
@@ -113,14 +113,14 @@ describe("eachOf", () => {
     map.set(1, "a");
     map.set(2, "b");
 
-    return pasync.forEachOf(map, forEachOfIterateeAsync(args)).then(() => {
+    return async.forEachOf(map, forEachOfIterateeAsync(args)).then(() => {
       expect(args).toEqual([0, [1, "a"], 1, [2, "b"]]);
     });
   });
 
   it("forEachOfSeries", () => {
     const args: Array<number | string> = [];
-    return pasync
+    return async
       .forEachOfSeries({ a: 1, b: 2 }, forEachOfIterateeAsync(args))
       .then(() => {
         expect(args).toEqual(["a", 1, "b", 2]);
@@ -128,7 +128,7 @@ describe("eachOf", () => {
   });
 
   it("forEachOfSeries empty object", () => {
-    return pasync
+    return async
       .forEachOfSeries({}, async () => {
         assert(false, "iteratee should not be called");
       })
@@ -140,7 +140,7 @@ describe("eachOf", () => {
   it("forEachOfSeries error", () => {
     const callOrder: any[] = [];
 
-    return pasync
+    return async
       .forEachOfSeries({ a: 1, b: 2 }, async (value, key) => {
         callOrder.push(value, key);
         throw new Error("error");
@@ -158,7 +158,7 @@ describe("eachOf", () => {
   it("forEachOfSeries with array", () => {
     const args: Array<number | string> = [];
 
-    return pasync
+    return async
       .forEachOfSeries(["a", "b"], forEachOfIterateeAsync(args))
       .then(() => {
         expect(args).toEqual([0, "a", 1, "b"]);
@@ -174,11 +174,9 @@ describe("eachOf", () => {
     const set = new Set();
     set.add("a");
     set.add("b");
-    return pasync
-      .forEachOfSeries(set, forEachOfIterateeAsync(args))
-      .then(() => {
-        expect(args).toEqual([0, "a", 1, "b"]);
-      });
+    return async.forEachOfSeries(set, forEachOfIterateeAsync(args)).then(() => {
+      expect(args).toEqual([0, "a", 1, "b"]);
+    });
   });
 
   it("forEachOfSeries with Map (iterators)", () => {
@@ -190,17 +188,15 @@ describe("eachOf", () => {
     const map = new Map();
     map.set(1, "a");
     map.set(2, "b");
-    return pasync
-      .forEachOfSeries(map, forEachOfIterateeAsync(args))
-      .then(() => {
-        expect(args).toEqual([0, [1, "a"], 1, [2, "b"]]);
-      });
+    return async.forEachOfSeries(map, forEachOfIterateeAsync(args)).then(() => {
+      expect(args).toEqual([0, [1, "a"], 1, [2, "b"]]);
+    });
   });
 
   it("forEachOfLimit", () => {
     const args: Array<number | string> = [];
     const obj = { a: 1, b: 2, c: 3, d: 4 };
-    return pasync
+    return async
       .forEachOfLimit(obj, 2, async (value, key) => {
         await sleep(value * 5);
         args.push(value, key);
@@ -211,7 +207,7 @@ describe("eachOf", () => {
   });
 
   it("forEachOfLimit empty object", () => {
-    return pasync
+    return async
       .forEachOfLimit({}, 2, async () => {
         assert(false, "iteratee should not be called");
       })
@@ -223,7 +219,7 @@ describe("eachOf", () => {
   it("forEachOfLimit limit exceeds size", () => {
     const args: Array<number | string> = [];
     const obj = { a: 1, b: 2, c: 3, d: 4, e: 5 };
-    return pasync
+    return async
       .forEachOfLimit(obj, 10, forEachOfIterateeAsync(args))
       .then(() => {
         expect(args).toEqual(["a", 1, "b", 2, "c", 3, "d", 4, "e", 5]);
@@ -233,7 +229,7 @@ describe("eachOf", () => {
   it("forEachOfLimit limit equal size", () => {
     const args: Array<number | string> = [];
     const obj = { a: 1, b: 2, c: 3, d: 4, e: 5 };
-    return pasync
+    return async
       .forEachOfLimit(obj, 5, forEachOfIterateeAsync(args))
       .then(err => {
         expect(args).toEqual(["a", 1, "b", 2, "c", 3, "d", 4, "e", 5]);
@@ -241,7 +237,7 @@ describe("eachOf", () => {
   });
 
   it("forEachOfLimit zero limit", () => {
-    return pasync
+    return async
       .forEachOfLimit({ a: 1, b: 2 }, 0, async () => {
         assert(false, "iteratee should not be called");
       })
@@ -252,7 +248,7 @@ describe("eachOf", () => {
 
   it("forEachOfLimit no limit", () => {
     let count = 0;
-    return pasync
+    return async
       .forEachOfLimit(Array.from({ length: 100 }), Infinity, async () => {
         count++;
       })
@@ -265,7 +261,7 @@ describe("eachOf", () => {
     const obj = { a: 1, b: 2, c: 3, d: 4, e: 5 };
     const callOrder: Array<number | string> = [];
 
-    return pasync
+    return async
       .forEachOfLimit(obj, 3, async (value, key) => {
         if (value === 2) {
           throw new Error("error");
@@ -286,7 +282,7 @@ describe("eachOf", () => {
   it("forEachOfLimit synchronous", () => {
     const args: Array<number | string> = [];
     const obj = { a: 1, b: 2 };
-    return pasync
+    return async
       .forEachOfLimit(obj, 5, forEachOfIterateeAsync(args))
       .then(() => {
         expect(args).toEqual(["a", 1, "b", 2]);
@@ -297,7 +293,7 @@ describe("eachOf", () => {
     const args: Array<number | string> = [];
     const arr = ["a", "b"];
 
-    return pasync
+    return async
       .forEachOfLimit(arr, 1, forEachOfIterateeAsync(args))
       .then(() => {
         expect(args).toEqual([0, "a", 1, "b"]);
@@ -313,7 +309,7 @@ describe("eachOf", () => {
     const set = new Set();
     set.add("a");
     set.add("b");
-    return pasync
+    return async
       .forEachOfLimit(set, 1, forEachOfIterateeAsync(args))
       .then(() => {
         expect(args).toEqual([0, "a", 1, "b"]);
@@ -330,7 +326,7 @@ describe("eachOf", () => {
     map.set(1, "a");
     map.set(2, "b");
 
-    return pasync
+    return async
       .forEachOfLimit(map, 1, forEachOfIterateeAsync(args))
       .then(() => {
         expect(args).toEqual([0, [1, "a"], 1, [2, "b"]]);

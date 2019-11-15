@@ -1,6 +1,6 @@
 import assert from "assert";
 import vm from "vm";
-import * as pasync from "../lib";
+import * as async from "../lib";
 import { getFunctionsObjectPromised } from "./support/get-function-object";
 import sleep from "./support/sleep";
 
@@ -8,7 +8,7 @@ describe("parallel", () => {
   it("parallel", () => {
     const callOrder: number[] = [];
 
-    return pasync
+    return async
       .parallel([
         async () => {
           await sleep(50);
@@ -33,13 +33,13 @@ describe("parallel", () => {
   });
 
   it("parallel empty array", () => {
-    return pasync.parallel([]).then(results => {
+    return async.parallel([]).then(results => {
       expect(results).toEqual([]);
     });
   });
 
   it("parallel error", () => {
-    return pasync
+    return async
       .parallel([
         async () => {
           throw new Error("error");
@@ -60,7 +60,7 @@ describe("parallel", () => {
   it("parallel object", () => {
     const callOrder: number[] = [];
 
-    return pasync
+    return async
       .parallel(getFunctionsObjectPromised(callOrder))
       .then(results => {
         expect(callOrder).toEqual([3, 1, 2]);
@@ -90,7 +90,7 @@ describe("parallel", () => {
       return null;
     }
 
-    return pasync
+    return async
       .parallel([taskFalse, taskUndefined, taskEmpty, taskNull])
       .then(results => {
         expect(results.length).toEqual(4);
@@ -103,7 +103,7 @@ describe("parallel", () => {
 
   it("parallel limit", () => {
     const callOrder: number[] = [];
-    return pasync
+    return async
       .parallelLimit(
         [
           async () => {
@@ -131,13 +131,13 @@ describe("parallel", () => {
   });
 
   it("parallel limit empty array", () => {
-    return pasync.parallelLimit([], 2).then(results => {
+    return async.parallelLimit([], 2).then(results => {
       expect(results).toEqual([]);
     });
   });
 
   it("parallel limit error", () => {
-    return pasync
+    return async
       .parallelLimit(
         [
           async () => {
@@ -160,7 +160,7 @@ describe("parallel", () => {
 
   it("parallel limit object", () => {
     const callOrder: number[] = [];
-    return pasync
+    return async
       .parallelLimit(getFunctionsObjectPromised(callOrder), 2)
       .then(results => {
         expect(callOrder).toEqual([1, 3, 2]);
@@ -174,7 +174,7 @@ describe("parallel", () => {
 
   it("parallel call in another context @nycinvalid @nodeonly", done => {
     const sandbox = {
-      async: pasync,
+      async: async,
       done
     };
 
@@ -194,15 +194,15 @@ describe("parallel", () => {
   });
 
   it("parallel error with reflect", () => {
-    return pasync
+    return async
       .parallel([
-        pasync.reflect(async () => {
+        async.reflect(async () => {
           throw new Error("error");
         }),
-        pasync.reflect(async () => {
+        async.reflect(async () => {
           throw new Error("error2");
         }),
-        pasync.reflect(async () => {
+        async.reflect(async () => {
           return 2;
         })
       ])
@@ -230,7 +230,7 @@ describe("parallel", () => {
       }
     };
 
-    return pasync.parallel(pasync.reflectAll(tasks)).then(results => {
+    return async.parallel(async.reflectAll(tasks)).then(results => {
       expect(results).toEqual({
         one: { value: "one" },
         two: { error: new Error("two") },
@@ -242,7 +242,7 @@ describe("parallel", () => {
   it("parallel empty object with reflect all", () => {
     const tasks = {};
 
-    return pasync.parallel(pasync.reflectAll(tasks)).then(results => {
+    return async.parallel(async.reflectAll(tasks)).then(results => {
       expect(results).toEqual({});
     });
   });
@@ -260,7 +260,7 @@ describe("parallel", () => {
       }
     };
 
-    return pasync.parallel(pasync.reflectAll(tasks)).then(results => {
+    return async.parallel(async.reflectAll(tasks)).then(results => {
       expect(results).toEqual({
         one: { error: new Error("one") },
         two: { error: new Error("two") },
@@ -282,7 +282,7 @@ describe("parallel", () => {
       }
     };
 
-    return pasync.parallel(pasync.reflectAll(tasks)).then(results => {
+    return async.parallel(async.reflectAll(tasks)).then(results => {
       expect(results).toEqual({
         one: { value: "one" },
         two: { value: "two" },
@@ -317,7 +317,7 @@ describe("parallel", () => {
     const limit = 3;
     const maxTime = 10 * arr.length;
 
-    pasync.parallelLimit(arr, limit).catch(err => {
+    async.parallelLimit(arr, limit).catch(err => {
       if (err.message !== "Test Error") {
         return Promise.reject(err);
       }
