@@ -106,7 +106,11 @@ describe("groupBy", () => {
         return;
       }
 
-      const map = new Map([["a", "a"], ["b", "b"], ["c", "a"]]);
+      const map = new Map([
+        ["a", "a"],
+        ["b", "b"],
+        ["c", "a"]
+      ]);
 
       return pasync
         .groupBy(map, async val => {
@@ -114,7 +118,10 @@ describe("groupBy", () => {
         })
         .then(result => {
           expect(result).toEqual({
-            a1: [["a", "a"], ["c", "a"]],
+            a1: [
+              ["a", "a"],
+              ["c", "a"]
+            ],
             b1: [["b", "b"]]
           });
         });
@@ -164,7 +171,7 @@ describe("groupBy", () => {
 
     it("basics", () => {
       let running = 0;
-      const concurrency = { b: 2, c: 1, d: 1 };
+      const concurrency = { b: 2, c: 2, d: 1 };
 
       return pasync
         .groupByLimit(obj, 2, async val => {
